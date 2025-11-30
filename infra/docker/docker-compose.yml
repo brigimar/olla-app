@@ -1,0 +1,37 @@
+version: '3.9'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./infra/env/frontend.env
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./infra/env/backend.env
+    depends_on:
+      - supabase
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "8501:8501"
+    env_file:
+      - ./infra/env/dashboard.env
+    depends_on:
+      - backend
+
+  supabase:
+    image: supabase/postgres:15
+    container_name: supabase_db
+    environment:
+      POSTGRES_PASSWORD: supabase123
+    ports:
+      - "5432:5432"

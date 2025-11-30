@@ -1,0 +1,14 @@
+﻿{
+  "name": "sync-service",
+  "version": "1.0.0",
+  "description": "Servicio de sincronización Notion -> Supabase",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "node-cron": "^3.0.2"
+  }
+}

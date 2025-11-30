@@ -1,0 +1,22 @@
+# --- Core framework ---
+fastapi==0.115.0
+uvicorn[standard]==0.32.0   # servidor ASGI para correr FastAPI
+
+# --- Supabase client ---
+supabase-py==0.0.2          # cliente oficial de Supabase para Python
+
+# --- Notion client ---
+notion-client==2.2.1        # SDK para consumir la API de Notion
+
+# --- Utilidades comunes ---
+python-dotenv==1.0.1        # para cargar variables de entorno (.env)
+httpx==0.27.0               # cliente HTTP asíncrono, útil para integraciones
+pydantic==2.9.2             # validación de datos y modelos en FastAPI
+
+# --- Seguridad / autenticación ---
+passlib[bcrypt]==1.7.4      # hashing de contraseñas si lo necesitás
+python-jose[cryptography]==3.3.0  # JWT y manejo de tokens
+
+# --- Testing ---
+pytest==8.3.3
+

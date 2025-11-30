@@ -1,0 +1,3 @@
+﻿/* Tailwind base placeholder - reemplazar por tailwind import si usás tailwind */
+html, body, #__next { height: 100%; }
+body { font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto; margin: 0; padding: 0; }
