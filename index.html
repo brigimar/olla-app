@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OLLA APP – Comida real de gente real</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/lucide@latest" />
+  <style>
+    /* ======================
+        RESET Y BASE
+    ====================== */
+    :root {
+      --color-primary: #FF6B35;
+      --color-primary-alt: #2EC4B6;
+      --color-dark: #1A1A1A;
+      --color-light: #FFFFFF;
+      --color-bg-light: #F8F9FA;
+      --color-accent-1: #FFD166;
+      --color-accent-2: #EF476F;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Plus Jakarta Sans', 'Inter', sans-serif;
+
+      --transition-fast: 0.2s ease;
+      --transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --blur-glass: blur(12px);
+      --shadow-glass: 0 8px 32px rgba(0,0,0,0.1);
+      --shadow-card: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--color-bg-light);
+      color: var(--color-dark);
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ======================
+        GLASSMORPHISM UTIL
+    ====================== */
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-glass);
+    }
+
+    /* ======================
+        NAVBAR
+    ====================== */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: var(--font-serif);
+      font-weight: 800;
+      font-size: 1.75rem;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-alt));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .nav-item {
+      font-weight: 600;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--color-primary);
+      transition: var(--transition);
+    }
+
+    .nav-item:hover::after {
+      width: 100%;
+    }
+
+    .menu-toggle {
+      display: none;
+      cursor: pointer;
+    }
+
+    /* ======================
+        HERO SECTION
+    ====================== */
+    .hero {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0 2rem;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,107,53,0.25) 0%, rgba(46,196,182,0.2) 100%);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 800px;
+      color: var(--color-dark);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      line-height: 1.1;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: clamp(1.125rem, 3.5vw, 1.5rem);
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 0.875rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-outline {
+      border: 2px solid var(--color-primary);
+      background: transparent;
+      color: var(--color-primary);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255,107,53,0.4);
+    }
+
+    .search-bar {
+      margin-top: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 1.25rem 1.75rem;
+      border-radius: 60px;
+      border: none;
+      font-size: 1.125rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: var(--blur-glass);
+      -webkit-backdrop-filter: var(--blur-glass);
+      box-shadow: var(--shadow-glass);
+      transition: var(--transition);
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255,107,53,0.3);
+    }
+
+    /* ======================
+        SECTIONS
+    ====================== */
+    section {
+      padding: 5rem 2rem;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title p {
+      color: #555;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ======================
+        CATEGORÍAS
+    ====================== */
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .category-card {
+      position: relative;
+      height: 280px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+
+    .category-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .category-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 2rem;
+      color: white;
+      z-index: 2;
+    }
+
+    .category-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ======================
+        PLATOS GRID (MASONRY)
+    ====================== */
+    .dishes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dish-card {
+      background: white;
+      border-radius: 24px 8px 24px 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition);
+      transform-origin: center;
+    }
+
+    .dish-card:hover {
+      transform: translateY(-8px) rotate(0.5deg);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .dish-image {
+      height: 200px;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 24px 0 0 0;
+    }
+
+    .dish-info {
+      padding: 1.5rem;
+    }
+
+    .dish-badge {
+      display: inline-block;
+      padding: 0.375rem 0.875rem;
+      background: var(--color-primary-alt);
+      color: white;
+      font-size: 0.875rem;
+      border-radius: 50px;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .dish-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .dish-chef {
+      font-size: 0.95rem;
+      color: #666;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .rating {
+      display: flex;
+      margin: 0.75rem 0;
+      color: #FFD166;
+    }
+
+    .price {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--color-primary);
+    }
+
+    /* ======================
+        FOOTER
+    ====================== */
+    footer {
+      background: var(--color-dark);
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    footer p {
+      opacity: 0.7;
+    }
+
+    /* ======================
+        UTILIDADES Y RESPONSIVE
+    ====================== */
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links {
+        display: none;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 10vw, 3.5rem);
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
+
+    @media (prefers-reduced-motion) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* ======================
+        ICONOS
+    ====================== */
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      stroke-width: 2px;
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav>
+    <a href="#" class="logo">OLLA</a>
+    <div class="nav-links">
+      <div class="nav-item">Explorar</div>
+      <div class="nav-item">Cocineros</div>
+      <div class="nav-item">Historias</div>
+      <div class="nav-item">Perfil</div>
+    </div>
+    <div class="menu-toggle">
+      <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Comida real de gente real</h1>
+      <p>Descubre chefs caseros en tu barrio</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn btn-primary">Explorar platos</a>
+        <a href="#" class="btn btn-outline">Ser cocinero</a>
+      </div>
+      <div class="search-bar">
+        <input type="text" placeholder="¿Qué deseas comer hoy? Arepas, ramen, tamales, curry..." />
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORÍAS -->
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2>Cocineros en tu comunidad</h2>
+        <p>Conecta con personas reales preparando comida con amor</p>
+      </div>
+      <div class="categories">
+        <div class="category-card" style="background: center/cover url('https://placehold.co/600x400/FF6B35/white?text=Familias') no-repeat;">
+          <div class="category-content">
+            <h3>Familias cocinando</h3>
+            <p>Recetas multigeneracionales</p>
+          </div>
+        </div>
+        <div class="category-card" style="background: center/cover url('https://placehold.co/600x400/2EC4B6/white?text=Especialistas') no-repeat;">
+          <div class="category-content">
+            <h3>Especialistas</h3>
+            <p>Platos auténticos y técnicos</p>
+          </div>
+        </div>
+        <div class="category-card" style="background: center/cover url('https://placehold.co/600x400/EF476F/white?text=Emergentes') no-repeat;">
+          <div class="category-content">
+            <h3>Chefs emergentes</h3>
+            <p>Nuevas voces culinarias</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATOS -->
+  <section>
+    <div class="container">
+      <div class="section-title">
+        <h2>Platos populares esta semana</h2>
+        <p>Sabores frescos, precios justos, cocineros verificados</p>
+      </div>
+      <div class="dishes-grid">
+        <!-- Dish 1 -->
+        <div class="dish-card">
+          <img src="https://placehold.co/600x400/FFD166/1A1A1A?text=Arepas+Recheadas" alt="Arepas Recheadas" class="dish-image" />
+          <div class="dish-info">
+            <span class="dish-badge">Vegetariano</span>
+            <h3 class="dish-title">Arepas Recheadas</h3>
+            <div class="dish-chef">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              María L., Bogotá
+            </div>
+            <div class="rating">
+              ★★★★★
+            </div>
+            <div class="price">$18.000 COP</div>
+          </div>
+        </div>
+
+        <!-- Dish 2 -->
+        <div class="dish-card">
+          <img src="https://placehold.co/600x400/2EC4B6/white?text=Ramen+Casero" alt="Ramen Casero" class="dish-image" />
+          <div class="dish-info">
+            <span class="dish-badge">Verificado</span>
+            <h3 class="dish-title">Ramen Casero</h3>
+            <div class="dish-chef">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Carlos M., Medellín
+            </div>
+            <div class="rating">
+              ★★★★☆
+            </div>
+            <div class="price">$22.000 COP</div>
+          </div>
+        </div>
+
+        <!-- Dish 3 -->
+        <div class="dish-card">
+          <img src="https://placehold.co/600x400/EF476F/white?text=Tamal+de+Veracruz" alt="Tamal de Veracruz" class="dish-image" />
+          <div class="dish-info">
+            <span class="dish-badge">Tradicional</span>
+            <h3 class="dish-title">Tamal de Veracruz</h3>
+            <div class="dish-chef">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Ana R., Cali
+            </div>
+            <div class="rating">
+              ★★★★★
+            </div>
+            <div class="price">$15.000 COP</div>
+          </div>
+        </div>
+
+        <!-- Dish 4 -->
+        <div class="dish-card">
+          <img src="https://placehold.co/600x400/FF6B35/white?text=Curry+Vegano" alt="Curry Vegano" class="dish-image" />
+          <div class="dish-info">
+            <span class="dish-badge">Vegano</span>
+            <h3 class="dish-title">Curry Vegano</h3>
+            <div class="dish-chef">
+              <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              Sofía T., Barranquilla
+            </div>
+            <div class="rating">
+              ★★★★☆
+            </div>
+            <div class="price">$20.000 COP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>© 2025 OLLA APP – Comida real de gente real. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple scroll animation for hero text
+    document.addEventListener('DOMContentLoaded', () => {
+      const heroTitle = document.querySelector('.hero h1');
+      const text = heroTitle.textContent;
+      heroTitle.textContent = '';
+      let i = 0;
+      const typeWriter = () => {
+        if (i < text.length) {
+          heroTitle.textContent += text.charAt(i);
+          i++;
+          setTimeout(typeWriter, 50);
+        }
+      };
+      setTimeout(typeWriter, 500);
+    });
+  </script>
+</body>
+</html>
+

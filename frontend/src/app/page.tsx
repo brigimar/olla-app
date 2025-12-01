@@ -1,18 +1,38 @@
-import { useEffect, useState } from "react";
-import { apiGet } from "../lib/api";
+// app/page.tsx
+import HeroSection from '@/components/HeroSection';
+import CommunityChefs from '@/components/CommunityChefs';
+import PopularDishes from '@/components/PopularDishes';
+
+export const metadata = {
+  title: 'Olla App - Comida real de gente real',
+  description: 'Descubre chefs caseros en tu barrio',
+};
 
 export default function HomePage() {
-  const [data, setData] = useState<any>(null);
-
-  useEffect(() => {
-    apiGet("/").then(setData).catch(console.error);
-  }, []);
-
   return (
-    <main>
-      <h1>Frontend</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+    <main className="min-h-screen">
+      {/* Hero Section */}
+      <HeroSection />
+      
+      {/* Community Chefs */}
+      <CommunityChefs />
+      
+      {/* Popular Dishes */}
+      <PopularDishes 
+        title="Platos populares esta semana"
+        description="Sabores frescos, precios justos, cocineros verificados"
+      />
+      
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-gray-400">
+              © {new Date().getFullYear()} OLLA APP – Comida real de gente real. Todos los derechos reservados.
+            </p>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
-

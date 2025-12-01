@@ -1,23 +1,17 @@
-import { createClient } from '@supabase/supabase-js'
+// lib/supabase.ts
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/database.types';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
-
-// Ejemplo de uso de las funciones RPC que generaremos
-export const orderAPI = {
-  createOrder: async (producerId: string, items: any[]) => {
-    return await supabase.rpc('create_order', {
-      producer_id: producerId,
-      items: items
-    })
-  },
-  
-  revealContact: async (orderId: string) => {
-    return await supabase.rpc('reveal_producer_contact', {
-      order_id: orderId,
-      user_id: (await supabase.auth.getUser()).data.user?.id
-    })
-  }
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Faltan variables de entorno de Supabase: NEXT_PUBLIC_SUPABASE_URL y NEXT_PUBLIC_SUPABASE_ANON_KEY');
 }
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
