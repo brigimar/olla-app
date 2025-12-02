@@ -1,13 +1,31 @@
 // components/DishCard.tsx
 'use client';
 
-import Image from 'next/image';
 import { Dish } from '@/types/database.types';
 import { Rating } from '@/components/ui/Rating';
 import { Button } from '@/components/ui/Button';
 import { ShoppingCart } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import Image from "next/image";
+import { normalizeImageUrl } from "@/utils/image";
+
+export default function DishCard({ dish }) {
+  return (
+    <div className="card">
+      <Image
+        src={normalizeImageUrl(dish.image_url)}
+        alt={dish.name}
+        width={400}
+        height={300}
+        className="object-cover rounded"
+      />
+      <h3>{dish.name}</h3>
+      <p>{dish.description}</p>
+    </div>
+  );
+}
+
 
 interface DishCardProps {
   dish: Dish;

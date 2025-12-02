@@ -1,160 +1,112 @@
-// components/PopularDishes.tsx
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Dish } from '@/types/database.types';
-import { usePopularDishes } from '@/hooks/useDishes';
-import { Button } from '@/components/ui/Button';
-import { Skeleton } from '@/components/ui/Skeleton';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import Image from "next/image";
+import { normalizeImageUrl } from "@/utils/image";
+import { usePopularDishes } from "@/hooks/usePopularDishes";
 
-interface PopularDishesProps {
-  city?: string;
-  limit?: number;
+type Dish = {
+  id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  category: string | null;
+  destacado: boolean;
+  price_cents: number;
+  status: "active" | "inactive" | string | null;
+  is_available: boolean;
+};
+
+export function DishCard({ dish }: { dish: Dish }) {
+  return (
+    <div className="card">
+      <Image
+        src={normalizeImageUrl(dish.image_url)}
+        alt={dish.name}
+        width={400}
+        height={300}
+        className="object-cover rounded"
+      />
+      <h3 className="mt-2 font-semibold">{dish.name}</h3>
+      {dish.description && (
+        <p className="text-sm text-gray-600">{dish.description}</p>
+      )}
+    </div>
+  );
 }
 
-export function PopularDishes({ city, limit = 8 }: PopularDishesProps) {
-  const { dishes, isLoading, isError } = usePopularDishes({ city, limit });
-  const [error, setError] = useState<string | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+const PopularDishes = () => {
+  const { dishes, loading, error } = usePopularDishes();
 
-  // SWR ya maneja re-fetch automático cuando cambian city/limit
-  // pero si usas un hook personalizado sin SWR, podrías usar useEffect + refetch
-
-  useEffect(() => {
-    if (isError) {
-      setError('No pudimos cargar los platos populares. Inténtalo de nuevo.');
-    } else {
-      setError(null);
-    }
-  }, [isError]);
-
-  const handleRetry = () => {
-    setRetryCount((prev) => prev + 1);
-    // SWR refetchea automáticamente al cambiar retryCount si lo pasas como key
-    // Pero si usas SWR como en el hook anterior, el re-fetch ya ocurre al cambiar props
-    // Por simplicidad, asumimos que el hook ya reacciona a cambios
-  };
-
-  if (isLoading) {
-    return <PopularDishesSkeleton limit={limit} />;
+  if (loading) {
+    return (
+      <div className="p-10 text-center">
+        Cargando nuestras especialidades...
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-secondary">Platos Populares</h2>
-        <div className="rounded-xl bg-red-50 p-6 text-center">
-          <AlertTriangle className="mx-auto h-10 w-10 text-red-500" />
-          <p className="mt-3 text-red-700">{error}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRetry}
-            className="mt-4"
-            leftIcon={<RefreshCw className="h-4 w-4" />}
-          >
-            Reintentar
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!dishes || dishes.length === 0) {
-    return (
-      <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-secondary">Platos Populares</h2>
-        <div className="rounded-xl bg-gray-50 p-8 text-center">
-          <p className="text-gray-600">
-            No hay platos disponibles en este momento.
-            {city ? ` Prueba con otra ciudad.` : ''}
-          </p>
-        </div>
+      <div className="p-10 text-center text-red-500">
+        Error cargando menú. Intente más tarde.
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-secondary">
-        {city ? `Platos en ${city}` : 'Platos Populares'}
-      </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {dishes.map((dish) => (
-          <DishCard key={dish.id} dish={dish} />
-        ))}
-      </div>
-    </div>
-  );
-}
+    <section className="py-12 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
+          Platos Destacados
+        </h2>
 
-// ─── DishCard (versión básica, reemplaza con tu diseño real) ────────────────
-interface DishCardProps {
-  dish: Dish;
-}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {dishes.map((dish: Dish) => (
+            <div
+              key={dish.id}
+              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+            >
+              {/* Imagen */}
+              <div className="relative h-48 w-full bg-gray-200">
+                <Image
+                  src={normalizeImageUrl(dish.image_url)}
+                  alt={dish.name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
 
-function DishCard({ dish }: DishCardProps) {
-  return (
-    <div className="group overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow border border-gray-100">
-      <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
-        {dish.image_url ? (
-          <img
-            src={dish.image_url}
-            alt={dish.name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          <div className="h-full w-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-500 text-sm">Sin imagen</span>
-          </div>
-        )}
-      </div>
-      <div className="p-4">
-        <div className="flex justify-between items-start">
-          <h3 className="font-semibold text-gray-900 line-clamp-1">{dish.name}</h3>
-          <span className="text-xs font-medium bg-accent text-secondary px-2 py-1 rounded-full">
-            {dish.badge || 'Popular'}
-          </span>
-        </div>
-        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{dish.description}</p>
-        <div className="mt-3 flex justify-between items-center">
-          <span className="text-sm text-secondary font-medium">
-            Por {dish.cook_name}
-          </span>
-          <span className="font-bold text-primary">
-            ${(dish.price_cents / 100).toFixed(2)}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
+                {/* Categoría */}
+                {dish.category && (
+                  <span className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full uppercase tracking-wider">
+                    {dish.category}
+                  </span>
+                )}
+              </div>
 
-// ─── Skeleton Loading ───────────────────────────────────────────────────────
-function PopularDishesSkeleton({ limit }: { limit: number }) {
-  return (
-    <div className="space-y-6">
-      <Skeleton className="h-8 w-48" />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {Array.from({ length: limit }).map((_, i) => (
-          <div key={i} className="overflow-hidden rounded-2xl border border-gray-100 bg-white">
-            <div className="aspect-square w-full">
-              <Skeleton className="h-full w-full" />
-            </div>
-            <div className="p-4 space-y-3">
-              <Skeleton className="h-4 w-3/4" />
-              <Skeleton className="h-3 w-full" />
-              <Skeleton className="h-3 w-5/6" />
-              <div className="flex justify-between items-center pt-2">
-                <Skeleton className="h-3 w-16" />
-                <Skeleton className="h-4 w-12" />
+              {/* Contenido */}
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">
+                    {dish.name}
+                  </h3>
+                  {dish.destacado && (
+                    <span className="text-yellow-500 text-sm">★</span>
+                  )}
+                </div>
+
+                {dish.description && (
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                    {dish.description}
+                  </p>
+                )}
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
-}
+};
+
+export default PopularDishes;
