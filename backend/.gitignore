@@ -1,0 +1,48 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Streamlit config
+.streamlit/
+.streamlit/secrets.toml
+
+# Logs / temp
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Eggs / build
+*.egg-info/
+.eggs/
+build/
+develop-eggs/
+.installed.cfg
+
+# Supabase temp
+supabase/.temp/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.iml
+
+# Tests / mockups
+app/tests/
+mockups/
+otros/

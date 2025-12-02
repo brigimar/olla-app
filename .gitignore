@@ -1,79 +1,77 @@
-# =========================================
-# Next.js / Node.js
-# =========================================
+# --- General ---
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.swo
+
+# --- Node.js / Next.js ---
 node_modules/
 .next/
 out/
 dist/
-build/
-.cache/
+coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
-# =========================================
-# Supabase
-# =========================================
-.supabase/
-supabase/.temp/
-supabase/.local/
+# --- TypeScript ---
+*.tsbuildinfo
 
-# =========================================
-# Notion Integrations
-# =========================================
-notion_cache.json
-notion_cache/
-notion_temp/
+# --- Tailwind / PostCSS cache ---
+.postcssrc
+tailwind.config.js.backup
 
-# =========================================
-# Docker
-# =========================================
-docker-compose.override.yml
-*.pid
-*.log
-*.tmp
-
-# =========================================
-# Entornos y configuración sensible
-# =========================================
+# --- Environment files ---
 .env
-.env.local
-.env.*.local
-.env.development
-.env.production
-.env.test
-sync/.env
+.env.*
+!.env.example
 
-# =========================================
-# Python
-# =========================================
-.venv/
-env/
+# --- Python / Streamlit ---
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
-*.sqlite3
+*.so
+*.egg-info/
+.eggs/
+*.manifest
+*.spec
 
-# =========================================
-# Sistema operativo
-# =========================================
-.DS_Store
-Thumbs.db
-desktop.ini
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
 
-# =========================================
-# IDE / Editor
-# =========================================
+# --- Streamlit specific ---
+.streamlit/
+.streamlit/secrets.toml
+
+# --- Supabase ---
+supabase/.temp/
+supabase/migrations/.temp/
+
+# --- IDE / Editor ---
 .vscode/
 .idea/
-*.swp
-*.swo
-*.bak
+*.iml
 
-# =========================================
-# Tests / Coverage
-# =========================================
-coverage/
-*.lcov
+# --- OS generated ---
+ehthumbs.db
+Icon?
+Desktop.ini
+
+# --- Tests / Mockups ---
+backend/app/tests/
+mockups/
+otros/
+
+# --- Scripts / Temp ---
+scripts/*.log
+scripts/*.tmp

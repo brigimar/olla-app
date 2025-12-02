@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OLLA APP</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #16a34a;
+      text-decoration: none;
+    }
+
+    .cart-icon {
+      position: relative;
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background-color: #ef4444;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Main content */
+    .main {
+      margin-top: 80px;
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: #1f2937;
+    }
+
+    /* Grid de platos */
+    .dishes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .dish-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .dish-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    }
+
+    .dish-image {
+      width: 100%;
+      height: 200px;
+      background-color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      font-size: 1.25rem;
+    }
+
+    .dish-content {
+      padding: 1.25rem;
+    }
+
+    .dish-name {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+
+    .dish-description {
+      color: #6b7280;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .dish-price {
+      color: #16a34a;
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .order-button {
+      background-color: #16a34a;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+
+    .order-button:hover {
+      background-color: #15803d;
+    }
+
+    /* Cart Sidebar */
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      z-index: 1000;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .cart-overlay.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 350px;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      padding: 2rem;
+      z-index: 1001;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .cart-overlay.active .cart-sidebar {
+      transform: translateX(0);
+    }
+
+    .cart-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #1f2937;
+    }
+
+    .cart-items {
+      margin-bottom: 2rem;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .cart-item-info h4 {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .cart-item-info p {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 1.5rem 0;
+      padding-top: 1rem;
+      border-top: 2px solid #f3f4f6;
+    }
+
+    .checkout-button {
+      background-color: #16a34a;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .checkout-button:hover {
+      background-color: #15803d;
+    }
+
+    .close-cart {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6b7280;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .dishes-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .cart-sidebar {
+        width: 100%;
+        max-width: 320px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dishes-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+      }
+
+      .main {
+        padding: 2rem 1rem;
+      }
+
+      .navbar {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="#" class="logo">OLLA APP</a>
+    <div class="cart-icon" id="cartIcon">
+      🛒
+      <span class="badge">3</span>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+    <h1 class="section-title">Platos Populares</h1>
+    <div class="dishes-grid">
+      <!-- Dish 1 -->
+      <div class="dish-card">
+        <div class="dish-image">Lomo Saltado</div>
+        <div class="dish-content">
+          <h3 class="dish-name">Lomo Saltado</h3>
+          <p class="dish-description">Deliciosa carne salteada con cebolla, tomate y papas fritas.</p>
+          <div class="dish-price">$25.900</div>
+          <button class="order-button">Ordenar</button>
+        </div>
+      </div>
+
+      <!-- Dish 2 -->
+      <div class="dish-card">
+        <div class="dish-image">Ceviche</div>
+        <div class="dish-content">
+          <h3 class="dish-name">Ceviche de Pescado</h3>
+          <p class="dish-description">Pescado fresco marinado en limón con cebolla morada y ají.</p>
+          <div class="dish-price">$22.500</div>
+          <button class="order-button">Ordenar</button>
+        </div>
+      </div>
+
+      <!-- Dish 3 -->
+      <div class="dish-card">
+        <div class="dish-image">Ají de Gallina</div>
+        <div class="dish-content">
+          <h3 class="dish-name">Ají de Gallina</h3>
+          <p class="dish-description">Gallina deshilachada en salsa de ají amarillo y nueces.</p>
+          <div class="dish-price">$20.000</div>
+          <button class="order-button">Ordenar</button>
+        </div>
+      </div>
+
+      <!-- Dish 4 -->
+      <div class="dish-card">
+        <div class="dish-image">Arroz con Pollo</div>
+        <div class="dish-content">
+          <h3 class="dish-name">Arroz con Pollo</h3>
+          <p class="dish-description">Arroz sazonado con pollo, chícharos, zanahoria y pimiento.</p>
+          <div class="dish-price">$18.900</div>
+          <button class="order-button">Ordenar</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay" id="cartOverlay">
+    <div class="cart-sidebar">
+      <button class="close-cart" id="closeCart">&times;</button>
+      <h2 class="cart-title">Tu Carrito</h2>
+      <div class="cart-items">
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <h4>Lomo Saltado</h4>
+            <p>Cantidad: 2</p>
+          </div>
+          <div>$51.800</div>
+        </div>
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <h4>Ceviche de Pescado</h4>
+            <p>Cantidad: 1</p>
+          </div>
+          <div>$22.500</div>
+        </div>
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <h4>Ají de Gallina</h4>
+            <p>Cantidad: 1</p>
+          </div>
+          <div>$20.000</div>
+        </div>
+      </div>
+      <div class="cart-total">
+        <span>Total:</span>
+        <span>$94.300</span>
+      </div>
+      <button class="checkout-button">Checkout</button>
+    </div>
+  </div>
+
+  <script>
+    const cartIcon = document.getElementById('cartIcon');
+    const cartOverlay = document.getElementById('cartOverlay');
+    const closeCart = document.getElementById('closeCart');
+
+    cartIcon.addEventListener('click', () => {
+      cartOverlay.classList.add('active');
+    });
+
+    closeCart.addEventListener('click', () => {
+      cartOverlay.classList.remove('active');
+    });
+
+    cartOverlay.addEventListener('click', (e) => {
+      if (e.target === cartOverlay) {
+        cartOverlay.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,5 +1,4 @@
-﻿
-services:
+﻿services:
   # 🐍 Backend FastAPI
   fastapi:
     build:
@@ -64,7 +63,7 @@ services:
     networks:
       - olla-network
 
-  # 🔄 Servicio de sincronización Notion - ✅ CORREGIDO
+  # 🔄 Servicio de sincronización Notion
   sync-service:
     build:
       context: ./sync
@@ -72,23 +71,21 @@ services:
     container_name: sync_service
     restart: unless-stopped
     environment:
-      - NOTION_TOKEN=${NOTION_TOKEN}
-      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
-      - SUPABASE_URL=${SUPABASE_URL}                    # ✅ AGREGADO
-      - SUPABASE_KEY=${SUPABASE_KEY}                    # ✅ AGREGADO
-      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}    # ✅ AGREGADO
+      - NOTION_API_KEY=${NOTION_API_KEY}                # ✅ corregido
+      - NOTION_PLATOS_ID=${NOTION_PLATOS_ID}            # ✅ corregido
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
       - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@supabase:5432/postgres
       - NODE_ENV=development
       - SYNC_INTERVAL=5
     volumes:
-      - ./sync:/app                                     # ✅ MONTAR TODO EL DIRECTORIO
-      - ./sync/.env:/app/.env                           # ✅ MONTAR ARCHIVO .env ESPECÍFICO
+      - ./sync:/app
+      - ./sync/.env:/app/.env
     depends_on:
       supabase:
         condition: service_healthy
     networks:
       - olla-network
-    # ✅ CAMBIADO: Usar node index.js directamente en lugar de watch
     command: node index.js
 
 volumes:

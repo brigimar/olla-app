@@ -1,45 +1,82 @@
 # =========================
-# Etapa base
+# Dockerfile para FastAPI
 # =========================
-FROM python:3.11-slim AS base
 
-# Evitar prompts interactivos y mejorar logs
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+# Etapa base (compartida)
+FROM python:3.11-slim AS base
 
 WORKDIR /app
 
-# Instalar dependencias del sistema (ej. locales, compiladores)
-RUN apt-get update && apt-get install -y \
+# Variables de entorno para Python
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libpq-dev \
     curl \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar requirements y dependencias
+# Copiar requirements
 COPY requirements.txt .
+
+# Instalar dependencias de producción
 RUN pip install --no-cache-dir -r requirements.txt
 
+# 👉 Instalar dependencias de testing
+RUN pip install pytest pytest-asyncio
+
 # Copiar código fuente
-COPY ./app ./app
+COPY . .
 
 # =========================
 # Etapa desarrollo (hot-reload)
 # =========================
 FROM base AS dev
 
-# Instalar dependencias extra para desarrollo
-RUN pip install --no-cache-dir watchdog
+# Instalar watchdog para hot-reload
+RUN pip install watchdog
 
-# Comando de arranque con hot-reload
-# ⚠️ IMPORTANTE: apunta a app/main.py
+# Puerto
+EXPOSE 8000
+
+# Comando con hot-reload (apunta a app.main:app)
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 # =========================
-# Etapa producción
+# Etapa producción (optimizada)
 # =========================
-FROM base AS prod
+FROM python:3.11-slim AS prod
 
-# Comando de arranque estable (sin reload)
-# Usa múltiples workers para mayor rendimiento
+WORKDIR /app
+
+# Variables de entorno para producción
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app
+
+# Instalar solo dependencias esenciales del sistema
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar solo las dependencias instaladas desde la etapa base
+COPY --from=base /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=base /usr/local/bin /usr/local/bin
+
+# Copiar código fuente (sin archivos de test)
+COPY . .
+
+# Crear usuario no-root para seguridad
+RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Puerto
+EXPOSE 8000
+
+# Comando para producción (sin hot-reload, con workers)
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
