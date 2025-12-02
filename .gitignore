@@ -30,6 +30,8 @@ tailwind.config.js.backup
 # --- Environment files ---
 .env
 .env.*
+backend/.env
+sync/.env
 !.env.example
 
 # --- Python / Streamlit ---
@@ -68,7 +70,6 @@ Icon?
 Desktop.ini
 
 # --- Tests / Mockups ---
-backend/app/tests/
 mockups/
 otros/
 
