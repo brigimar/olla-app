@@ -1,0 +1,14 @@
+backend/
+supabase/
+streamlit/
+infra/
+otros/
+mockups/
+sync/
+scripts/
+shared/
+node_modules/
+.venv/
+**/*.py
+**/__pycache__/
+**/*.env
