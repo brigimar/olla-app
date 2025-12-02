@@ -3,11 +3,8 @@
     "baseUrl": "src",
     "skipLibCheck": true,
     "paths": {
-      "@components/*": ["components/*"],
-      "@layouts/*": ["layouts/*"],
-      "@hooks/*": ["hooks/*"],
-      "@utils/*": ["utils/*"],
-      "@styles/*": ["styles/*"]
+      "@/*": ["*"]
     }
   }
 }
+
