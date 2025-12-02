@@ -1,10 +1,10 @@
-﻿// src/lib/supabase.ts - VERSI CORRECTA
+// src/lib/supabase.ts - VERSI CORRECTA
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL! || 'https://placeholder.supabase.co';
 const supabaseAnonKey = process.env.SUPABASE_SERVICE_ROLE_KEY! || 'placeholder-anon-key';
 
-// âœ… SOLO para uso en Client Components
+// ✅ SOLO para uso en Client Components
 export function createSupabaseClient() {
   if (typeof window === 'undefined') {
     throw new Error('createSupabaseClient solo puede usarse en el cliente');
@@ -18,7 +18,7 @@ export function useSupabase() {
   return createSupabaseClient();
 }
 
-// âœ… Para Server Components
+// ✅ Para Server Components
 export async function getDishesFromServer(limit = 10) {
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
   const { data, error } = await supabase.from('dishes').select('*').limit(limit);

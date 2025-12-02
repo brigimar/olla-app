@@ -1,4 +1,3 @@
-// syncNotionToSupabase.js
 // Requiere Node.js 18+ (fetch nativo), instalar dependencias:
 //   npm install @supabase/supabase-js dotenv
 
@@ -10,15 +9,11 @@ dotenv.config();
 // Inicializar cliente Supabase
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-// Función para obtener platos desde Notion con fetch
 async function fetchPlatos() {
   const res = await fetch(
-    `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`,
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.NOTION_API_KEY}`,
-        'Notion-Version': '2022-06-28',
         'Content-Type': 'application/json',
       },
     }
@@ -92,7 +87,6 @@ async function main() {
   for (const plato of platos) {
     await upsertDish(plato);
   }
-  console.log('🎉 Sincronización completa Notion → Supabase');
 }
 
 main().catch((err) => console.error(err));

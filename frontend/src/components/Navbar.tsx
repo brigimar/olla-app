@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useCart } from '@/hooks/useCart';
 import Cart from '@/components/Cart';
-import Checkout from '@/components/Checkout';
 
 export default function Navbar() {
   const { items } = useCart();

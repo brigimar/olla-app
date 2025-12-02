@@ -1,6 +1,5 @@
 'use client';
 import dynamic from 'next/dynamic';
-import CheckoutForm from '../components/Checkout';
 
 export default function CheckoutPage() {
   return (

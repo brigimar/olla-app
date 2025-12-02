@@ -1,4 +1,4 @@
-﻿// src/app/providers.tsx - Client Component
+// src/app/providers.tsx - Client Component
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

@@ -1,4 +1,4 @@
-﻿// src/components/OrderStatus.tsx - Client Component
+// src/components/OrderStatus.tsx - Client Component
 'use client';
 
 import { useEffect, useState } from 'react';

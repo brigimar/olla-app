@@ -1,4 +1,4 @@
-﻿// src/hooks/useAuth.ts - Client Component hook
+// src/hooks/useAuth.ts - Client Component hook
 'use client';
 
 import { useState, useEffect } from 'react';

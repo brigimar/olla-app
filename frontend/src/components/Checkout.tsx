@@ -1,4 +1,4 @@
-﻿// src/components/Checkout.tsx - Client Component
+// src/components/Checkout.tsx - Client Component
 'use client';
 
 import { useState } from 'react';

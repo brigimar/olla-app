@@ -9,12 +9,9 @@ const supabase = createClient(
 export async function GET() {
   try {
     const response = await fetch(
-      `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`,
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
-          'Notion-Version': '2022-06-28',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({}),
@@ -25,7 +22,6 @@ export async function GET() {
 
     if (!data.results) {
       return NextResponse.json(
-        { error: 'No se encontraron resultados en Notion' },
         { status: 500 }
       );
     }
@@ -33,7 +29,6 @@ export async function GET() {
     const platos = data.results.map((page: any) => {
       const props = page.properties;
       return {
-        id: page.id, // usar el ID de Notion como PK
         producer_id: null, // ⚠️ pendiente: mapear nombre_cocinero → producer_id
         name: props.nombre?.title?.[0]?.plain_text || null,
         description: props.descripcion?.rich_text?.[0]?.plain_text || null,

@@ -15,28 +15,18 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // 1. Fetch directo a Notion REST API
-    const notionRes = await fetch(
-      `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`,
       {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
           'Content-Type': 'application/json',
-          'Notion-Version': '2022-06-28', // versión estable de la API
         },
         body: JSON.stringify({ page_size: 50 }), // opcional: limitar resultados
       }
     );
 
-    if (!notionRes.ok) {
-      const errText = await notionRes.text();
-      throw new Error(`Error Notion: ${notionRes.status} ${errText}`);
     }
 
-    const response = await notionRes.json();
 
-    // 2. Mapear propiedades Notion → Supabase
     const mapped = response.results.map((page: any) => {
       const props = page.properties;
       return {
