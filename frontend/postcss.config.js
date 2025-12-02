@@ -2,7 +2,7 @@
 module.exports = {
   plugins: {
     // ⬇️ CORRECCIÓN: Debe ser 'tailwindcss'
-    'tailwindcss': {},
-    'autoprefixer': {},
+    tailwindcss: {},
+    autoprefixer: {},
   },
 };

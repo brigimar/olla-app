@@ -19,54 +19,48 @@ export const useCart = (): CartResult => {
   }, [items]);
 
   const addItem = useCallback((dish: any, quantity: number = 1) => {
-    setItems(prev => {
-      const existingItem = prev.find(item => item.id === dish.id);
-      
+    setItems((prev) => {
+      const existingItem = prev.find((item) => item.id === dish.id);
+
       if (existingItem) {
-        return prev.map(item =>
-          item.id === dish.id 
-            ? { ...item, quantity: item.quantity + quantity } 
-            : item
+        return prev.map((item) =>
+          item.id === dish.id ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      
+
       return [
         ...prev,
         {
           id: dish.id,
           dish,
           quantity,
-          added_at: new Date()
-        }
+          added_at: new Date(),
+        },
       ];
     });
   }, []);
 
   const removeItem = useCallback((dishId: string) => {
-    setItems(prev => prev.filter(item => item.id !== dishId));
+    setItems((prev) => prev.filter((item) => item.id !== dishId));
   }, []);
 
-  const updateQuantity = useCallback((dishId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeItem(dishId);
-      return;
-    }
-    
-    setItems(prev => 
-      prev.map(item => 
-        item.id === dishId ? { ...item, quantity } : item
-      )
-    );
-  }, [removeItem]);
+  const updateQuantity = useCallback(
+    (dishId: string, quantity: number) => {
+      if (quantity <= 0) {
+        removeItem(dishId);
+        return;
+      }
+
+      setItems((prev) => prev.map((item) => (item.id === dishId ? { ...item, quantity } : item)));
+    },
+    [removeItem]
+  );
 
   const clearCart = useCallback(() => {
     setItems([]);
   }, []);
 
-  const total = items.reduce(
-    (sum, item) => sum + (item.dish.price_cents / 100) * item.quantity, 
-    0
-  );
+  const total = items.reduce((sum, item) => sum + (item.dish.price_cents / 100) * item.quantity, 0);
 
   return {
     items,
@@ -74,6 +68,6 @@ export const useCart = (): CartResult => {
     addItem,
     removeItem,
     clearCart,
-    updateQuantity
+    updateQuantity,
   };
 };

@@ -1,12 +1,6 @@
 // types/database.types.ts
 //npx supabase gen types typescript --project-id YOUR_PROJECT_ID --schema public > types/database.types.ts
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
 
 export interface Database {
   public: {

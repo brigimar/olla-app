@@ -52,14 +52,14 @@ export enum GeolocationError {
   POSITION_UNAVAILABLE = 'POSITION_UNAVAILABLE',
   TIMEOUT = 'TIMEOUT',
   UNSUPPORTED = 'UNSUPPORTED',
-  UNKNOWN = 'UNKNOWN'
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum SupabaseError {
   NETWORK_ERROR = 'NETWORK_ERROR',
   AUTH_ERROR = 'AUTH_ERROR',
   QUERY_ERROR = 'QUERY_ERROR',
-  UNKNOWN = 'UNKNOWN'
+  UNKNOWN = 'UNKNOWN',
 }
 
 // === Hook Return Types ===

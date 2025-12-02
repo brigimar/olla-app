@@ -1,4 +1,3 @@
 export default function ProductorFeature() {
-  return <div>Feature Productor (placeholder)</div>
+  return <div>Feature Productor (placeholder)</div>;
 }
-

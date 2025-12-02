@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useCart } from "@/hooks/useCart";
-import Cart from "@/components/Cart";
-import Checkout from "@/components/Checkout";
+import { useState } from 'react';
+import { useCart } from '@/hooks/useCart';
+import Cart from '@/components/Cart';
+import Checkout from '@/components/Checkout';
 
 export default function Navbar() {
   const { items } = useCart();
@@ -15,10 +15,7 @@ export default function Navbar() {
 
       {/* Carrito con dropdown */}
       <div className="relative">
-        <button
-          onClick={() => setOpen(!open)}
-          className="relative p-2 rounded hover:bg-gray-100"
-        >
+        <button onClick={() => setOpen(!open)} className="relative p-2 rounded hover:bg-gray-100">
           🛒
           {items.length > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">

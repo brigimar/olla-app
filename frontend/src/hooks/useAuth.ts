@@ -1,9 +1,9 @@
 ﻿// src/hooks/useAuth.ts - Client Component hook
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useSupabase } from "@/lib/supabase";
-import { User } from "@supabase/supabase-js";
+import { useState, useEffect } from 'react';
+import { useSupabase } from '@/lib/supabase';
+import { User } from '@supabase/supabase-js';
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -16,7 +16,9 @@ export function useAuth() {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
 

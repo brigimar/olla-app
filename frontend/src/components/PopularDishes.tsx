@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { normalizeImageUrl } from "@/utils/image";
-import { usePopularDishes } from "@/hooks/usePopularDishes";
+import Image from 'next/image';
+import { normalizeImageUrl } from '@/utils/image';
+import { usePopularDishes } from '@/hooks/usePopularDishes';
 
 type Dish = {
   id: string;
@@ -12,7 +12,7 @@ type Dish = {
   category: string | null;
   destacado: boolean;
   price_cents: number;
-  status: "active" | "inactive" | string | null;
+  status: 'active' | 'inactive' | string | null;
   is_available: boolean;
 };
 
@@ -27,9 +27,7 @@ export function DishCard({ dish }: { dish: Dish }) {
         className="object-cover rounded"
       />
       <h3 className="mt-2 font-semibold">{dish.name}</h3>
-      {dish.description && (
-        <p className="text-sm text-gray-600">{dish.description}</p>
-      )}
+      {dish.description && <p className="text-sm text-gray-600">{dish.description}</p>}
     </div>
   );
 }
@@ -38,27 +36,19 @@ const PopularDishes = () => {
   const { dishes, loading, error } = usePopularDishes();
 
   if (loading) {
-    return (
-      <div className="p-10 text-center">
-        Cargando nuestras especialidades...
-      </div>
-    );
+    return <div className="p-10 text-center">Cargando nuestras especialidades...</div>;
   }
 
   if (error) {
     return (
-      <div className="p-10 text-center text-red-500">
-        Error cargando menú. Intente más tarde.
-      </div>
+      <div className="p-10 text-center text-red-500">Error cargando menú. Intente más tarde.</div>
     );
   }
 
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Platos Destacados
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Platos Destacados</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {dishes.map((dish: Dish) => (
@@ -87,18 +77,12 @@ const PopularDishes = () => {
               {/* Contenido */}
               <div className="p-6">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">
-                    {dish.name}
-                  </h3>
-                  {dish.destacado && (
-                    <span className="text-yellow-500 text-sm">★</span>
-                  )}
+                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">{dish.name}</h3>
+                  {dish.destacado && <span className="text-yellow-500 text-sm">★</span>}
                 </div>
 
                 {dish.description && (
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                    {dish.description}
-                  </p>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{dish.description}</p>
                 )}
               </div>
             </div>

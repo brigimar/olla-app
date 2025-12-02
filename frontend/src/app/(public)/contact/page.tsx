@@ -1,4 +1,3 @@
 export default function Page() {
-  return <div>?? Nueva página generada automáticamente</div>;
+  return <div>?? Nueva pï¿½gina generada automï¿½ticamente</div>;
 }
-

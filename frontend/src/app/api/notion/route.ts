@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,11 +11,11 @@ export async function GET() {
     const response = await fetch(
       `https://api.notion.com/v1/databases/${process.env.NOTION_DATABASE_ID}/query`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Authorization": `Bearer ${process.env.NOTION_TOKEN}`,
-          "Notion-Version": "2022-06-28",
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
+          'Notion-Version': '2022-06-28',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({}),
       }
@@ -24,7 +24,10 @@ export async function GET() {
     const data = await response.json();
 
     if (!data.results) {
-      return NextResponse.json({ error: "No se encontraron resultados en Notion" }, { status: 500 });
+      return NextResponse.json(
+        { error: 'No se encontraron resultados en Notion' },
+        { status: 500 }
+      );
     }
 
     const platos = data.results.map((page: any) => {
@@ -37,17 +40,17 @@ export async function GET() {
         price_cents: 2000, // default o regla de negocio
         image_url: props.archivo_imagen?.files?.[0]?.file?.url || null,
         category: props.categoria?.select?.name || null,
-        is_available: props.estado?.select?.name === "activo",
+        is_available: props.estado?.select?.name === 'activo',
         preparation_time_minutes: null, // opcional
-        status: props.estado?.select?.name || "active",
+        status: props.estado?.select?.name || 'active',
         rating: 0,
         city: null,
       };
     });
 
     const { error: supabaseError } = await supabase
-      .from("dishes")
-      .upsert(platos, { onConflict: "id" });
+      .from('dishes')
+      .upsert(platos, { onConflict: 'id' });
 
     if (supabaseError) {
       return NextResponse.json({ error: supabaseError.message }, { status: 500 });

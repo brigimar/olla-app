@@ -1,5 +1,5 @@
 'use client';
-import Checkout from "./Checkout";
+import Checkout from './Checkout';
 
 export default function Cart({ items }: { items: any[] }) {
   const total = items.reduce((sum, i) => sum + (i.precio || 0), 0);

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function ProducerSignUp() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
@@ -27,7 +27,7 @@ export default function ProducerSignUp() {
 
     // Nota: si tu proyecto tiene verificación por email activada,
     // Supabase enviará un correo de confirmación.
-    setMsg("Registro iniciado. Revisa tu email para confirmar la cuenta (si corresponde).");
+    setMsg('Registro iniciado. Revisa tu email para confirmar la cuenta (si corresponde).');
   }
 
   return (
@@ -59,7 +59,7 @@ export default function ProducerSignUp() {
         disabled={loading}
         className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
       >
-        {loading ? "Registrando..." : "Crear productor"}
+        {loading ? 'Registrando...' : 'Crear productor'}
       </button>
 
       {msg && <p className="text-green-600 text-sm">{msg}</p>}

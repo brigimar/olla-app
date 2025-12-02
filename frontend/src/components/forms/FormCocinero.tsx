@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function ProducerRegisterForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [businessName, setBusinessName] = useState("");
-  const [description, setDescription] = useState("");
-  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [businessName, setBusinessName] = useState('');
+  const [description, setDescription] = useState('');
+  const [address, setAddress] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +25,7 @@ export default function ProducerRegisterForm() {
 
       if (authError) throw authError;
       const user = authData.user;
-      if (!user) throw new Error("No se pudo registrar el usuario.");
+      if (!user) throw new Error('No se pudo registrar el usuario.');
 
       let logoUrl: string | null = null;
 
@@ -33,24 +33,24 @@ export default function ProducerRegisterForm() {
       if (file) {
         const fileName = `${user.id}-${Date.now()}-${file.name}`;
         const { error: uploadError } = await supabase.storage
-          .from("producers")
+          .from('producers')
           .upload(fileName, file);
 
         if (uploadError) throw uploadError;
 
-        const { data } = supabase.storage.from("producers").getPublicUrl(fileName);
+        const { data } = supabase.storage.from('producers').getPublicUrl(fileName);
         logoUrl = data.publicUrl;
       }
 
       // 3. Insertar productor en la tabla "producers"
-      const { error: insertError } = await supabase.from("producers").insert([
+      const { error: insertError } = await supabase.from('producers').insert([
         {
           id: user.id, // 👈 vinculado al profiles.id
           business_name: businessName,
           description,
           address,
-          -- address_point: null, // opcional, si luego usás PostGIS
-          -- delivery_zone_id: null, // opcional, si luego definís zonas
+          address_point: null, // opcional, si luego usás PostGIS
+          delivery_zone_id: null, // opcional, si luego definís zonas
           is_active: true,
           rating: 0.0,
           total_orders: 0,
@@ -62,15 +62,15 @@ export default function ProducerRegisterForm() {
 
       if (insertError) throw insertError;
 
-      alert("Productor registrado con éxito!");
-      setEmail("");
-      setPassword("");
-      setBusinessName("");
-      setDescription("");
-      setAddress("");
+      alert('Productor registrado con éxito!');
+      setEmail('');
+      setPassword('');
+      setBusinessName('');
+      setDescription('');
+      setAddress('');
       setFile(null);
     } catch (err: any) {
-      alert("Error registrando productor: " + err.message);
+      alert('Error registrando productor: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -133,12 +133,8 @@ export default function ProducerRegisterForm() {
         className="w-full border p-2 rounded"
       />
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="btn btn-primary w-full"
-      >
-        {loading ? "Registrando..." : "Registrar Productor"}
+      <button type="submit" disabled={loading} className="btn btn-primary w-full">
+        {loading ? 'Registrando...' : 'Registrar Productor'}
       </button>
     </form>
   );

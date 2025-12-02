@@ -26,14 +26,14 @@ export const useGeolocation = (): GeolocationResult => {
       setLocation({
         lat: latitude,
         lng: longitude,
-        source: 'auto'
+        source: 'auto',
       });
       setLoading(false);
     };
 
     const errorCallback = (err: GeolocationPositionError) => {
       let geolocationError: GeolocationError;
-      
+
       switch (err.code) {
         case err.PERMISSION_DENIED:
           geolocationError = GeolocationError.PERMISSION_DENIED;
@@ -47,26 +47,22 @@ export const useGeolocation = (): GeolocationResult => {
         default:
           geolocationError = GeolocationError.UNKNOWN;
       }
-      
+
       setError(geolocationError);
       setLoading(false);
     };
 
-    navigator.geolocation.getCurrentPosition(
-      successCallback,
-      errorCallback,
-      { 
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 300000
-      }
-    );
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 300000,
+    });
   }, []);
 
   // Auto-request on mount
   useEffect(() => {
     getCurrentLocation();
-    
+
     return () => {
       // Cleanup not needed for geolocation
     };
@@ -77,6 +73,6 @@ export const useGeolocation = (): GeolocationResult => {
     error,
     loading,
     getCurrentLocation,
-    clearLocation
+    clearLocation,
   };
 };

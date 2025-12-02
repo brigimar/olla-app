@@ -3,4 +3,3 @@ declare namespace NodeJS {
     NEXT_PUBLIC_API_URL: string;
   }
 }
-
