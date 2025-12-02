@@ -1,3 +1,4 @@
+# Ignorar backend y otros módulos que no deben subirse a Vercel
 backend/
 supabase/
 streamlit/
@@ -7,8 +8,38 @@ mockups/
 sync/
 scripts/
 shared/
+
+# Ignorar dependencias y entornos
 node_modules/
 .venv/
+venv/
+env/
+ENV/
+
+# Ignorar archivos Python y temporales
 **/*.py
 **/__pycache__/
-**/*.env
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ignorar secretos
+*.env
+.env
+backend/.env
+sync/.env
+.streamlit/secrets.toml
+
+# Ignorar logs y temporales
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Ignorar IDE/OS
+.vscode/
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+Desktop.ini
