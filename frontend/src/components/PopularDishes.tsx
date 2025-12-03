@@ -32,7 +32,12 @@ export function DishCard({ dish }: { dish: Dish }) {
   );
 }
 
-const PopularDishes = () => {
+type PopularDishesProps = {
+  title: string;
+  description: string;
+};
+
+const PopularDishes = ({ title, description }: PopularDishesProps) => {
   const { dishes, loading, error } = usePopularDishes();
 
   if (loading) {
