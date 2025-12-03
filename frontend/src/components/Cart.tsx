@@ -33,7 +33,7 @@ export default function Cart({ items }: { items: any[] }) {
       <div className="mt-3 font-bold text-lg">Total: ${total}</div>
 
       {/* Botón de checkout */}
-      <Checkout items={items} />
+    
     </div>
   );
 }
