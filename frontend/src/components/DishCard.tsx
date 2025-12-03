@@ -1,7 +1,7 @@
 // src/components/DishCard.tsx
 'use client';
 
-import { Dish } from '@/types/database.types';
+import { Dish } from "@/types/dish";
 import { Rating } from '@/components/ui/Rating';
 import { Button } from '@/components/ui/Button';
 import { ShoppingCart } from 'lucide-react';
