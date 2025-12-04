@@ -26,10 +26,7 @@ const OnboardingProductor: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
   const handleAddMenuItem = () => {
-    setMenuItems((prev) => [
-      ...prev,
-      { id: crypto.randomUUID(), name: '', price: '' },
-    ]);
+    setMenuItems((prev) => [...prev, { id: crypto.randomUUID(), name: '', price: '' }]);
   };
 
   return (
@@ -68,9 +65,7 @@ const OnboardingProductor: React.FC = () => {
           <input
             type="text"
             value={producer.neighborhood}
-            onChange={(e) =>
-              setProducer({ ...producer, neighborhood: e.target.value })
-            }
+            onChange={(e) => setProducer({ ...producer, neighborhood: e.target.value })}
             className="w-full rounded border p-2"
             placeholder="Ej: Palermo"
           />
@@ -87,9 +82,7 @@ const OnboardingProductor: React.FC = () => {
               value={item.name}
               onChange={(e) =>
                 setMenuItems((prev) =>
-                  prev.map((m) =>
-                    m.id === item.id ? { ...m, name: e.target.value } : m
-                  )
+                  prev.map((m) => (m.id === item.id ? { ...m, name: e.target.value } : m))
                 )
               }
               placeholder="Nombre del plato"

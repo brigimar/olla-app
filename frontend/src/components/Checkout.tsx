@@ -6,7 +6,6 @@ import { supabase } from '@/lib/supabase';
 
 export default function Checkout() {
   const [loading, setLoading] = useState(false);
-  
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -31,8 +30,3 @@ export default function Checkout() {
     </button>
   );
 }
-
-
-
-
-

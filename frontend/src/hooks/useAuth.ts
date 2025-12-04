@@ -33,7 +33,3 @@ export function useAuth() {
 
   return { user, signIn, signOut };
 }
-
-
-
-

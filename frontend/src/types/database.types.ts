@@ -9,7 +9,7 @@ export type Dish = {
   category: string | null;
   destacado: boolean;
   price_cents: number;
-  status: "active" | "inactive" | string | null;
+  status: 'active' | 'inactive' | string | null;
   is_available: boolean;
 };
 export interface FilterOptions {
@@ -82,8 +82,3 @@ export interface Database {
     };
   };
 }
-
-
-
-
-

@@ -10,4 +10,3 @@ export async function createOrder(orderData: unknown) {
   console.log('Stub createOrder', orderData);
   return { id: 'fake-order-id', ...orderData };
 }
-

@@ -6,8 +6,3 @@ if (!supabaseUrl) throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
 if (!supabaseAnonKey) throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY');
 
 export { supabaseUrl, supabaseAnonKey };
-
-
-
-
-

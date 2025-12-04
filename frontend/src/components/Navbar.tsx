@@ -1,6 +1,6 @@
 // src/components/Navbar.tsx
-import { useState } from "react";
-import Cart from "./Cart";
+import { useState } from 'react';
+import Cart from './Cart';
 
 // ⚡ Definimos un tipo claro para los ítems del carrito
 type CartItem = {
@@ -14,7 +14,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   // Estado para los ítems del carrito (solo lectura por ahora)
-  const [cartItems] = useState<CartItem[]>([]); 
+  const [cartItems] = useState<CartItem[]>([]);
 
   return (
     <nav className="relative">

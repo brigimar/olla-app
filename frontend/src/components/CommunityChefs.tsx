@@ -86,8 +86,3 @@ const CommunityChefs: React.FC = () => {
 };
 
 export default CommunityChefs;
-
-
-
-
-

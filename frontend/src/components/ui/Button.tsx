@@ -23,14 +23,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {}
 
 export const Button: React.FC<ButtonProps> = ({ variant, size, className, ...props }) => {
   return <button className={buttonVariants({ variant, size, className })} {...props} />;
 };
-
-
-
-
-

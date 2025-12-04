@@ -8,10 +8,7 @@ export const dishesService = {
   },
 
   async getDishesByCity(city: string) {
-    const { data, error } = await supabase
-      .from('dishes')
-      .select('*')
-      .eq('city', city); // ✅ usamos city
+    const { data, error } = await supabase.from('dishes').select('*').eq('city', city); // ✅ usamos city
     if (error) throw error;
     return data ?? [];
   },
@@ -27,11 +24,7 @@ export const dishesService = {
   },
 
   async getDishById(id: string) {
-    const { data, error } = await supabase
-      .from('dishes')
-      .select('*')
-      .eq('id', id)
-      .single(); // ✅ usamos id
+    const { data, error } = await supabase.from('dishes').select('*').eq('id', id).single(); // ✅ usamos id
     if (error) throw error;
     return data ?? null;
   },

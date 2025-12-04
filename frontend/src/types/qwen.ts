@@ -31,8 +31,3 @@ export type FilterOptions = {
   tags: string[];
   searchQuery: string;
 };
-
-
-
-
-

@@ -52,9 +52,7 @@ export const useCart = (): CartResult => {
         return;
       }
 
-      setItems((prev) =>
-        prev.map((item) => (item.id === dishId ? { ...item, quantity } : item))
-      );
+      setItems((prev) => prev.map((item) => (item.id === dishId ? { ...item, quantity } : item)));
     },
     [removeItem]
   );
@@ -63,10 +61,7 @@ export const useCart = (): CartResult => {
     setItems([]);
   }, []);
 
-  const total = items.reduce(
-    (sum, item) => sum + (item.dish.price_cents / 100) * item.quantity,
-    0
-  );
+  const total = items.reduce((sum, item) => sum + (item.dish.price_cents / 100) * item.quantity, 0);
 
   return {
     items,

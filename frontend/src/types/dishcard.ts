@@ -21,8 +21,3 @@ export interface DishCardProps {
   isLoading?: boolean;
   isError?: boolean;
 }
-
-
-
-
-

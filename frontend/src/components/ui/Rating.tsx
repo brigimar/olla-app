@@ -80,8 +80,3 @@ const Rating = ({
 };
 
 export { Rating };
-
-
-
-
-

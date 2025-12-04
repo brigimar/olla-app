@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -8,9 +8,9 @@ const supabase = createClient(
 
 export async function GET() {
   const { data, error } = await supabase
-    .from("dishes")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .from('dishes')
+    .select('*')
+    .order('created_at', { ascending: false });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -18,8 +18,3 @@ export async function GET() {
 
   return NextResponse.json(data);
 }
-
-
-
-
-

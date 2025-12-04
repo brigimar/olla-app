@@ -5,8 +5,3 @@ export interface Dish {
   description: string;
   price_cents: number;
 }
-
-
-
-
-

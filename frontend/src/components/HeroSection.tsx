@@ -114,8 +114,3 @@ const HeroSection = ({ onSearch, className = '' }: HeroSectionProps) => {
 };
 
 export default HeroSection;
-
-
-
-
-
