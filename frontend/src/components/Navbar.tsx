@@ -1,7 +1,7 @@
 // src/components/Navbar.tsx
 import { useState } from 'react';
 import Cart from './Cart';
-import type { CartItem } from '@/types/cart';  // ✅ usar el tipo global
+import type { CartItem } from '@/types/cart'; // ✅ usar el tipo global
 
 export default function Navbar() {
   // Estado para abrir/cerrar el carrito

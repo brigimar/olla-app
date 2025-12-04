@@ -20,12 +20,10 @@ export function useCart(): [CartResult, (dish: Dish, quantity: number) => void] 
   }, [items]);
 
   const addItem = useCallback((dish: Dish, quantity: number) => {
-    setItems(prev =>
-      prev.some(item => item.id === dish.id)
-        ? prev.map(item =>
-            item.id === dish.id
-              ? { ...item, quantity: item.quantity + quantity }
-              : item
+    setItems((prev) =>
+      prev.some((item) => item.id === dish.id)
+        ? prev.map((item) =>
+            item.id === dish.id ? { ...item, quantity: item.quantity + quantity } : item
           )
         : [...prev, { id: dish.id, name: dish.name, price: dish.price_cents / 100, quantity, dish }]
     );
