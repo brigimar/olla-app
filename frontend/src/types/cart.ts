@@ -1,13 +1,14 @@
-// src/types/cart.ts
-export type CartItem = {
+import { Dish } from "./dish";
+
+export interface CartItem {
   id: string;
   name: string;
   price: number;
   quantity: number;
-  dish?: Dish; // si querés vincular al plato completo
-};
+  dish?: Dish; // opcional, si querés vincular al plato completo
+}
 
-export type CartResult = {
+export interface CartResult {
   items: CartItem[];
   total: number;
-};
+}
