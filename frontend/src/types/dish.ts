@@ -5,4 +5,8 @@ export type Dish = {
   name: string;
   description: string;
   price_cents: number;
+  image_url?: string;
+  category?: string;
+  is_available: boolean;
+  preparation_time_minutes: number | null;
 };
