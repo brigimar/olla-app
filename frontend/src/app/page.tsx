@@ -1,39 +1,29 @@
-// app/page.tsx
-import HeroSection from '@/components/HeroSection';
-import CommunityChefs from '@/components/CommunityChefs';
-import PopularDishes from '@/components/PopularDishes';
+// frontend/src/app/page.tsx
+import Navbar from "../components/Navbar";
+import HeroSection from "../components/HeroSection";
+import ComoFunciona from "../components/ComoFunciona";
+import CategoriasCocina from "../components/CategoriasCocina";
+import CategoriasProductores from "../components/CategoriasProductores";
+import PopularDishes from "../components/PopularDishes";
+import CommunityChefs from "../components/CommunityChefs";
+import PequenoNegocio from "../components/PequenoNegocio";
+import Footer from "../components/Footer";
 
-export const metadata = {
-  title: 'Olla App - Comida real de gente real',
-  description: 'Descubre chefs caseros en tu barrio',
-};
-
-export default function HomePage() {
+export default function Page() {
   return (
-    <main className="flex min-h-screen flex-col">
-      {/* Hero Section */}
+    <main className="space-y-16">
+      <Navbar />
       <HeroSection />
-
-      {/* Community Chefs */}
-      <CommunityChefs />
-
-      {/* Popular Dishes */}
+      <ComoFunciona />
+      <CategoriasCocina />
+      <CategoriasProductores />
       <PopularDishes
-        title="Platos populares esta semana"
-        description="Sabores frescos, precios justos, cocineros verificados"
+        title="Platos populares"
+        description="Descubrí las especialidades más pedidas en tu barrio"
       />
-
-      {/* Footer */}
-      <footer className="mt-auto bg-gray-900 py-8 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-gray-400">
-              © {new Date().getFullYear()} OLLA APP Comida real de gente real. Todos los derechos
-              reservados.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <CommunityChefs />
+      <PequenoNegocio />
+      <Footer />
     </main>
   );
 }

@@ -1,0 +1,15 @@
+// src/lib/supabase.ts
+import { createClient } from "@supabase/supabase-js";
+import { supabaseUrl, supabaseAnonKey } from "./env";
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// Ejemplo de helper para insertar pedidos
+export async function createOrder(orderData: any) {
+  const { data, error } = await supabase
+    .from("orders")
+    .insert(orderData)
+    .select();
+  if (error) throw error;
+  return data;
+}

@@ -1,116 +1,87 @@
-// app/components/HeroSection.tsx
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { Search } from "lucide-react";
 
-// Interfaces TypeScript
-interface HeroSectionProps {
-  onSearch?: (query: string) => void;
-  className?: string;
-}
+export default function HeroSection() {
+  const [query, setQuery] = useState("");
+  const [i, setI] = useState(0);
 
-interface SearchSuggestion {
-  id: number;
-  text: string;
-}
-
-const HeroSection = ({ onSearch, className = '' }: HeroSectionProps) => {
-  // Estado para el input de búsqueda
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Estado para el índice del placeholder actual
-  const [currentPlaceholderIndex, setCurrentPlaceholderIndex] = useState(0);
-
-  // Lista de sugerencias para el placeholder rotativo
-  const searchSuggestions: SearchSuggestion[] = [
-    { id: 1, text: '¿Qué deseas comer hoy? Arepas, ramen, tamales, curry...' },
-    { id: 2, text: 'Busca platos caseros en tu vecindario' },
-    { id: 3, text: 'Encuentra chefs locales con recetas auténticas' },
-    { id: 4, text: 'Descubre comida casera hecha con amor' },
+  const placeholders = [
+    "¿Qué querés comer hoy? Guisos, empanadas, comidas regionales...",
+    "Explorá comida casera cerca tuyo",
+    "Encontrá cocineros de tu barrio",
   ];
 
-  // Efecto para rotar los placeholders cada 4 segundos
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPlaceholderIndex((prevIndex) => (prevIndex + 1) % searchSuggestions.length);
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, [searchSuggestions.length]);
-
-  // Manejador de búsqueda
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onSearch && searchQuery.trim()) {
-      onSearch(searchQuery.trim());
-    }
-  };
-
-  // Placeholder actual
-  const currentPlaceholder =
-    searchSuggestions[currentPlaceholderIndex]?.text || searchSuggestions[0]?.text;
+    const id = setInterval(() => setI((p) => (p + 1) % placeholders.length), 4000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <section
-      className={`relative flex min-h-screen items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 ${className}`}
+      className="
+        relative w-full h-[80vh] min-h-[580px]
+        flex items-center justify-center text-center overflow-hidden
+      "
+      style={{
+        /* 1) Tu imagen local en /public */
+        backgroundImage: `
+          linear-gradient(
+            to bottom,
+            rgba(255,244,233,0.92) 0%,
+            rgba(255,244,233,0.70) 40%,
+            rgba(255,244,233,0.55) 70%,
+            rgba(255,244,233,0.35) 100%
+          ),
+          url('/hero.webp')
+        `,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        backgroundBlendMode: "screen",
+        //✔ Más suave → soft-light (actual)
+        //Más desenfoque visual → overlay
+        //Imagen más visible → normal
+        //Más lavado → screen
+        //Más oscuro → multiply
+      }}
     >
-      {/* Background con gradiente sutil */}
-      <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 via-teal-400/20 to-pink-400/20"></div>
+      {/* Contenido */}
+      <div className="relative z-10 mx-auto max-w-3xl px-6">
 
-      {/* Overlay para mejorar la legibilidad */}
-      <div className="absolute inset-0 bg-black/10"></div>
-
-      {/* Contenido principal */}
-      <div className="relative z-10 mx-auto max-w-4xl text-center">
-        {/* Headline */}
-        <h1 className="mb-6 bg-gradient-to-r from-orange-500 via-teal-500 to-pink-500 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-6xl lg:text-7xl">
-          Comida real de gente real
+        <h1 className="text-5xl md:text-6xl font-[Poppins] font-bold text-dark-graphite leading-tight drop-shadow-sm">
+          Comida casera de tu barrio,
+          <br /> directo a tu mesa
         </h1>
 
-        {/* Subheadline */}
-        <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-700 sm:text-xl md:text-2xl">
-          Descubre chefs caseros en tu barrio
-        </p>
+        <p className="text-olive-soft text-lg sm:text-xl max-w-2xl font-semibold">
+  Comprá a cocineros de tu zona: abuelas, familias, emprendedores y cocinas artesanales del AMBA y CABA.
+</p>
 
-        {/* Botones CTA */}
-        <div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
+
+        {/* Botones */}
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/explorar"
-            className="transform rounded-full bg-orange-500 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-orange-600 hover:shadow-xl"
+            className="px-8 py-4 rounded-full bg-tomato text-white text-lg font-semibold shadow-md-custom hover:bg-tomato-light transition"
           >
-            Explorar platos
+            📍 Explorar platos cerca de mí
           </Link>
+
           <Link
             href="/ser-cocinero"
-            className="transform rounded-full border-2 border-orange-500 bg-white px-8 py-4 font-semibold text-orange-500 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-50 hover:shadow-xl"
+            className="px-8 py-4 rounded-full bg-white/70 backdrop-blur-sm border border-white/40 text-dark-graphite text-lg font-medium hover:bg-white hover:text-dark-graphite transition"
           >
-            Ser cocinero
+            👩‍🍳 Convertirme en cocinero
           </Link>
         </div>
 
-        {/* Search Bar con Glassmorphism */}
-        <div className="mx-auto max-w-2xl">
-          <form onSubmit={handleSearch} className="relative">
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={currentPlaceholder}
-                className="w-full rounded-full border border-white/50 bg-white/80 px-6 py-5 pl-12 text-lg shadow-lg backdrop-blur-md transition-all duration-300 focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-500/30"
-              />
-              <Search
-                className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-500"
-                strokeWidth={2}
-              />
-            </div>
-          </form>
-        </div>
+                {/* Tercera acción */}
+      
       </div>
     </section>
+    
   );
-};
-
-export default HeroSection;
+}

@@ -1,59 +1,134 @@
+/* -------------------------------------------------------------
+   1) Fonts
+------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
+@import 'swiper/css';
+@import 'swiper/css/pagination';
+@import 'swiper/css/autoplay';
+
+/* -------------------------------------------------------------
+   2) Root Design System (COINCIDE EXACTO CON EL MOCKUP)
+------------------------------------------------------------- */
+:root {
+  /* Typography system */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  --font-head: 'Poppins', var(--font-sans);
+
+  /* Core palette */
+  --warm-cream: #FFF4E9;
+  --cream-light: #FFF9F2;
+
+  --dark-graphite: #1A1A1C;
+  --olive-soft: #6E7F4F;
+  --olive-light: #8A9B68;
+
+  --tomato: #FF5533;
+  --tomato-light: #FF7755;
+
+  --gold-accent: #F2B544;
+
+  --card: #FFFFFF;
+  --border: #E6E6E6;
+  --muted: #7B7B7B;
+
+  /* Radii */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 36px;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-lg: 0 16px 40px rgba(0,0,0,0.15);
+}
+
+/* -------------------------------------------------------------
+   3) Tailwind layers
+------------------------------------------------------------- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Variables globales */
-:root {
-  --bg: #ffffff;
-  --text: #111111;
+/* -------------------------------------------------------------
+   4) Base Elements
+------------------------------------------------------------- */
+@layer base {
+  body {
+    background-color: var(--warm-cream);
+    color: var(--dark-graphite);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-head);
+  }
 }
 
-/* Reset básico */
-html,
-body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: sans-serif;
+/* -------------------------------------------------------------
+   5) Utility Helpers
+------------------------------------------------------------- */
+@layer utilities {
+  .bg-warm-cream { background-color: var(--warm-cream); }
+  .bg-cream-light { background-color: var(--cream-light); }
+
+  .text-dark-graphite { color: var(--dark-graphite); }
+  .text-olive-soft { color: var(--olive-soft); }
+  .text-olive-light { color: var(--olive-light); }
+  .text-muted { color: var(--muted); }
+
+  .shadow-sm-custom { box-shadow: var(--shadow-sm); }
+  .shadow-md-custom { box-shadow: var(--shadow-md); }
+  .shadow-lg-custom { box-shadow: var(--shadow-lg); }
+
+  .radius-sm { border-radius: var(--radius-sm); }
+  .radius-md { border-radius: var(--radius-md); }
+  .radius-lg { border-radius: var(--radius-lg); }
+  .radius-xl { border-radius: var(--radius-xl); }
 }
 
-/* Tipografía global */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-weight: 700;
-  color: var(--text);
+/* -------------------------------------------------------------
+   6) Buttons (premium)
+------------------------------------------------------------- */
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center font-semibold transition-colors duration-300;
+  }
+
+  .btn-primary {
+    background-color: var(--tomato);
+    color: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:hover {
+    background-color: var(--tomato-light);
+  }
+
+  .btn-secondary {
+    background-color: var(--cream-light);
+    color: var(--dark-graphite);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+
+  .btn-outline {
+    border: 1px solid var(--border);
+    color: var(--dark-graphite);
+    border-radius: var(--radius-lg);
+  }
 }
 
-p {
-  line-height: 1.6;
-  margin-bottom: 1rem;
-}
-
-/* Botones base */
-.btn {
-  @apply inline-flex items-center justify-center px-4 py-2 rounded-md font-medium transition-colors;
-}
-
-.btn-primary {
-  @apply bg-blue-600 text-white hover:bg-blue-700;
-}
-
-.btn-secondary {
-  @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
-}
-
-/* Cards */
-.card {
-  @apply bg-white shadow-md rounded-xl p-6;
-}
-
-/* Contenedor */
-.container {
-  @apply max-w-7xl mx-auto px-4;
+/* -------------------------------------------------------------
+   7) Cards
+------------------------------------------------------------- */
+@layer components {
+  .card {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
 }

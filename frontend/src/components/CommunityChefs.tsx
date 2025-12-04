@@ -1,9 +1,8 @@
-// app/components/CommunityChefs.tsx
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Users, ChefHat, Sparkles } from 'lucide-react';
-import React from 'react';
+import Link from "next/link";
+import { Users, ChefHat, Sparkles } from "lucide-react";
+import React from "react";
 
 // Interfaces TypeScript
 interface ChefCategory {
@@ -14,67 +13,77 @@ interface ChefCategory {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const CommunityChefs: React.FC = () => {
+export default function CommunityChefs() {
   const categories: ChefCategory[] = [
     {
-      id: 'families',
-      title: 'Familias',
-      subtitle: 'Familias cocinando',
-      description: 'Recetas multigeneracionales',
+      id: "families",
+      title: "Familias",
+      subtitle: "Familias cocinando",
+      description: "Recetas multigeneracionales con tradición y sabor.",
       icon: Users,
     },
     {
-      id: 'specialists',
-      title: 'Cocineros Expertos',
-      subtitle: 'Especialistas',
-      description: 'Platos auténticos y técnicos',
+      id: "specialists",
+      title: "Cocineros Expertos",
+      subtitle: "Especialistas",
+      description: "Platos auténticos y elaborados con técnica profesional.",
       icon: ChefHat,
     },
     {
-      id: 'emergent',
-      title: 'Nuevas Voces',
-      subtitle: 'Chefs emergentes',
-      description: 'Nuevas voces culinarias',
+      id: "emergent",
+      title: "Nuevas Voces",
+      subtitle: "Chefs emergentes",
+      description: "Innovación y creatividad desde la cocina casera.",
       icon: Sparkles,
     },
   ];
 
   return (
-    <section className="bg-gray-50 px-4 py-16 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
+    <section className="w-full py-24 bg-white">
+      <div className="w-full max-w-[1600px] mx-auto px-6">
+        
         {/* Header */}
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-[Poppins] font-bold text-dark-graphite">
             Cocineros en tu comunidad
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-gray-600">
-            Conecta con personas reales preparando comida con amor
+          <p className="mt-4 text-lg text-olive-soft max-w-2xl mx-auto">
+            Conectá con personas reales que preparan comida con amor y dedicación.
           </p>
         </div>
 
-        {/* Grid de Categorías */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
-              <Link key={category.id} href={`/categorias/${category.id}`} className="group">
-                <div className="flex h-full transform flex-col rounded-xl bg-white p-6 shadow-lg transition-transform hover:-translate-y-2 hover:shadow-xl">
-                  {/* Icono */}
-                  <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 transition-colors duration-300 group-hover:bg-orange-200">
-                    <Icon className="h-6 w-6 text-orange-600" />
+              <Link
+                key={category.id}
+                href={`/categorias/${category.id}`}
+                className="group"
+              >
+                <div className="bg-white border border-border rounded-2xl p-10 shadow-sm-custom hover:shadow-md-custom transition-all duration-300 hover:-translate-y-2 flex flex-col">
+                  
+                  {/* Icon */}
+                  <div className="h-14 w-14 flex items-center justify-center rounded-full bg-cream-light text-tomato mb-6 shadow-sm-custom">
+                    <Icon className="h-7 w-7" />
                   </div>
 
-                  {/* Contenido */}
-                  <div className="flex-1">
-                    <span className="mb-2 block text-sm font-semibold uppercase tracking-wide text-orange-600">
-                      {category.subtitle}
-                    </span>
-                    <h3 className="mb-3 text-xl font-bold text-gray-900">{category.title}</h3>
-                    <p className="text-gray-600">{category.description}</p>
-                  </div>
+                  {/* Content */}
+                  <span className="text-sm font-semibold uppercase tracking-wide text-olive-soft">
+                    {category.subtitle}
+                  </span>
 
-                  {/* Decorative element on hover */}
-                  <div className="mt-4 h-1 w-0 rounded-full bg-orange-500 transition-all duration-300 group-hover:w-12"></div>
+                  <h3 className="mt-2 text-2xl font-[Poppins] font-bold text-dark-graphite">
+                    {category.title}
+                  </h3>
+
+                  <p className="mt-3 text-muted text-sm">
+                    {category.description}
+                  </p>
+
+                  {/* Decorative line */}
+                  <div className="mt-6 h-1 w-0 rounded-full bg-tomato transition-all duration-300 group-hover:w-14"></div>
                 </div>
               </Link>
             );
@@ -83,6 +92,4 @@ const CommunityChefs: React.FC = () => {
       </div>
     </section>
   );
-};
-
-export default CommunityChefs;
+}
