@@ -5,7 +5,7 @@ export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// ? NO importes createOrder de sí mismo
+// ? NO importes createOrder de sï¿½ mismo
 export async function createOrder(orderData: unknown) {
   console.log('Stub createOrder', orderData);
   return { id: 'fake-order-id', ...orderData };
