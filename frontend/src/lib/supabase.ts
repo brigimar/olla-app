@@ -1,14 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
+import { Order } from "../types/order";
 
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+export async function createOrder(orderData: Order) {
+  const { data, error } = await supabase
+    .from("orders")
+    .insert(orderData);
 
-// ? NO importes createOrder de s� mismo
-// src/lib/supabase.ts
-export async function createOrder(orderData: Record<string, any>) {
-  console.log('Stub createOrder', orderData);
-  return { id: 'fake-order-id', ...orderData };
+  if (error) throw error;
+  return data;
 }
-

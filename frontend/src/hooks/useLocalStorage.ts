@@ -1,10 +1,7 @@
 // src/hooks/useLocalStorage.ts
-import { useState } from 'react';   // ✅ faltaba este import
+import { useState } from 'react'; // ✅ faltaba este import
 
-export function useLocalStorage<T>(
-  key: string,
-  initialValue: T
-): [T, (value: T) => void] {
+export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
   // Get value from localStorage or use initialValue
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
