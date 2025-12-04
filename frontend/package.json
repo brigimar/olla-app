@@ -9,6 +9,10 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.11",
+    "@tanstack/react-query-devtools": "^5.91.1",
+    "autoprefixer": "^10.4.22",
+    "lucide-react": "^0.555.0",
     "next": "14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0"
