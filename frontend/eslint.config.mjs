@@ -6,6 +6,7 @@ import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import tailwindPlugin from 'eslint-plugin-tailwindcss';
 import globals from 'globals';
+import nextPlugin from '@next/eslint-plugin-next';
 
 export default [
   js.configs.recommended,
@@ -13,7 +14,7 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
-      parser, // ✅ ahora es el objeto importado, no string
+      parser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
@@ -29,12 +30,14 @@ export default [
       react: reactPlugin,
       'react-hooks': reactHooksPlugin,
       tailwindcss: tailwindPlugin,
+      '@next/next': nextPlugin,
     },
     rules: {
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'tailwindcss/classnames-order': 'warn',
+      '@next/next/no-img-element': 'warn',
     },
   },
 ];

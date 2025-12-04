@@ -5,7 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .js,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.ts,.tsx --fix",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
