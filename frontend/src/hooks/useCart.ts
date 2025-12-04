@@ -5,70 +5,33 @@ import type { Dish } from '@/types/dish';
 
 const CART_STORAGE_KEY = 'olla_app_cart';
 
-export const useCart = (): CartResult => {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(CART_STORAGE_KEY);
-      return stored ? (JSON.parse(stored) as CartItem[]) : [];
-    }
-    return [];
-  });
+export function useCart(): [CartResult, (dish: Dish, quantity: number) => void] {
+  const [items, setItems] = useState<CartItem[]>([]);
 
-  // Persist to localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    if (stored) {
+      setItems(JSON.parse(stored));
+    }
+  }, []);
+
   useEffect(() => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addItem = useCallback((dish: Dish, quantity: number = 1) => {
-    setItems((prev) => {
-      const existingItem = prev.find((item) => item.id === dish.id);
-
-      if (existingItem) {
-        return prev.map((item) =>
-          item.id === dish.id ? { ...item, quantity: item.quantity + quantity } : item
-        );
-      }
-
-      return [
-        ...prev,
-        {
-          id: dish.id,
-          dish,
-          quantity,
-          added_at: new Date(),
-        },
-      ];
-    });
+  const addItem = useCallback((dish: Dish, quantity: number) => {
+    setItems(prev =>
+      prev.some(item => item.id === dish.id)
+        ? prev.map(item =>
+            item.id === dish.id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          )
+        : [...prev, { id: dish.id, name: dish.name, price: dish.price_cents / 100, quantity, dish }]
+    );
   }, []);
 
-  const removeItem = useCallback((dishId: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== dishId));
-  }, []);
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const updateQuantity = useCallback(
-    (dishId: string, quantity: number) => {
-      if (quantity <= 0) {
-        removeItem(dishId);
-        return;
-      }
-
-      setItems((prev) => prev.map((item) => (item.id === dishId ? { ...item, quantity } : item)));
-    },
-    [removeItem]
-  );
-
-  const clearCart = useCallback(() => {
-    setItems([]);
-  }, []);
-
-  const total = items.reduce((sum, item) => sum + (item.dish.price_cents / 100) * item.quantity, 0);
-
-  return {
-    items,
-    total,
-    addItem,
-    removeItem,
-    clearCart,
-    updateQuantity,
-  };
-};
+  return [{ items, total }, addItem];
+}

@@ -1,19 +1,13 @@
 // src/components/Navbar.tsx
 import { useState } from 'react';
 import Cart from './Cart';
-
-// ⚡ Definimos un tipo claro para los ítems del carrito
-type CartItem = {
-  id: string;
-  name: string;
-  price: number;
-};
+import type { CartItem } from '@/types/cart';  // ✅ usar el tipo global
 
 export default function Navbar() {
   // Estado para abrir/cerrar el carrito
   const [open, setOpen] = useState(false);
 
-  // Estado para los ítems del carrito (solo lectura por ahora)
+  // Estado para los ítems del carrito (usa el tipo oficial con quantity)
   const [cartItems] = useState<CartItem[]>([]);
 
   return (
