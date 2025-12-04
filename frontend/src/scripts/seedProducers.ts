@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, User } from '@supabase/supabase-js';
 
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL!,
@@ -13,26 +13,30 @@ async function ensureProducerUser(
   description: string
 ) {
   // 1. Buscar usuario existente en Auth
-  const { users, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+  const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
   if (listError) throw listError;
 
   let userId: string | null = null;
-  const existingUser = users.find((u: any) => u.email === email);
+
+  // ✅ Tipamos correctamente los usuarios
+  const existingUser = listData?.users.find((u: User) => u.email === email);
 
   if (existingUser) {
     userId = existingUser.id;
     console.log(`ℹ️ Usuario ya existe: ${email}`);
   } else {
     // 2. Crear usuario nuevo
-    const { user, error: userError } = await supabaseAdmin.auth.admin.createUser({
+    const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
     });
     if (userError) throw userError;
-    userId = user.id;
+    userId = userData?.user?.id ?? null;
     console.log(`✅ Usuario creado: ${email}`);
   }
+
+  if (!userId) throw new Error(`No se pudo obtener el ID de usuario para ${email}`);
 
   // 3. Asegurar perfil
   const { data: profile, error: profileSelectError } = await supabaseAdmin
@@ -97,7 +101,11 @@ async function ensureProducerUser(
       'Ana Torres',
       'Nutricionista y amante de la comida saludable.'
     );
-  } catch (err) {
-    console.error('❌ Error en seed:', err);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error('❌ Error en seed:', err.message);
+    } else {
+      console.error('❌ Error desconocido en seed:', err);
+    }
   }
 })();

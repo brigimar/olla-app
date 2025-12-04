@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSupabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 interface Order {
   id: string;
@@ -11,7 +11,6 @@ interface Order {
 
 export default function OrderStatus({ orderId }: { orderId: string }) {
   const [order, setOrder] = useState<Order | null>(null);
-  const supabase = useSupabase();
 
   useEffect(() => {
     const channel = supabase
@@ -24,15 +23,25 @@ export default function OrderStatus({ orderId }: { orderId: string }) {
       .subscribe();
 
     async function loadOrder() {
-      const { data } = await supabase.from('orders').select('*').eq('id', orderId).single();
-      if (data) setOrder(data);
+      const { data, error } = await supabase
+        .from('orders')
+        .select('id, status') // ✅ seleccionamos solo lo necesario
+        .eq('id', orderId)
+        .single();
+
+      if (error) {
+        console.error('❌ Error cargando orden:', error.message);
+        return;
+      }
+      if (data) setOrder(data as Order);
     }
+
     loadOrder();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [supabase, orderId]);
+  }, [orderId]);
 
   if (!order) return <div>Cargando...</div>;
   return <div>Estado de la orden: {order.status}</div>;

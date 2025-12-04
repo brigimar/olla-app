@@ -1,16 +1,16 @@
 // types.ts
+export interface PartidoAMBA {
+  id: string;
+  nombre: string;
+  coordenadas_centro: [number, number];
+  poligono: [number, number][]; // array de coordenadas [lat, lng]
+}
+
 export interface Location {
   lat: number;
   lng: number;
   partido?: string;
   source: 'auto' | 'manual';
-}
-
-export interface PartidoAMBA {
-  id: string;
-  nombre: string;
-  coordenadas_centro: [number, number];
-  poligono: [number, number][];
 }
 
 // constants.ts
@@ -40,3 +40,8 @@ export const PARTIDOS_AMBA: PartidoAMBA[] = [
   // ... (agregar los 48 partidos completos con polígonos reales)
   // Por brevedad, mostramos solo 2 partidos. En producción incluir los 48
 ];
+
+
+
+
+

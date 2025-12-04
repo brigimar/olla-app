@@ -1,135 +1,131 @@
-// ProducerOnboardingPage.tsx
+// src/components/ProducerOnboardingPage.tsx
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
-import {
-  User,
-  Phone,
-  MapPin,
-  Camera,
-  DollarSign,
-  Trash2,
-  Soup,
-  PlusCircle,
-  CheckCircle,
-  UploadCloud,
-} from 'lucide-react';
-
-// TIPOS
-type MenuItem = {
-  tempId: string;
-  name: string;
-  price_cents: number | null;
-  photoFile: File | null;
-  photoUrl: string | null;
-  description: string;
-};
+import React, { useState } from 'react';
+import { Soup, PlusCircle } from 'lucide-react';
 
 type ProducerData = {
   name: string;
   phone: string;
   neighborhood: string;
-  dniPhoto: File | null;
 };
 
-// COMPONENTES AUXILIARES
-const FormInput: React.FC<{
-  label: string;
+type MenuItem = {
   id: string;
-  icon: React.ComponentType<{ className?: string }>;
-  value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: string;
-  placeholder?: string;
-  error?: string;
-}> = ({ label, id, icon: Icon, value, onChange, type = 'text', placeholder, error }) => (
-  <div className="mb-4">
-    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-      {label}
-    </label>
-    <div className="mt-1 relative rounded-md shadow-sm">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Icon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-      </div>
-      <input
-        type={type}
-        id={id}
-        value={value ?? ''}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-lg p-3 ${error ? 'border-red-500 ring-red-500' : ''}`}
-      />
-    </div>
-    {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-  </div>
-);
+  name: string;
+  price: number | ''; // ✅ coherente con input type="number"
+};
 
-const FileUploader: React.FC<{
-  label: string;
-  id: string;
-  file: File | null;
-  onFileChange: (file: File | null) => void;
-  required?: boolean;
-}> = ({ label, id, file, onFileChange, required = false }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+const OnboardingProductor: React.FC = () => {
+  const [producer, setProducer] = useState<ProducerData>({
+    name: '',
+    phone: '',
+    neighborhood: '',
+  });
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files.length > 0) {
-      onFileChange(e.dataTransfer.files[0]);
-    }
-  };
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFileChange(e.target.files?.[0] || null);
+  const handleAddMenuItem = () => {
+    setMenuItems((prev) => [
+      ...prev,
+      { id: crypto.randomUUID(), name: '', price: '' },
+    ]);
   };
 
   return (
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <div
-        className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-indigo-400 transition-colors cursor-pointer"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={handleDrop}
-        onClick={() => inputRef.current?.click()}
-      >
-        <div className="space-y-1 text-center">
-          <UploadCloud className="mx-auto h-8 w-8 text-gray-400" />
-          <p className="text-sm text-gray-600">
-            {file ? file.name : 'Arrastra o haz click para subir un archivo'}
-          </p>
-          <p className="text-xs text-gray-500">PNG, JPG, hasta 1MB</p>
-          {file && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onFileChange(null);
-              }}
-              className="text-red-500 hover:text-red-700 text-xs mt-1 block w-full"
-            >
-              Quitar archivo
-            </button>
-          )}
+    <div className="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow">
+      <h1 className="mb-6 flex items-center gap-2 text-2xl font-bold">
+        <Soup className="h-6 w-6 text-amber-600" />
+        Registro de Productor
+      </h1>
+
+      {/* Datos básicos */}
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium">Nombre</label>
+          <input
+            type="text"
+            value={producer.name}
+            onChange={(e) => setProducer({ ...producer, name: e.target.value })}
+            className="w-full rounded border p-2"
+            placeholder="Ej: Juan Pérez"
+          />
         </div>
-        <input
-          ref={inputRef}
-          id={id}
-          name={id}
-          type="file"
-          className="sr-only"
-          onChange={handleChange}
-          accept="image/*"
-        />
+
+        <div>
+          <label className="block text-sm font-medium">Teléfono</label>
+          <input
+            type="text"
+            value={producer.phone}
+            onChange={(e) => setProducer({ ...producer, phone: e.target.value })}
+            className="w-full rounded border p-2"
+            placeholder="Ej: 11-1234-5678"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Barrio</label>
+          <input
+            type="text"
+            value={producer.neighborhood}
+            onChange={(e) =>
+              setProducer({ ...producer, neighborhood: e.target.value })
+            }
+            className="w-full rounded border p-2"
+            placeholder="Ej: Palermo"
+          />
+        </div>
+      </div>
+
+      {/* Menú */}
+      <div className="mt-6">
+        <h2 className="mb-4 text-lg font-semibold">Menú de platos</h2>
+        {menuItems.map((item) => (
+          <div key={item.id} className="mb-3 rounded border p-3">
+            <input
+              type="text"
+              value={item.name}
+              onChange={(e) =>
+                setMenuItems((prev) =>
+                  prev.map((m) =>
+                    m.id === item.id ? { ...m, name: e.target.value } : m
+                  )
+                )
+              }
+              placeholder="Nombre del plato"
+              className="mb-2 w-full rounded border p-2"
+            />
+            <input
+              type="number"
+              value={item.price}
+              onChange={(e) =>
+                setMenuItems((prev) =>
+                  prev.map((m) =>
+                    m.id === item.id
+                      ? {
+                          ...m,
+                          price: e.target.value === '' ? '' : Number(e.target.value),
+                        }
+                      : m
+                  )
+                )
+              }
+              placeholder="Precio en pesos"
+              className="w-full rounded border p-2"
+            />
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={handleAddMenuItem}
+          className="flex items-center gap-2 rounded bg-amber-600 px-4 py-2 text-white hover:bg-amber-700"
+        >
+          <PlusCircle className="h-5 w-5" /> Agregar plato
+        </button>
       </div>
     </div>
   );
 };
 
-// Resto del código (MenuItemForm y ProducerOnboardingPage) se mantiene igual,
-// solo asegurate de reemplazar cualquier uso de URL.revokeObjectURL con photoUrl válido.
-// Además, todos los iconos se tipan como React.ComponentType<{ className?: string }>
-
-export default ProducerOnboardingPage;
+export default OnboardingProductor;

@@ -14,7 +14,7 @@ export default function MapPage() {
   }, []);
 
   return (
-    <div className="w-full h-screen p-6">
+    <div className="h-screen w-full p-6">
       <h2 className="text-2xl">Mapa (geolocalizaci�n)</h2>
       {coords ? (
         <iframe
@@ -29,3 +29,8 @@ export default function MapPage() {
     </div>
   );
 }
+
+
+
+
+

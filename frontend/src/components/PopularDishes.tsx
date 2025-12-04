@@ -3,18 +3,7 @@
 import Image from 'next/image';
 import { normalizeImageUrl } from '@/utils/image';
 import { usePopularDishes } from '@/hooks/usePopularDishes';
-
-type Dish = {
-  id: string;
-  name: string;
-  description: string | null;
-  image_url: string | null;
-  category: string | null;
-  destacado: boolean;
-  price_cents: number;
-  status: 'active' | 'inactive' | string | null;
-  is_available: boolean;
-};
+import type { Dish } from '@/types/database.types';
 
 export function DishCard({ dish }: { dish: Dish }) {
   return (
@@ -24,7 +13,7 @@ export function DishCard({ dish }: { dish: Dish }) {
         alt={dish.name}
         width={400}
         height={300}
-        className="object-cover rounded"
+        className="rounded object-cover" // ✅ orden corregido
       />
       <h3 className="mt-2 font-semibold">{dish.name}</h3>
       {dish.description && <p className="text-sm text-gray-600">{dish.description}</p>}
@@ -34,7 +23,7 @@ export function DishCard({ dish }: { dish: Dish }) {
 
 type PopularDishesProps = {
   title: string;
-  description: string;
+  description?: string;
 };
 
 const PopularDishes = ({ title, description }: PopularDishesProps) => {
@@ -51,17 +40,19 @@ const PopularDishes = ({ title, description }: PopularDishesProps) => {
   }
 
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="bg-gray-50 py-12">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Platos Destacados</h2>
+        <h2 className="mb-2 text-center text-3xl font-bold text-gray-800">{title}</h2>
+        {description && (
+          <p className="mb-8 text-center text-gray-600">{description}</p>
+        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {dishes.map((dish: Dish) => (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {dishes.map((dish: Dish) => ( // ✅ tipado explícito
             <div
               key={dish.id}
-              className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
+              className="overflow-hidden rounded-xl bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl"
             >
-              {/* Imagen */}
               <div className="relative h-48 w-full bg-gray-200">
                 <Image
                   src={normalizeImageUrl(dish.image_url)}
@@ -70,24 +61,19 @@ const PopularDishes = ({ title, description }: PopularDishesProps) => {
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
-
-                {/* Categoría */}
                 {dish.category && (
-                  <span className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded-full uppercase tracking-wider">
+                  <span className="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-1 text-xs uppercase tracking-wider text-white">
                     {dish.category}
                   </span>
                 )}
               </div>
-
-              {/* Contenido */}
               <div className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-semibold text-gray-900 line-clamp-1">{dish.name}</h3>
-                  {dish.destacado && <span className="text-yellow-500 text-sm">★</span>}
+                <div className="mb-2 flex items-start justify-between">
+                  <h3 className="line-clamp-1 text-xl font-semibold text-gray-900">{dish.name}</h3>
+                  {dish.destacado && <span className="text-sm text-yellow-500">★</span>}
                 </div>
-
                 {dish.description && (
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{dish.description}</p>
+                  <p className="mb-4 line-clamp-3 text-sm text-gray-600">{dish.description}</p>
                 )}
               </div>
             </div>

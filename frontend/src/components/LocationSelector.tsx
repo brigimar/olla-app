@@ -11,7 +11,6 @@ interface LocationSelectorProps {
   initialLocation?: Location;
   showSelector?: boolean;
 }
-
 const STORAGE_KEY = 'olla_app_location';
 
 const LocationSelector = ({
@@ -143,17 +142,17 @@ const LocationSelector = ({
 
   return (
     <div className="w-full">
-      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
         {showSelector && (
-          <div className="relative flex-1 w-full">
+          <div className="relative w-full flex-1">
             <select
               value={manualPartido || ''}
               onChange={handlePartidoChange}
               disabled={!showManualSelector}
-              className={`w-full px-4 py-3 pr-10 rounded-xl border ${
+              className={`w-full rounded-xl border px-4 py-3 pr-10 ${
                 showManualSelector
-                  ? 'bg-white border-gray-300 focus:border-amber-500 focus:ring-amber-500'
-                  : 'bg-gray-100 border-gray-200 cursor-not-allowed'
+                  ? 'border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500'
+                  : 'cursor-not-allowed border-gray-200 bg-gray-100'
               } focus:outline-none focus:ring-1`}
             >
               <option value="">Seleccionar partido</option>
@@ -180,8 +179,8 @@ const LocationSelector = ({
             </div>
 
             {loading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 rounded-xl">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-600"></div>
+              <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-white bg-opacity-75">
+                <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-amber-600"></div>
               </div>
             )}
           </div>
@@ -191,7 +190,7 @@ const LocationSelector = ({
           type="button"
           onClick={useCurrentLocation}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-3 bg-amber-600 hover:bg-amber-700 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors shadow-sm"
+          className="flex items-center gap-2 rounded-xl bg-amber-600 px-4 py-3 font-medium text-white shadow-sm transition-colors hover:bg-amber-700 disabled:bg-gray-400"
         >
           <svg
             className={`h-5 w-5 ${loading ? 'animate-pulse' : ''}`}
@@ -220,7 +219,7 @@ const LocationSelector = ({
       {(error || location) && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {error && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
               <svg
                 className="h-3 w-3"
                 xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +239,7 @@ const LocationSelector = ({
           )}
           {location && (
             <span
-              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
                 location.source === 'auto'
                   ? 'bg-green-100 text-green-800'
                   : 'bg-blue-100 text-blue-800'
@@ -262,3 +261,8 @@ const LocationSelector = ({
 };
 
 export default LocationSelector;
+
+
+
+
+

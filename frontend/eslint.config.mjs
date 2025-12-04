@@ -1,34 +1,40 @@
 // eslint.config.mjs
-import js from "@eslint/js";
-import tsParser from "@typescript-eslint/parser";
-import tsPlugin from "@typescript-eslint/eslint-plugin";
-import reactHooks from "eslint-plugin-react-hooks";
-import prettier from "eslint-plugin-prettier";
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import parser from '@typescript-eslint/parser';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import tailwindPlugin from 'eslint-plugin-tailwindcss';
+import globals from 'globals';
 
 export default [
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    files: ["**/*.js", "**/*.ts", "**/*.tsx"],
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
+      parser, // ✅ ahora es el objeto importado, no string
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: { jsx: true },
+      },
       globals: {
-        console: "readonly",
-        process: "readonly",
-        module: "readonly",
-        require: "readonly",
-        window: "readonly",
-        document: "readonly",
-        navigator: "readonly",
-        setTimeout: "readonly",
-        clearTimeout: "readonly",
-        setInterval: "readonly",
-        clearInterval: "readonly",
-        fetch: "readonly",
+        ...globals.browser,
+        ...globals.node,
       },
     },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      react: reactPlugin,
+      'react-hooks': reactHooksPlugin,
+      tailwindcss: tailwindPlugin,
+    },
     rules: {
-      "no-unused-vars": "warn",
-      "no-undef": "error",
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      'tailwindcss/classnames-order': 'warn',
     },
   },
 ];

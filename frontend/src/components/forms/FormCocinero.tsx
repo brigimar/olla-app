@@ -1,7 +1,7 @@
 'use client';
-
+//FormCocinero.tsx
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase'; // 👈 usa el cliente centralizado
 
 export default function ProducerRegisterForm() {
   const [email, setEmail] = useState('');
@@ -45,32 +45,36 @@ export default function ProducerRegisterForm() {
       // 3. Insertar productor en la tabla "producers"
       const { error: insertError } = await supabase.from('producers').insert([
         {
-          id: user.id, // 👈 vinculado al profiles.id
+          id: user.id,
           business_name: businessName,
           description,
           address,
-          address_point: null, // opcional, si luego usás PostGIS
-          delivery_zone_id: null, // opcional, si luego definís zonas
+          address_point: null,
+          delivery_zone_id: null,
           is_active: true,
           rating: 0.0,
           total_orders: 0,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          logo_url: logoUrl, // si agregaste esta columna auxiliar
+          logo_url: logoUrl,
         },
       ]);
 
       if (insertError) throw insertError;
 
-      alert('Productor registrado con éxito!');
+      alert('✅ Productor registrado con éxito!');
       setEmail('');
       setPassword('');
       setBusinessName('');
       setDescription('');
       setAddress('');
       setFile(null);
-    } catch (err: any) {
-      alert('Error registrando productor: ' + err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert('❌ Error registrando productor: ' + err.message);
+      } else {
+        alert('❌ Error desconocido registrando productor');
+      }
     } finally {
       setLoading(false);
     }
@@ -79,16 +83,16 @@ export default function ProducerRegisterForm() {
   return (
     <form
       onSubmit={handleRegister}
-      className="space-y-4 p-6 bg-white shadow rounded max-w-md mx-auto"
+      className="mx-auto max-w-md space-y-4 rounded bg-white p-6 shadow"
     >
-      <h2 className="text-2xl font-bold text-center">Registro de Productor</h2>
+      <h2 className="text-center text-2xl font-bold">Registro de Productor</h2>
 
       <input
         type="email"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
         required
       />
 
@@ -97,7 +101,7 @@ export default function ProducerRegisterForm() {
         placeholder="Contraseña"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
         required
       />
 
@@ -106,7 +110,7 @@ export default function ProducerRegisterForm() {
         placeholder="Nombre del negocio"
         value={businessName}
         onChange={(e) => setBusinessName(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
         required
       />
 
@@ -114,7 +118,7 @@ export default function ProducerRegisterForm() {
         placeholder="Descripción del negocio"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
       />
 
       <input
@@ -122,7 +126,7 @@ export default function ProducerRegisterForm() {
         placeholder="Dirección"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
         required
       />
 
@@ -130,7 +134,7 @@ export default function ProducerRegisterForm() {
         type="file"
         accept="image/*"
         onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
       />
 
       <button type="submit" disabled={loading} className="btn btn-primary w-full">

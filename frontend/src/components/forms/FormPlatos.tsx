@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase'; // 👈 usa tu cliente centralizado
+import type { Dish } from '@/types/dish'; // 👈 tipado fuerte
 
 export default function DishCreateForm() {
   const [name, setName] = useState('');
@@ -22,7 +23,9 @@ export default function DishCreateForm() {
       // 1. Obtener usuario logueado
       const {
         data: { user },
+        error: userError,
       } = await supabase.auth.getUser();
+      if (userError) throw userError;
       if (!user) throw new Error('No hay usuario autenticado.');
 
       let imageUrl: string | null = null;
@@ -30,35 +33,37 @@ export default function DishCreateForm() {
       // 2. Subir imagen al bucket "dishes"
       if (file) {
         const fileName = `${user.id}-${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage.from('Dishes').upload(fileName, file);
+        const { error: uploadError } = await supabase.storage
+          .from('dishes') // 👈 bucket en minúsculas para consistencia
+          .upload(fileName, file);
 
         if (uploadError) throw uploadError;
 
-        const { data } = supabase.storage.from('Dishes').getPublicUrl(fileName);
+        const { data } = supabase.storage.from('dishes').getPublicUrl(fileName);
         imageUrl = data.publicUrl;
       }
 
       // 3. Insertar plato en la tabla "dishes"
-      const { error: insertError } = await supabase.from('dishes').insert([
-        {
-          producer_id: user.id, // 👈 vinculado al productor logueado
-          name,
-          description,
-          price_cents: price * 100, // constraint: > 0
-          image_url: imageUrl,
-          category,
-          is_available: true,
-          preparation_time_minutes: prepTime > 0 ? prepTime : null, // constraint: > 0
-          city,
-          status: 'active', // constraint: 'active' o 'inactive'
-          rating: 0,
-          destacado,
-        },
-      ]);
+      const newDish: Dish = {
+        id: crypto.randomUUID(), // o lo maneja Supabase
+        producer_id: user.id,
+        name,
+        description,
+        price_cents: price * 100,
+        image_url: imageUrl,
+        category,
+        is_available: true,
+        preparation_time_minutes: prepTime > 0 ? prepTime : null,
+        city,
+        status: 'active',
+        rating: 0,
+        destacado,
+      };
 
+      const { error: insertError } = await supabase.from('dishes').insert([newDish]);
       if (insertError) throw insertError;
 
-      alert('Plato creado con éxito!');
+      alert('✅ Plato creado con éxito!');
       setName('');
       setDescription('');
       setPrice(0);
@@ -67,8 +72,12 @@ export default function DishCreateForm() {
       setCity('');
       setDestacado(false);
       setFile(null);
-    } catch (err: any) {
-      alert('Error creando plato: ' + err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert('❌ Error creando plato: ' + err.message);
+      } else {
+        alert('❌ Error desconocido creando plato');
+      }
     } finally {
       setLoading(false);
     }
@@ -77,16 +86,16 @@ export default function DishCreateForm() {
   return (
     <form
       onSubmit={handleCreateDish}
-      className="space-y-4 p-6 bg-white shadow rounded max-w-md mx-auto"
+      className="mx-auto max-w-md space-y-4 rounded bg-white p-6 shadow"
     >
-      <h2 className="text-2xl font-bold text-center">Crear nuevo plato</h2>
+      <h2 className="text-center text-2xl font-bold">Crear nuevo plato</h2>
 
       <input
         type="text"
         placeholder="Nombre del plato"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
         required
       />
 
@@ -94,7 +103,7 @@ export default function DishCreateForm() {
         placeholder="Descripción"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
       />
 
       <input
@@ -102,7 +111,7 @@ export default function DishCreateForm() {
         placeholder="Precio en pesos"
         value={price}
         onChange={(e) => setPrice(Number(e.target.value))}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
         required
       />
 
@@ -111,7 +120,7 @@ export default function DishCreateForm() {
         placeholder="Categoría (ej. ensaladas, pizzas)"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
       />
 
       <input
@@ -119,7 +128,7 @@ export default function DishCreateForm() {
         placeholder="Tiempo de preparación (minutos)"
         value={prepTime}
         onChange={(e) => setPrepTime(Number(e.target.value))}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
       />
 
       <input
@@ -127,7 +136,7 @@ export default function DishCreateForm() {
         placeholder="Ciudad"
         value={city}
         onChange={(e) => setCity(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
       />
 
       <label className="flex items-center space-x-2">
@@ -143,7 +152,7 @@ export default function DishCreateForm() {
         type="file"
         accept="image/*"
         onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        className="w-full border p-2 rounded"
+        className="w-full rounded border p-2"
       />
 
       <button type="submit" disabled={loading} className="btn btn-primary w-full">

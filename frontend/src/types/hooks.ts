@@ -1,5 +1,6 @@
-// types/hooks.ts
-import { User } from '@supabase/supabase-js';
+// src/types/hooks.ts
+
+import type { User } from '@supabase/supabase-js'; // 👈 Import necesario
 
 // === Core Data Types ===
 export interface Location {
@@ -79,7 +80,7 @@ export interface DishesResult {
 }
 
 export interface AuthResult {
-  user: User | null;
+  user: User | null; // ✅ ahora está tipado correctamente
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;

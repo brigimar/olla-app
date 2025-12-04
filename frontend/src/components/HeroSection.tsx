@@ -54,7 +54,7 @@ const HeroSection = ({ onSearch, className = '' }: HeroSectionProps) => {
 
   return (
     <section
-      className={`relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 ${className}`}
+      className={`relative flex min-h-screen items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 ${className}`}
     >
       {/* Background con gradiente sutil */}
       <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 via-teal-400/20 to-pink-400/20"></div>
@@ -63,35 +63,35 @@ const HeroSection = ({ onSearch, className = '' }: HeroSectionProps) => {
       <div className="absolute inset-0 bg-black/10"></div>
 
       {/* Contenido principal */}
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
+      <div className="relative z-10 mx-auto max-w-4xl text-center">
         {/* Headline */}
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-orange-500 via-teal-500 to-pink-500 bg-clip-text text-transparent">
+        <h1 className="mb-6 bg-gradient-to-r from-orange-500 via-teal-500 to-pink-500 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-6xl lg:text-7xl">
           Comida real de gente real
         </h1>
 
         {/* Subheadline */}
-        <p className="text-lg sm:text-xl md:text-2xl text-gray-700 mb-10 max-w-2xl mx-auto">
+        <p className="mx-auto mb-10 max-w-2xl text-lg text-gray-700 sm:text-xl md:text-2xl">
           Descubre chefs caseros en tu barrio
         </p>
 
         {/* Botones CTA */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+        <div className="mb-12 flex flex-col justify-center gap-4 sm:flex-row">
           <Link
             href="/explorar"
-            className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
+            className="transform rounded-full bg-orange-500 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-orange-600 hover:shadow-xl"
           >
             Explorar platos
           </Link>
           <Link
             href="/ser-cocinero"
-            className="px-8 py-4 bg-white hover:bg-gray-50 text-orange-500 font-semibold rounded-full border-2 border-orange-500 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl"
+            className="transform rounded-full border-2 border-orange-500 bg-white px-8 py-4 font-semibold text-orange-500 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-gray-50 hover:shadow-xl"
           >
             Ser cocinero
           </Link>
         </div>
 
         {/* Search Bar con Glassmorphism */}
-        <div className="max-w-2xl mx-auto">
+        <div className="mx-auto max-w-2xl">
           <form onSubmit={handleSearch} className="relative">
             <div className="relative">
               <input
@@ -99,10 +99,10 @@ const HeroSection = ({ onSearch, className = '' }: HeroSectionProps) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={currentPlaceholder}
-                className="w-full px-6 py-5 pl-12 text-lg bg-white/80 backdrop-blur-md border border-white/50 rounded-full shadow-lg focus:outline-none focus:ring-4 focus:ring-orange-500/30 focus:border-orange-500 transition-all duration-300"
+                className="w-full rounded-full border border-white/50 bg-white/80 px-6 py-5 pl-12 text-lg shadow-lg backdrop-blur-md transition-all duration-300 focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-500/30"
               />
               <Search
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5"
+                className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-500"
                 strokeWidth={2}
               />
             </div>
@@ -114,3 +114,8 @@ const HeroSection = ({ onSearch, className = '' }: HeroSectionProps) => {
 };
 
 export default HeroSection;
+
+
+
+
+

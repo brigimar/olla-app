@@ -1,5 +1,5 @@
 // components/ui/Input.tsx
-import { forwardRef, InputHTMLAttributes, useState, useEffect } from 'react';
+import { forwardRef, InputHTMLAttributes, useState } from 'react';
 import { Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,7 +28,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     const [isFocused, setIsFocused] = useState(false);
-    const showPlaceholder = !isFocused && (!value || value === '');
+    const stringValue = String(value ?? '');
+    const showPlaceholder = !isFocused && stringValue === '';
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange?.(e);

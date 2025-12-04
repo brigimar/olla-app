@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/lib/supabase';
 import { Dish } from '@/types/database.types';
 
 export const usePopularDishes = () => {
@@ -23,7 +23,7 @@ export const usePopularDishes = () => {
           .from('dishes')
           .select('*')
           .eq('is_available', true)
-          .order('destacado', { ascending: false }) // 👈 usar destacado
+          .order('destacado', { ascending: false })
           .order('name', { ascending: true })
           .limit(10);
 
@@ -35,9 +35,14 @@ export const usePopularDishes = () => {
         }
 
         setDishes(data as Dish[]);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('[usePopularDishes] Excepción capturada:', err);
-        setError(err.message);
+
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Error desconocido al cargar platos');
+        }
       } finally {
         console.log('[usePopularDishes] Finalizando fetch. Loading=false');
         setLoading(false);

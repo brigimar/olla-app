@@ -1,28 +1,20 @@
-import { SupabaseClient } from '@supabase/supabase-js';
+// src/lib/syncService.ts
+import { supabase } from "@/lib/supabase";
 
+export async function syncData() {
   try {
+    const { data, error } = await supabase.from("dishes").select("*");
 
-      method: 'POST',
-    });
+    if (error) throw error;
 
-    // 2. Procesar y transformar los datos
-      return {
-        id_plato: page.id,
-        nombre: page.properties.Nombre?.title?.[0]?.plain_text || '',
-        precio: page.properties.Precio?.number || 0,
-        // ⚡ Agregá aquí el resto de campos que quieras mapear
-      };
-    });
+    // procesar data
+    console.log("Sync OK:", data);
 
-    // 3. Ejecutar Upsert en Supabase
-    const { error } = await supabase.from('dishes').upsert(dishesToUpsert);
-
-    if (error) {
-      throw new Error(`Error al insertar en Supabase: ${error.message}`);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Error en syncData:", error.message);
+    } else {
+      console.error("Error en syncData: error desconocido", error);
     }
-
-  } catch (error: any) {
-    console.error('❌ Fallo en el servicio de sincronización:', error.message);
-    throw error;
   }
 }

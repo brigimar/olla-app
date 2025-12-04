@@ -1,6 +1,24 @@
 // types/database.types.ts
 //npx supabase gen types typescript --project-id YOUR_PROJECT_ID --schema public > types/database.types.ts
-export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+
+export type Dish = {
+  id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  category: string | null;
+  destacado: boolean;
+  price_cents: number;
+  status: "active" | "inactive" | string | null;
+  is_available: boolean;
+};
+export interface FilterOptions {
+  distance: number | null;
+  minPrice: number | null;
+  maxPrice: number | null;
+  tags: string[];
+  searchQuery: string;
+}
 
 export interface Database {
   public: {
@@ -64,3 +82,8 @@ export interface Database {
     };
   };
 }
+
+
+
+
+

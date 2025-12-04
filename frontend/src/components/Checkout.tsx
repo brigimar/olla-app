@@ -2,11 +2,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useSupabase } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 export default function Checkout() {
   const [loading, setLoading] = useState(false);
-  const supabase = useSupabase();
+  
 
   const handleCheckout = async () => {
     setLoading(true);
@@ -31,3 +31,8 @@ export default function Checkout() {
     </button>
   );
 }
+
+
+
+
+

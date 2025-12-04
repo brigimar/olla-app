@@ -40,41 +40,41 @@ const CommunityChefs: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="max-w-6xl mx-auto">
+    <section className="bg-gray-50 px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
             Cocineros en tu comunidad
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-gray-600">
             Conecta con personas reales preparando comida con amor
           </p>
         </div>
 
         {/* Grid de Categorías */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
               <Link key={category.id} href={`/categorias/${category.id}`} className="group">
-                <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-transform transform hover:-translate-y-2 p-6 h-full flex flex-col">
+                <div className="flex h-full transform flex-col rounded-xl bg-white p-6 shadow-lg transition-transform hover:-translate-y-2 hover:shadow-xl">
                   {/* Icono */}
-                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-orange-200 transition-colors duration-300">
-                    <Icon className="w-6 h-6 text-orange-600" />
+                  <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 transition-colors duration-300 group-hover:bg-orange-200">
+                    <Icon className="h-6 w-6 text-orange-600" />
                   </div>
 
                   {/* Contenido */}
                   <div className="flex-1">
-                    <span className="text-sm font-semibold text-orange-600 uppercase tracking-wide mb-2 block">
+                    <span className="mb-2 block text-sm font-semibold uppercase tracking-wide text-orange-600">
                       {category.subtitle}
                     </span>
-                    <h3 className="text-xl font-bold text-gray-900 mb-3">{category.title}</h3>
+                    <h3 className="mb-3 text-xl font-bold text-gray-900">{category.title}</h3>
                     <p className="text-gray-600">{category.description}</p>
                   </div>
 
                   {/* Decorative element on hover */}
-                  <div className="mt-4 h-1 w-0 group-hover:w-12 bg-orange-500 transition-all duration-300 rounded-full"></div>
+                  <div className="mt-4 h-1 w-0 rounded-full bg-orange-500 transition-all duration-300 group-hover:w-12"></div>
                 </div>
               </Link>
             );
@@ -86,3 +86,8 @@ const CommunityChefs: React.FC = () => {
 };
 
 export default CommunityChefs;
+
+
+
+
+

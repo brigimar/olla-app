@@ -1,11 +1,12 @@
-export type Dish = {
+// src/types/dish.ts
+export interface Dish {
   id: string;
   name: string;
-  description: string | null;
-  image_url: string | null;
-  category: string | null;
-  destacado: boolean;
+  description: string;
   price_cents: number;
-  status: "active" | "inactive" | string | null;
-  is_available: boolean;
-};
+}
+
+
+
+
+

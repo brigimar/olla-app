@@ -1,37 +1,39 @@
-'use client';
+// src/components/Navbar.tsx
+import { useState } from "react";
+import Cart from "./Cart";
 
-import { useState } from 'react';
-import { useCart } from '@/hooks/useCart';
-import Cart from '@/components/Cart';
+// ⚡ Definimos un tipo claro para los ítems del carrito
+type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+};
 
 export default function Navbar() {
-  const { items } = useCart();
+  // Estado para abrir/cerrar el carrito
   const [open, setOpen] = useState(false);
 
+  // Estado para los ítems del carrito (solo lectura por ahora)
+  const [cartItems] = useState<CartItem[]>([]); 
+
   return (
-    <nav className="bg-white shadow px-4 py-3 flex justify-between items-center">
-      <h1 className="font-bold text-xl">OLLA APP</h1>
+    <nav className="relative">
+      {/* Botón para abrir/cerrar el carrito */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+      >
+        Carrito
+      </button>
 
-      {/* Carrito con dropdown */}
-      <div className="relative">
-        <button onClick={() => setOpen(!open)} className="relative p-2 rounded hover:bg-gray-100">
-          🛒
-          {items.length > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-2">
-              {items.length}
-            </span>
-          )}
-        </button>
-
-        {open && (
-          <div className="absolute right-0 mt-2 w-80 bg-white shadow-lg rounded-lg p-4 z-50">
-            <Cart />
-            <div className="mt-4 border-t pt-4">
-              <Checkout />
-            </div>
+      {open && (
+        <div className="absolute right-0 z-50 mt-2 w-80 rounded-lg bg-white p-4 shadow-lg">
+          <Cart items={cartItems} />
+          <div className="mt-4 border-t pt-4">
+            {/* Aquí podrías poner acciones como "Finalizar compra" */}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 }

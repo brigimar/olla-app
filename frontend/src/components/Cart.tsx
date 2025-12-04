@@ -1,39 +1,37 @@
-'use client';
+// src/types/cart.ts
+export interface CartItem {
+  id: string;
+  name: string;
+  quantity: number;
+}
 
-export default function Cart({ items }: { items: any[] }) {
-  const total = items.reduce((sum, i) => sum + (i.precio || 0), 0);
+// src/components/Cart.tsx
+import type { CartItem } from '@/types/cart';
 
+interface CartProps {
+  items: CartItem[];
+}
+
+export default function Cart({ items }: CartProps) {
   if (items.length === 0) {
     return (
-      <div className="border rounded p-4 mt-4">
+      <div className="mt-4 rounded border p-4">
         <h3 className="font-bold">Carrito</h3>
-        <p className="text-gray-600">Todavía no agregaste platos</p>
+        <p>No hay productos en el carrito.</p>
       </div>
     );
   }
 
   return (
-    <div className="border rounded p-4 mt-4">
-      <h3 className="font-bold mb-2">Carrito</h3>
-      <ul className="divide-y divide-gray-200">
-        {items.map((dish, idx) => (
-          <li key={idx} className="flex items-center py-2">
-            <img
-              src={dish.imagen}
-              alt={dish.nombre}
-              className="w-16 h-16 object-cover rounded mr-3"
-            />
-            <div className="flex-1">
-              <div className="font-semibold">{dish.nombre}</div>
-              <div className="text-sm text-gray-600">${dish.precio}</div>
-            </div>
+    <div className="mt-4 rounded border p-4">
+      <h3 className="font-bold">Carrito</h3>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>
+            {item.name} (x{item.quantity})
           </li>
         ))}
       </ul>
-      <div className="mt-3 font-bold text-lg">Total: ${total}</div>
-
-      {/* Botón de checkout */}
-    
     </div>
   );
 }

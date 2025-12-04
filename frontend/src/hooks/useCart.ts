@@ -1,6 +1,7 @@
-// hooks/useCart.ts
+// src/hooks/useCart.ts
 import { useState, useEffect, useCallback } from 'react';
-import { CartItem, CartResult } from '@/types/hooks';
+import type { CartItem, CartResult } from '@/types/cart';
+import type { Dish } from '@/types/dish';
 
 const CART_STORAGE_KEY = 'olla_app_cart';
 
@@ -8,7 +9,7 @@ export const useCart = (): CartResult => {
   const [items, setItems] = useState<CartItem[]>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      return stored ? (JSON.parse(stored) as CartItem[]) : [];
     }
     return [];
   });
@@ -18,7 +19,7 @@ export const useCart = (): CartResult => {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
-  const addItem = useCallback((dish: any, quantity: number = 1) => {
+  const addItem = useCallback((dish: Dish, quantity: number = 1) => {
     setItems((prev) => {
       const existingItem = prev.find((item) => item.id === dish.id);
 
@@ -51,7 +52,9 @@ export const useCart = (): CartResult => {
         return;
       }
 
-      setItems((prev) => prev.map((item) => (item.id === dishId ? { ...item, quantity } : item)));
+      setItems((prev) =>
+        prev.map((item) => (item.id === dishId ? { ...item, quantity } : item))
+      );
     },
     [removeItem]
   );
@@ -60,7 +63,10 @@ export const useCart = (): CartResult => {
     setItems([]);
   }, []);
 
-  const total = items.reduce((sum, item) => sum + (item.dish.price_cents / 100) * item.quantity, 0);
+  const total = items.reduce(
+    (sum, item) => sum + (item.dish.price_cents / 100) * item.quantity,
+    0
+  );
 
   return {
     items,

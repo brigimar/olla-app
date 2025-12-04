@@ -62,11 +62,8 @@ export const useGeolocation = (): GeolocationResult => {
   // Auto-request on mount
   useEffect(() => {
     getCurrentLocation();
-
-    return () => {
-      // Cleanup not needed for geolocation
-    };
-  }, []);
+    // ✅ incluimos getCurrentLocation en dependencias
+  }, [getCurrentLocation]);
 
   return {
     location,

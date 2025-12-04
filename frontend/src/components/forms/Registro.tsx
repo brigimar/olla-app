@@ -10,13 +10,13 @@ export default function ProducerSignUp() {
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
-  async function handleSignUp(e: React.FormEvent) {
+  async function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setMsg(null);
     setErr(null);
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signUp({ email, password }); // ✅ eliminamos data
 
     setLoading(false);
 
@@ -38,7 +38,7 @@ export default function ProducerSignUp() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 w-full border rounded px-3 py-2"
+          className="mt-1 w-full rounded border px-3 py-2"
           required
         />
       </div>
@@ -49,7 +49,7 @@ export default function ProducerSignUp() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 w-full border rounded px-3 py-2"
+          className="mt-1 w-full rounded border px-3 py-2"
           required
         />
       </div>
@@ -57,13 +57,13 @@ export default function ProducerSignUp() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:opacity-50"
+        className="w-full rounded bg-green-600 py-2 text-white hover:bg-green-700 disabled:opacity-50"
       >
         {loading ? 'Registrando...' : 'Crear productor'}
       </button>
 
-      {msg && <p className="text-green-600 text-sm">{msg}</p>}
-      {err && <p className="text-red-600 text-sm">{err}</p>}
+      {msg && <p className="text-sm text-green-600">{msg}</p>}
+      {err && <p className="text-sm text-red-600">{err}</p>}
     </form>
   );
 }

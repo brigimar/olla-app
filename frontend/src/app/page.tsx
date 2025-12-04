@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col">
+    <main className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <HeroSection />
 
@@ -24,8 +24,8 @@ export default function HomePage() {
       />
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="mt-auto bg-gray-900 py-8 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-gray-400">
               © {new Date().getFullYear()} OLLA APP Comida real de gente real. Todos los derechos
@@ -37,3 +37,8 @@ export default function HomePage() {
     </main>
   );
 }
+
+
+
+
+

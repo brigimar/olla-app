@@ -1,5 +1,4 @@
 // hooks/useLocalStorage.ts
-import { useState, useEffect } from 'react';
 
 export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T) => void] {
   // Get value from localStorage or use initialValue
@@ -25,3 +24,8 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T)
 
   return [storedValue, setValue];
 }
+
+
+
+
+
