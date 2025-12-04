@@ -6,7 +6,9 @@ export const supabase = createClient(
 );
 
 // ? NO importes createOrder de s� mismo
-export async function createOrder(orderData: unknown) {
+// src/lib/supabase.ts
+export async function createOrder(orderData: Record<string, any>) {
   console.log('Stub createOrder', orderData);
   return { id: 'fake-order-id', ...orderData };
 }
+
