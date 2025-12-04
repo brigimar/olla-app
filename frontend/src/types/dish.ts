@@ -1,7 +1,8 @@
 // src/types/dish.ts
-export interface Dish {
+export type Dish = {
   id: string;
+  producer_id: string;   // ✅ agregado
   name: string;
   description: string;
   price_cents: number;
-}
+};
