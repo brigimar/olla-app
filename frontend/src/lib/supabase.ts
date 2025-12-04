@@ -1,10 +1,7 @@
-import { Order } from "../types/order";
+import { createClient } from '@supabase/supabase-js';
 
-export async function createOrder(orderData: Order) {
-  const { data, error } = await supabase
-    .from("orders")
-    .insert(orderData);
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-  if (error) throw error;
-  return data;
-}
