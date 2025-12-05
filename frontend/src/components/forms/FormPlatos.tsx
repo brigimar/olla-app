@@ -34,12 +34,12 @@ export default function DishCreateForm() {
       if (file) {
         const fileName = `${user.id}-${Date.now()}-${file.name}`;
         const { error: uploadError } = await supabase.storage
-          .from('dishes') // 👈 bucket en minúsculas para consistencia
+          .from('platos') // 👈 bucket en minúsculas para consistencia
           .upload(fileName, file);
 
         if (uploadError) throw uploadError;
 
-        const { data } = supabase.storage.from('dishes').getPublicUrl(fileName);
+        const { data } = supabase.storage.from('platos').getPublicUrl(fileName);
         imageUrl = data.publicUrl;
       }
 

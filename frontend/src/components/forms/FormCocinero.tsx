@@ -1,144 +1,142 @@
 'use client';
-//FormCocinero.tsx
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase'; // 👈 usa el cliente centralizado
+import { useAuth } from '@/hooks/useAuth';
+import { useProducers } from '@/hooks/useProducers';
 
-export default function ProducerRegisterForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [businessName, setBusinessName] = useState('');
-  const [description, setDescription] = useState('');
-  const [address, setAddress] = useState('');
-  const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+export default function FormCocinero() {
+  const { signUp, loading: authLoading } = useAuth();
+  const { createProfile, loading: profileLoading, error: profileError } = useProducers();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const [formError, setFormError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const isLoading = authLoading || profileLoading;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    setFormError(null);
+    setSuccessMessage(null);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const businessName = formData.get('businessName') as string;
+    const description = formData.get('description') as string;
+    const address = formData.get('address') as string;
+    const phone = formData.get('phone') as string;
+    const logo = formData.get('logo') as File | null;
 
     try {
-      // 1. Crear cuenta en Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      // Paso 1: Crear usuario en Auth con rol 'productor'
+      const { user, error: signUpError } = await signUp(email, password, 'productor');
+      if (signUpError) throw new Error(signUpError.message);
+      if (!user) throw new Error('No se pudo crear el usuario');
 
-      if (authError) throw authError;
-      const user = authData.user;
-      if (!user) throw new Error('No se pudo registrar el usuario.');
-
-      let logoUrl: string | null = null;
-
-      // 2. Subir logo al bucket "producers"
-      if (file) {
-        const fileName = `${user.id}-${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from('producers')
-          .upload(fileName, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data } = supabase.storage.from('producers').getPublicUrl(fileName);
-        logoUrl = data.publicUrl;
-      }
-
-      // 3. Insertar productor en la tabla "producers"
-      const { error: insertError } = await supabase.from('producers').insert([
+      // Paso 2: Crear perfil en producers con los campos correctos
+      await createProfile(
+        user.id,
         {
-          id: user.id,
           business_name: businessName,
           description,
           address,
-          address_point: null,
-          delivery_zone_id: null,
-          is_active: true,
-          rating: 0.0,
-          total_orders: 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          logo_url: logoUrl,
+          email,
+          phone,
         },
-      ]);
+        logo || undefined
+      );
 
-      if (insertError) throw insertError;
-
-      alert('✅ Productor registrado con éxito!');
-      setEmail('');
-      setPassword('');
-      setBusinessName('');
-      setDescription('');
-      setAddress('');
-      setFile(null);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        alert('❌ Error registrando productor: ' + err.message);
-      } else {
-        alert('❌ Error desconocido registrando productor');
-      }
-    } finally {
-      setLoading(false);
+      setSuccessMessage('✅ Cocinero registrado exitosamente');
+      e.currentTarget.reset();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setFormError(errorMessage);
     }
   };
 
   return (
     <form
-      onSubmit={handleRegister}
-      className="mx-auto max-w-md space-y-4 rounded bg-white p-6 shadow"
+      onSubmit={handleSubmit}
+      className="mx-auto max-w-lg space-y-6 rounded-xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-lg"
     >
-      <h2 className="text-center text-2xl font-bold">Registro de Productor</h2>
+      <h2 className="text-center text-3xl font-extrabold text-gray-800">
+        Registro de Cocinero
+      </h2>
+      <p className="text-center text-sm text-gray-500">
+        Completa tus datos para comenzar a vender tus platos
+      </p>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full rounded border p-2"
-        required
-      />
+      <div className="space-y-4">
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Contraseña"
+          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+          required
+        />
+        <input
+          type="text"
+          name="businessName"
+          placeholder="Nombre del negocio"
+          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+          required
+        />
+        <textarea
+          name="description"
+          placeholder="Descripción del negocio"
+          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+        />
+        <input
+          type="text"
+          name="address"
+          placeholder="Dirección"
+          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+          required
+        />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Teléfono"
+          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+          required
+        />
+        <div>
+  <label
+    htmlFor="logo"
+    className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-gradient-to-r from-pink-500 to-red-500 px-4 py-3 text-white font-semibold shadow hover:from-pink-400 hover:to-red-400 transition-all duration-200"
+  >
+    📤 Subir logo
+  </label>
+  <input
+    id="logo"
+    type="file"
+    name="logo"
+    accept="image/*"
+    className="hidden"
+  />
+</div>
 
-      <input
-        type="password"
-        placeholder="Contraseña"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full rounded border p-2"
-        required
-      />
+      </div>
 
-      <input
-        type="text"
-        placeholder="Nombre del negocio"
-        value={businessName}
-        onChange={(e) => setBusinessName(e.target.value)}
-        className="w-full rounded border p-2"
-        required
-      />
+      {(formError || profileError) && (
+        <p className="text-red-600 text-sm font-medium">{formError || profileError}</p>
+      )}
+      {successMessage && (
+        <p className="text-green-600 text-sm font-medium">{successMessage}</p>
+      )}
 
-      <textarea
-        placeholder="Descripción del negocio"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        className="w-full rounded border p-2"
-      />
-
-      <input
-        type="text"
-        placeholder="Dirección"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        className="w-full rounded border p-2"
-        required
-      />
-
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        className="w-full rounded border p-2"
-      />
-
-      <button type="submit" disabled={loading} className="btn btn-primary w-full">
-        {loading ? 'Registrando...' : 'Registrar Productor'}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-3 text-white font-semibold shadow hover:from-indigo-500 hover:to-purple-500 transition-all duration-200 disabled:opacity-50"
+      >
+        {isLoading ? 'Registrando...' : 'Registrar Cocinero'}
       </button>
     </form>
   );
