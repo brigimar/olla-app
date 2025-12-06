@@ -1,4 +1,5 @@
 ﻿'use client';
+
 import { useState, useEffect } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
@@ -14,26 +15,33 @@ export function useAuth() {
       setUser(session?.user ?? null);
     });
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => setUser(session?.user ?? null)
+    );
 
-    return () => {
-      subscription?.subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
   // Crear usuario (signUp)
   const signUp = async (email: string, password: string) => {
     setLoading(true);
     setError(null);
+
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/bienvenida`,
+          emailRedirectToOptions: { type: "signup" }
+        }
+      });
+
       if (error) {
         setError(error.message);
         return { user: null, error };
       }
-      setUser(data.user);
+
       return { user: data.user, error: null };
     } finally {
       setLoading(false);
@@ -44,13 +52,16 @@ export function useAuth() {
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     setError(null);
+
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } =
+        await supabase.auth.signInWithPassword({ email, password });
+
       if (error) {
         setError(error.message);
         throw error;
       }
-      setUser(data.user);
+
       return data;
     } finally {
       setLoading(false);

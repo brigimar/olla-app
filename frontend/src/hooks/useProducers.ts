@@ -20,8 +20,9 @@ export function useProducers() {
   ): Promise<{ logoUrl?: string }> => {
     setLoading(true);
     setError(null);
+
     try {
-      // Insertar perfil en la tabla producers
+      // Insertar perfil del productor
       const { error: insertError } = await supabase.from('producers').insert([
         {
           id: userId,
@@ -32,33 +33,49 @@ export function useProducers() {
           phone: profile.phone,
           is_active: false,
           visible: false,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
         },
       ]);
+
       if (insertError) throw insertError;
 
       let logoUrl: string | undefined;
 
-      // Subir logo si existe
+      // Si hay logo, validar y subir
       if (logo) {
+        if (!["image/png", "image/jpeg", "image/webp"].includes(logo.type)) {
+          throw new Error("Formato de imagen no permitido");
+        }
+
+        if (logo.size > 2 * 1024 * 1024) {
+          // 2MB
+          throw new Error("El archivo excede los 2MB");
+        }
+
+        const filePath = `${userId}/logo.png`;
+
         const { error: uploadError } = await supabase.storage
-          .from('producer-logos') // 👈 nombre del bucket en Supabase
-          .upload(`${userId}/logo.png`, logo, {
+          .from('producer-logos')
+          .upload(filePath, logo, {
             cacheControl: '3600',
             upsert: true,
           });
+
         if (uploadError) throw uploadError;
 
-        // Obtener URL pública del logo
-        const { data } = supabase.storage.from('producer-logos').getPublicUrl(`${userId}/logo.png`);
+        // Obtener URL pública
+        const { data } = supabase.storage
+          .from('producer-logos')
+          .getPublicUrl(filePath);
+
         logoUrl = data.publicUrl;
       }
 
       return { logoUrl };
+
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error desconocido al crear perfil');
-      return {};
+      const message = err instanceof Error ? err.message : 'Error desconocido al crear perfil';
+      setError(message);
+      return { logoUrl: undefined };
     } finally {
       setLoading(false);
     }

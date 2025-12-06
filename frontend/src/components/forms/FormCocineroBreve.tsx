@@ -1,5 +1,5 @@
 'use client';
-// frontend/src/components/forms/FormCocineroBreve.tsx
+
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -27,38 +27,86 @@ export default function FormCocineroBreve() {
     setLoading(true);
 
     try {
-      // 1. Guardar datos básicos en pending_registrations
-      const { error: pendingError } = await supabase.from('pending_registrations').insert([
-        {
-          name: formData.nombre,
-          email: formData.email,
-          whatsapp: formData.whatsapp,
-        },
-      ]);
+      // -----------------------------
+      // 1. Validaciones previas
+      // -----------------------------
+      if (!formData.email.includes('@')) {
+        throw new Error('El email no es válido.');
+      }
+
+      if (formData.whatsapp.length < 6) {
+        throw new Error('El número de WhatsApp es demasiado corto.');
+      }
+
+      // -----------------------------
+      // 2. Verificar si ya existe un pending_registrations con ese mail
+      // -----------------------------
+      const { data: existingPending } = await supabase
+        .from('pending_registrations')
+        .select('email')
+        .eq('email', formData.email)
+        .maybeSingle();
+
+      if (existingPending) {
+        throw new Error('Ya existe un registro pendiente con este email.');
+      }
+
+      // -----------------------------
+      // 3. Guardar en pending_registrations
+      // -----------------------------
+      const { error: pendingError } = await supabase
+        .from('pending_registrations')
+        .insert([
+          {
+            name: formData.nombre,
+            email: formData.email,
+            whatsapp: formData.whatsapp,
+          },
+        ]);
+
       if (pendingError) throw pendingError;
 
-      // 2. Crear usuario en Auth (Supabase envía email de verificación)
-      const tempPassword = crypto.randomUUID(); // password temporal
+      // -----------------------------
+      // 4. Crear usuario en Auth
+      // ⚠ Password segura generada rústicamente (sin crypto.randomUUID)
+      // -----------------------------
+      const tempPassword = Math.random().toString(36).slice(-12);
+
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: tempPassword,
         options: {
           emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/bienvenida`,
+          emailRedirectToOptions: {
+            type: 'signup',
+          },
         },
       });
 
-      if (signUpError) throw signUpError;
-      if (!data.user) throw new Error('No se pudo crear el usuario');
+      if (signUpError) {
+        // Si falla la creación en auth, revertimos la pending_registrations
+        await supabase
+          .from('pending_registrations')
+          .delete()
+          .eq('email', formData.email);
 
+        throw signUpError;
+      }
+
+      if (!data.user) throw new Error('No se pudo crear el usuario.');
+
+      // -----------------------------
+      // 5. Éxito
+      // -----------------------------
       setSuccessMessage(
-        '✅ Registro inicial exitoso. Revisa tu correo, verifica tu cuenta y completa tu perfil.'
+        '✅ Registro exitoso. Revisa tu correo para verificar tu cuenta y completar tu perfil.'
       );
 
-      // Resetear el estado de los inputs
       setFormData({ nombre: '', email: '', whatsapp: '' });
+
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      setFormError(errorMessage);
+      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      setFormError(msg);
     } finally {
       setLoading(false);
     }
@@ -83,6 +131,7 @@ export default function FormCocineroBreve() {
           onChange={handleChange}
           className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-indigo-300"
         />
+
         <input
           type="email"
           name="email"
@@ -92,6 +141,7 @@ export default function FormCocineroBreve() {
           onChange={handleChange}
           className="w-full rounded-md border px-3 py-2 focus:ring focus:ring-indigo-300"
         />
+
         <input
           type="text"
           name="whatsapp"

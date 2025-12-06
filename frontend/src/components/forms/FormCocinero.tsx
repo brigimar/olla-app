@@ -1,12 +1,16 @@
 'use client';
-//frontend\src\components\forms\FormCocinero.tsx
+
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProducers } from '@/hooks/useProducers';
 
 export default function FormCocinero() {
   const { signUp, loading: authLoading } = useAuth();
-  const { createProfile, loading: profileLoading, error: profileError } = useProducers();
+  const {
+    createProfile,
+    loading: profileLoading,
+    error: profileError,
+  } = useProducers();
 
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -23,8 +27,14 @@ export default function FormCocinero() {
 
   const isLoading = authLoading || profileLoading;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // -------------------------
+  // Handle inputs
+  // -------------------------
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, files } = e.target as HTMLInputElement;
+
     if (files) {
       setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
@@ -32,18 +42,60 @@ export default function FormCocinero() {
     }
   };
 
+  // -------------------------
+  // Validaciones avanzadas
+  // -------------------------
+  const validateForm = () => {
+    if (!formData.email.includes('@')) {
+      throw new Error('El email no es válido.');
+    }
+
+    if (formData.password.length < 6) {
+      throw new Error('La contraseña debe tener al menos 6 caracteres.');
+    }
+
+    if (formData.phone.length < 6) {
+      throw new Error('El teléfono es demasiado corto.');
+    }
+
+    if (formData.businessName.trim().length < 2) {
+      throw new Error('El nombre del negocio es demasiado corto.');
+    }
+
+    if (!formData.address.trim()) {
+      throw new Error('Debes ingresar una dirección.');
+    }
+  };
+
+  // -------------------------
+  // Submit
+  // -------------------------
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError(null);
     setSuccessMessage(null);
 
     try {
-      // Paso 1: Crear usuario en Auth
-      const { user, error: signUpError } = await signUp(formData.email, formData.password);
-      if (signUpError) throw new Error(signUpError.message);
-      if (!user) throw new Error('No se pudo crear el usuario');
+      validateForm();
 
-      // Paso 2: Crear perfil en producers
+      // ---- 1. Crear usuario en Auth ----
+      const { user, error: signUpError } = await signUp(
+        formData.email,
+        formData.password
+      );
+
+      if (signUpError) {
+        if (signUpError.message.includes('already registered')) {
+          throw new Error('Este email ya está registrado.');
+        }
+        throw new Error(signUpError.message);
+      }
+
+      if (!user) {
+        throw new Error('No se pudo crear el usuario.');
+      }
+
+      // ---- 2. Crear perfil en producers ----
       await createProfile(
         user.id,
         {
@@ -56,7 +108,9 @@ export default function FormCocinero() {
         formData.logo || undefined
       );
 
-      setSuccessMessage('✅ Cocinero registrado exitosamente');
+      // ---- 3. Éxito ----
+      setSuccessMessage('✅ Cocinero registrado exitosamente.');
+
       setFormData({
         email: '',
         password: '',
@@ -67,8 +121,9 @@ export default function FormCocinero() {
         logo: null,
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      setFormError(errorMessage);
+      const message =
+        err instanceof Error ? err.message : 'Error desconocido.';
+      setFormError(message);
     }
   };
 
@@ -77,12 +132,15 @@ export default function FormCocinero() {
       onSubmit={handleSubmit}
       className="mx-auto max-w-lg space-y-6 rounded-xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-lg"
     >
-      <h2 className="text-center text-3xl font-extrabold text-gray-800">Registro de Cocinero</h2>
+      <h2 className="text-center text-3xl font-extrabold text-gray-800">
+        Registro de Cocinero
+      </h2>
       <p className="text-center text-sm text-gray-500">
         Completa tus datos para comenzar a vender tus platos
       </p>
 
       <div className="space-y-4">
+        {/* Email */}
         <input
           type="email"
           name="email"
@@ -92,6 +150,8 @@ export default function FormCocinero() {
           className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           required
         />
+
+        {/* Contraseña */}
         <input
           type="password"
           name="password"
@@ -101,6 +161,8 @@ export default function FormCocinero() {
           className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           required
         />
+
+        {/* Nombre negocio */}
         <input
           type="text"
           name="businessName"
@@ -110,6 +172,8 @@ export default function FormCocinero() {
           className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           required
         />
+
+        {/* Descripción */}
         <textarea
           name="description"
           placeholder="Descripción del negocio"
@@ -117,6 +181,8 @@ export default function FormCocinero() {
           onChange={handleChange}
           className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
         />
+
+        {/* Dirección */}
         <input
           type="text"
           name="address"
@@ -126,6 +192,8 @@ export default function FormCocinero() {
           className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           required
         />
+
+        {/* Teléfono */}
         <input
           type="text"
           name="phone"
@@ -135,6 +203,8 @@ export default function FormCocinero() {
           className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           required
         />
+
+        {/* Logo */}
         <div>
           <label
             htmlFor="logo"
@@ -153,11 +223,19 @@ export default function FormCocinero() {
         </div>
       </div>
 
+      {/* Errores */}
       {(formError || profileError) && (
-        <p className="text-sm font-medium text-red-600">{formError || profileError}</p>
+        <p className="text-sm font-medium text-red-600">
+          {formError || profileError}
+        </p>
       )}
-      {successMessage && <p className="text-sm font-medium text-green-600">{successMessage}</p>}
 
+      {/* Éxito */}
+      {successMessage && (
+        <p className="text-sm font-medium text-green-600">{successMessage}</p>
+      )}
+
+      {/* Botón */}
       <button
         type="submit"
         disabled={isLoading}
