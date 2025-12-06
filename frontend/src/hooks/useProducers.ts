@@ -1,82 +1,95 @@
-'use client';
+// hooks/useProducer.ts
+import { useState, useMemo } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { ProducerServerSchema } from '@/shared/validation';
+import { z } from 'zod';
 
-import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+type ProducerFormData = z.infer<typeof ProducerServerSchema>;
 
-export function useProducers() {
+export const useProducer = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createProfile = async (
-    userId: string,
-    profile: {
-      business_name: string;
-      description?: string;
-      address?: string;
-      email: string;
-      phone: string;
-    },
-    logo?: File
-  ): Promise<{ logoUrl?: string }> => {
+  const supabase = useMemo(() => createClient(), []);
+
+  const createOrUpdateProducer = async (data: ProducerFormData, logoFile?: File | null) => {
     setLoading(true);
     setError(null);
 
     try {
-      // Insertar perfil del productor
-      const { error: insertError } = await supabase.from('producers').insert([
-        {
-          id: userId,
-          business_name: profile.business_name,
-          description: profile.description,
-          address: profile.address,
-          email: profile.email,
-          phone: profile.phone,
-          is_active: false,
-          visible: false,
-        },
-      ]);
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) throw new Error('No autenticado');
 
-      if (insertError) throw insertError;
+      let logoUrl = data.logo_url ?? null;
 
-      let logoUrl: string | undefined;
-
-      // Si hay logo, validar y subir
-      if (logo) {
-        if (!['image/png', 'image/jpeg', 'image/webp'].includes(logo.type)) {
-          throw new Error('Formato de imagen no permitido');
-        }
-
-        if (logo.size > 2 * 1024 * 1024) {
-          // 2MB
-          throw new Error('El archivo excede los 2MB');
-        }
-
-        const filePath = `${userId}/logo.png`;
-
+      if (logoFile) {
+        const timestamp = Date.now();
+        const fileName = `logo-${timestamp}.webp`;
+        const path = `cocineros/${user.id}/${fileName}`;
         const { error: uploadError } = await supabase.storage
-          .from('producer-logos')
-          .upload(filePath, logo, {
-            cacheControl: '3600',
+          .from('cocineros')
+          .upload(path, logoFile, {
             upsert: true,
+            contentType: 'image/webp',
           });
-
-        if (uploadError) throw uploadError;
-
-        // Obtener URL pública
-        const { data } = supabase.storage.from('producer-logos').getPublicUrl(filePath);
-
-        logoUrl = data.publicUrl;
+        if (uploadError) throw new Error('Error al subir logo');
+        const { data: urlData } = supabase.storage.from('cocineros').getPublicUrl(path);
+        logoUrl = urlData.publicUrl;
       }
 
-      return { logoUrl };
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error desconocido al crear perfil';
-      setError(message);
-      return { logoUrl: undefined };
+      const payload = {
+        id: user.id,
+        business_name: data.business_name,
+        description: data.description,
+        address: data.address,
+        email: data.email,
+        phone: data.phone,
+        logo_url: logoUrl,
+        visible: data.visible ?? false,
+        is_active: data.is_active ?? false,
+      };
+
+      const { error: upsertError } = await supabase
+        .from('producers')
+        .upsert(payload, { onConflict: 'id' });
+
+      if (upsertError) throw new Error('Error al guardar negocio');
+      return { success: true };
+    } catch (err: any) {
+      setError(err.message);
+      return { success: false, error: err.message };
     } finally {
       setLoading(false);
     }
   };
 
-  return { createProfile, loading, error };
-}
+  const getProducer = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No autenticado');
+
+      const { data, error } = await supabase
+        .from('producers')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw new Error('Error al obtener negocio');
+      return data;
+    } catch (err: any) {
+      setError(err.message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    loading,
+    error,
+    createOrUpdateProducer,
+    getProducer,
+  };
+};

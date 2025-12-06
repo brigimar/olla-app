@@ -1,68 +1,122 @@
-﻿'use client';
-import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
-import type { User, Session, AuthError } from '@supabase/supabase-js';
+﻿// hooks/useAuth.ts
+import { useState, useEffect, useMemo } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { User, Session } from '@supabase/supabase-js';
 
-export function useAuth() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export const useAuth = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // SignUp ajustado
+  // Memoizamos el cliente para evitar recrearlo en cada render
+  const supabase = useMemo(() => createClient(), []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) console.error('Error fetching session:', error);
+      if (mounted) {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    };
+
+    fetchSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (mounted) {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
+  }, [supabase]);
+
+  // -----------------------------
+  // Métodos de autenticación
+  // -----------------------------
+
+  // SignUp por email o teléfono
   const signUp = async (
-    email: string,
-    password: string
-  ): Promise<{ user: User | null; session: Session | null; error: AuthError | null }> => {
-    setLoading(true);
-    setError(null);
-    try {
+    method: 'email' | 'phone',
+    identifier: string,
+    password: string,
+    metadata?: any,
+    channel: 'sms' | 'whatsapp' = 'sms'
+  ) => {
+    if (method === 'email') {
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: identifier,
         password,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-          data: { type: 'signup' }, // metadata opcional
+          data: metadata,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-
-      if (error) {
-        setError(error.message);
-        return { user: null, session: null, error };
-      }
-
-      return { user: data.user, session: data.session, error: null };
-    } finally {
-      setLoading(false);
+      if (error) throw error;
+      return data;
+    } else {
+      const { data, error } = await supabase.auth.signUp({
+        phone: identifier,
+        password,
+        options: {
+          channel,
+          data: metadata,
+        },
+      });
+      if (error) throw error;
+      return data;
     }
   };
 
-  // SignIn ajustado
-  const signIn = async (
-    email: string,
-    password: string
-  ): Promise<{ user: User | null; session: Session | null; error: AuthError | null }> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+  // Login con email + contraseña
+  const signIn = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
+  };
 
-      if (error) {
-        setError(error.message);
-        return { user: null, session: null, error };
-      }
+  // Login con OTP (SMS/WhatsApp)
+  const verifyOtp = async (phone: string, token: string, type: 'sms' | 'whatsapp' = 'sms') => {
+    const { data, error } = await supabase.auth.verifyOtp({ phone, token, type });
+    if (error) throw error;
+    return data;
+  };
 
-      return { user: data.user, session: data.session, error: null };
-    } finally {
-      setLoading(false);
-    }
+  // Login con magic link (email)
+  const signInWithMagicLink = async (email: string) => {
+    const { data, error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) throw error;
+    return data;
+  };
+
+  // Cerrar sesión
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   };
 
   return {
+    user,
+    session,
+    loading,
     signUp,
     signIn,
-    loading,
-    error,
+    verifyOtp,
+    signInWithMagicLink,
+    signOut,
   };
-}
+};
