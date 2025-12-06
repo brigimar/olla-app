@@ -2,10 +2,9 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// ⚠️ Usa la service_role key, nunca la expongas en el cliente
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,   // público
+  process.env.SUPABASE_SERVICE_ROLE_KEY!   // privado, definido en Vercel
 );
 
 export async function POST(req: Request) {
@@ -22,7 +21,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (err: unknown) {
-    // ✅ usamos unknown en vez de any
     const message = err instanceof Error ? err.message : 'Error desconocido en cleanup';
     return NextResponse.json({ error: message }, { status: 500 });
   }
