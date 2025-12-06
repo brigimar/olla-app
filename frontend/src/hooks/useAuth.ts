@@ -1,82 +1,68 @@
 ﻿'use client';
-
-import { useState, useEffect } from 'react';
-import type { User } from '@supabase/supabase-js';
+import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import type { User, Session, AuthError } from '@supabase/supabase-js';
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mantener estado de sesión
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => setUser(session?.user ?? null)
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Crear usuario (signUp)
-  const signUp = async (email: string, password: string) => {
+  // SignUp ajustado
+  const signUp = async (
+    email: string,
+    password: string
+  ): Promise<{ user: User | null; session: Session | null; error: AuthError | null }> => {
     setLoading(true);
     setError(null);
-
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/bienvenida`,
-          emailRedirectToOptions: { type: "signup" }
-        }
+          data: { type: 'signup' }, // metadata opcional
+        },
       });
 
       if (error) {
         setError(error.message);
-        return { user: null, error };
+        return { user: null, session: null, error };
       }
 
-      return { user: data.user, error: null };
+      return { user: data.user, session: data.session, error: null };
     } finally {
       setLoading(false);
     }
   };
 
-  // Iniciar sesión
-  const signIn = async (email: string, password: string) => {
+  // SignIn ajustado
+  const signIn = async (
+    email: string,
+    password: string
+  ): Promise<{ user: User | null; session: Session | null; error: AuthError | null }> => {
     setLoading(true);
     setError(null);
-
     try {
-      const { data, error } =
-        await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
       if (error) {
         setError(error.message);
-        throw error;
+        return { user: null, session: null, error };
       }
 
-      return data;
+      return { user: data.user, session: data.session, error: null };
     } finally {
       setLoading(false);
     }
   };
 
-  // Cerrar sesión
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      setError(error.message);
-      throw error;
-    }
-    setUser(null);
+  return {
+    signUp,
+    signIn,
+    loading,
+    error,
   };
-
-  return { user, error, loading, signUp, signIn, signOut };
 }

@@ -6,11 +6,7 @@ import { useProducers } from '@/hooks/useProducers';
 
 export default function FormCocinero() {
   const { signUp, loading: authLoading } = useAuth();
-  const {
-    createProfile,
-    loading: profileLoading,
-    error: profileError,
-  } = useProducers();
+  const { createProfile, loading: profileLoading, error: profileError } = useProducers();
 
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -30,9 +26,7 @@ export default function FormCocinero() {
   // -------------------------
   // Handle inputs
   // -------------------------
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, files } = e.target as HTMLInputElement;
 
     if (files) {
@@ -79,10 +73,7 @@ export default function FormCocinero() {
       validateForm();
 
       // ---- 1. Crear usuario en Auth ----
-      const { user, error: signUpError } = await signUp(
-        formData.email,
-        formData.password
-      );
+      const { user, error: signUpError } = await signUp(formData.email, formData.password);
 
       if (signUpError) {
         if (signUpError.message.includes('already registered')) {
@@ -121,8 +112,7 @@ export default function FormCocinero() {
         logo: null,
       });
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Error desconocido.';
+      const message = err instanceof Error ? err.message : 'Error desconocido.';
       setFormError(message);
     }
   };
@@ -132,9 +122,7 @@ export default function FormCocinero() {
       onSubmit={handleSubmit}
       className="mx-auto max-w-lg space-y-6 rounded-xl bg-gradient-to-br from-white to-gray-50 p-8 shadow-lg"
     >
-      <h2 className="text-center text-3xl font-extrabold text-gray-800">
-        Registro de Cocinero
-      </h2>
+      <h2 className="text-center text-3xl font-extrabold text-gray-800">Registro de Cocinero</h2>
       <p className="text-center text-sm text-gray-500">
         Completa tus datos para comenzar a vender tus platos
       </p>
@@ -225,15 +213,11 @@ export default function FormCocinero() {
 
       {/* Errores */}
       {(formError || profileError) && (
-        <p className="text-sm font-medium text-red-600">
-          {formError || profileError}
-        </p>
+        <p className="text-sm font-medium text-red-600">{formError || profileError}</p>
       )}
 
       {/* Éxito */}
-      {successMessage && (
-        <p className="text-sm font-medium text-green-600">{successMessage}</p>
-      )}
+      {successMessage && <p className="text-sm font-medium text-green-600">{successMessage}</p>}
 
       {/* Botón */}
       <button

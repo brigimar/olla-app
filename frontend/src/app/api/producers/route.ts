@@ -1,100 +1,223 @@
-import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+// app/api/producers/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
+
+// Validación con zod
+const producerSchema = z.object({
+  business_name: z.string().min(2).max(100),
+  description: z.string().max(500).nullable().optional(),
+  address: z.string().max(200).nullable().optional(),
+  email: z.string().email(),
+  phone: z.string().min(6).max(20),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
-
-    // Datos sent from client
-    const business_name = formData.get("business_name") as string;
-    const description = formData.get("description") as string | null;
-    const address = formData.get("address") as string | null;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-
-    const logo = formData.get("logo") as File | null;
-
-    // VALIDATE FIELDS  
-    if (!business_name || !email || !phone) {
+    // 1. Obtener token del header
+    const accessToken = req.headers.get('Authorization')?.replace('Bearer ', '');
+    
+    if (!accessToken) {
       return NextResponse.json(
-        { error: "Faltan datos obligatorios." },
-        { status: 400 }
+        { error: 'No autenticado. Token requerido.' }, 
+        { status: 401 }
       );
     }
 
-    // GET USER SESSION
+    // 2. Crear cliente de Supabase con el token del usuario (respeta RLS)
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    
+    const userSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    });
+
+    // 3. Obtener usuario autenticado
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser();
+    } = await userSupabase.auth.getUser();
 
     if (userError || !user) {
-      return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+      return NextResponse.json(
+        { error: 'Token inválido o expirado' }, 
+        { status: 401 }
+      );
     }
 
     const userId = user.id;
 
-    // CREATE PRODUCER IN DB
-    const { error: insertError } = await supabase.from("producers").insert([
-      {
-        id: userId,
-        business_name,
-        description,
-        address,
-        email,
-        phone,
-        is_active: false,
-        visible: false,
-      },
-    ]);
+    // 4. Verificar que el email esté confirmado
+    if (!user.email_confirmed_at) {
+      return NextResponse.json(
+        { error: 'Debes confirmar tu email antes de crear un perfil' },
+        { status: 403 }
+      );
+    }
 
-    if (insertError) throw insertError;
+    // 5. Verificar si ya tiene un perfil de productor
+    const { data: existingProducer, error: checkError } = await userSupabase
+      .from('producers')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();  // ✅ Mejor que .single() porque no falla si no existe
 
+    if (checkError) {
+      console.error('Error al verificar productor existente:', checkError);
+      throw checkError;
+    }
+
+    if (existingProducer) {
+      return NextResponse.json(
+        { error: 'Ya tienes un perfil de productor creado' },
+        { status: 409 }
+      );
+    }
+
+    // 6. Parsear body (JSON o multipart)
+    let body: any;
+    let logoFile: File | null = null;
+    const contentType = req.headers.get('content-type') || '';
+
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await req.formData();
+      body = {
+        business_name: formData.get('business_name'),
+        description: formData.get('description'),
+        address: formData.get('address'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+      };
+      logoFile = formData.get('logo') as File | null;
+    } else {
+      body = await req.json();
+    }
+
+    // 7. Validar datos con zod
+    const parsed = producerSchema.safeParse(body);
+    
+    if (!parsed.success) {
+      return NextResponse.json(
+        { 
+          error: 'Datos inválidos',
+          details: parsed.error.flatten().fieldErrors 
+        }, 
+        { status: 400 }
+      );
+    }
+
+    const { business_name, description, address, email, phone } = parsed.data;
+
+    // 8. Subir logo ANTES del insert (para tener la URL)
     let logoUrl: string | undefined;
 
-    // UPLOAD LOGO IF EXISTS
-    if (logo) {
-      if (!["image/png", "image/jpeg", "image/webp"].includes(logo.type)) {
+    if (logoFile) {
+      // Validar tipo de archivo
+      if (!['image/png', 'image/jpeg', 'image/webp', 'image/jpg'].includes(logoFile.type)) {
         return NextResponse.json(
-          { error: "Formato inválido" },
+          { error: 'Formato de imagen inválido. Use PNG, JPG o WEBP.' },
           { status: 400 }
         );
       }
 
-      const filePath = `${userId}/logo.png`;
+      // Validar tamaño (máximo 5MB)
+      if (logoFile.size > 5 * 1024 * 1024) {
+        return NextResponse.json(
+          { error: 'La imagen es muy grande. Máximo 5MB.' },
+          { status: 400 }
+        );
+      }
 
-      const { error: uploadError } = await supabase.storage
-        .from("producer-logos")
-        .upload(filePath, logo, {
-          upsert: true,
-        });
+      try {
+        const buffer = Buffer.from(await logoFile.arrayBuffer());
+        const fileExt = logoFile.type.split('/')[1];
+        const filePath = `${userId}/logo-${Date.now()}.${fileExt}`;
 
-      if (uploadError) throw uploadError;
+        const { error: uploadError } = await userSupabase.storage
+          .from('producer-logos')
+          .upload(filePath, buffer, { 
+            upsert: true,
+            contentType: logoFile.type,
+          });
 
-      const { data } = supabase.storage
-        .from("producer-logos")
-        .getPublicUrl(filePath);
+        if (uploadError) {
+          console.error('Error al subir logo:', uploadError);
+          throw uploadError;
+        }
 
-      logoUrl = data.publicUrl;
+        const { data } = userSupabase.storage
+          .from('producer-logos')
+          .getPublicUrl(filePath);
+
+        logoUrl = data.publicUrl;
+      } catch (uploadErr: any) {
+        console.error('Error en upload de logo:', uploadErr);
+        return NextResponse.json(
+          { error: 'Error al subir la imagen' },
+          { status: 500 }
+        );
+      }
     }
 
-    return NextResponse.json(
-      {
-        success: true,
-        producer: {
-          id: userId,
+    // 9. Insertar productor en DB (RLS se valida automáticamente)
+    const { data: newProducer, error: insertError } = await userSupabase
+      .from('producers')
+      .insert([
+        {
+          id: userId,  // ✅ Correcto: usa 'id', no 'user_id'
           business_name,
           description,
           address,
           email,
           phone,
-          logoUrl,
+          logo_url: logoUrl,  // ✅ Ya incluimos el logo_url
+          is_active: false,
+          visible: false,
         },
+      ])
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Error al insertar productor:', insertError);
+
+      // Manejar errores específicos
+      if (insertError.code === '23505') {
+        return NextResponse.json(
+          { error: 'Ya existe un productor con este email' },
+          { status: 409 }
+        );
+      }
+
+      if (insertError.code === '42501') {  // RLS violation
+        return NextResponse.json(
+          { error: 'No tienes permiso para crear este perfil' },
+          { status: 403 }
+        );
+      }
+
+      throw insertError;
+    }
+
+    // 10. Respuesta exitosa
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Perfil de productor creado exitosamente',
+        producer: newProducer,
       },
       { status: 201 }
     );
+
   } catch (err: any) {
-    console.error("API /producers error:", err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    console.error('API /producers error:', err);
+    return NextResponse.json(
+      { error: err.message || 'Error interno del servidor' },
+      { status: 500 }
+    );
   }
 }

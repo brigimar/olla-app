@@ -42,13 +42,13 @@ export function useProducers() {
 
       // Si hay logo, validar y subir
       if (logo) {
-        if (!["image/png", "image/jpeg", "image/webp"].includes(logo.type)) {
-          throw new Error("Formato de imagen no permitido");
+        if (!['image/png', 'image/jpeg', 'image/webp'].includes(logo.type)) {
+          throw new Error('Formato de imagen no permitido');
         }
 
         if (logo.size > 2 * 1024 * 1024) {
           // 2MB
-          throw new Error("El archivo excede los 2MB");
+          throw new Error('El archivo excede los 2MB');
         }
 
         const filePath = `${userId}/logo.png`;
@@ -63,15 +63,12 @@ export function useProducers() {
         if (uploadError) throw uploadError;
 
         // Obtener URL pública
-        const { data } = supabase.storage
-          .from('producer-logos')
-          .getPublicUrl(filePath);
+        const { data } = supabase.storage.from('producer-logos').getPublicUrl(filePath);
 
         logoUrl = data.publicUrl;
       }
 
       return { logoUrl };
-
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Error desconocido al crear perfil';
       setError(message);

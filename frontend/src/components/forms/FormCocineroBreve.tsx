@@ -8,7 +8,6 @@ export default function FormCocineroBreve() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Estado controlado de los inputs
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -27,20 +26,16 @@ export default function FormCocineroBreve() {
     setLoading(true);
 
     try {
-      // -----------------------------
       // 1. Validaciones previas
-      // -----------------------------
       if (!formData.email.includes('@')) {
         throw new Error('El email no es válido.');
       }
 
-      if (formData.whatsapp.length < 6) {
+      if (formData.whatsapp.replace(/\D/g, '').length < 6) {
         throw new Error('El número de WhatsApp es demasiado corto.');
       }
 
-      // -----------------------------
-      // 2. Verificar si ya existe un pending_registrations con ese mail
-      // -----------------------------
+      // 2. Verificar si ya existe un registro pendiente
       const { data: existingPending } = await supabase
         .from('pending_registrations')
         .select('email')
@@ -51,62 +46,44 @@ export default function FormCocineroBreve() {
         throw new Error('Ya existe un registro pendiente con este email.');
       }
 
-      // -----------------------------
       // 3. Guardar en pending_registrations
-      // -----------------------------
-      const { error: pendingError } = await supabase
-        .from('pending_registrations')
-        .insert([
-          {
-            name: formData.nombre,
-            email: formData.email,
-            whatsapp: formData.whatsapp,
-          },
-        ]);
+      const { error: pendingError } = await supabase.from('pending_registrations').insert([
+        {
+          name: formData.nombre,
+          email: formData.email,
+          whatsapp: formData.whatsapp,
+        },
+      ]);
 
       if (pendingError) throw pendingError;
 
-      // -----------------------------
-      // 4. Crear usuario en Auth
-      // ⚠ Password segura generada rústicamente (sin crypto.randomUUID)
-      // -----------------------------
-      const tempPassword = Math.random().toString(36).slice(-12);
+      // 4. Crear usuario en Auth (password temporal)
+      const tempPassword =
+        Math.random().toString(36).slice(-8) + Math.random().toString(36).toUpperCase().slice(-4);
 
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: tempPassword,
         options: {
           emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/bienvenida`,
-          emailRedirectToOptions: {
-            type: 'signup',
-          },
         },
       });
 
       if (signUpError) {
-        // Si falla la creación en auth, revertimos la pending_registrations
-        await supabase
-          .from('pending_registrations')
-          .delete()
-          .eq('email', formData.email);
-
+        await supabase.from('pending_registrations').delete().eq('email', formData.email);
         throw signUpError;
       }
 
       if (!data.user) throw new Error('No se pudo crear el usuario.');
 
-      // -----------------------------
       // 5. Éxito
-      // -----------------------------
       setSuccessMessage(
         '✅ Registro exitoso. Revisa tu correo para verificar tu cuenta y completar tu perfil.'
       );
 
       setFormData({ nombre: '', email: '', whatsapp: '' });
-
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
-      setFormError(msg);
+      setFormError(err instanceof Error ? err.message : 'Error desconocido');
     } finally {
       setLoading(false);
     }
@@ -115,7 +92,7 @@ export default function FormCocineroBreve() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-lg space-y-6 p-8 rounded-lg shadow-lg bg-white"
+      className="mx-auto max-w-lg space-y-6 rounded-lg bg-white p-8 shadow-lg"
     >
       <h2 className="text-center text-3xl font-extrabold text-indigo-700">
         Registro breve de Cocinero
@@ -159,7 +136,7 @@ export default function FormCocineroBreve() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-indigo-600 py-2 text-white font-semibold hover:bg-indigo-700 disabled:opacity-50"
+        className="w-full rounded-md bg-indigo-600 py-2 font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
       >
         {loading ? 'Registrando...' : 'Registrar Cocinero'}
       </button>
