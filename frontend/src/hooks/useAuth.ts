@@ -19,7 +19,7 @@ export function useAuth() {
         email,
         password,
         options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/bienvenida`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
           data: { type: 'signup' }, // metadata opcional
         },
       });

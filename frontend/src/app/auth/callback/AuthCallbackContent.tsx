@@ -1,5 +1,5 @@
 'use client';
-
+//frontend\src\app\auth\callback\AuthCallbackContent.tsx
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';

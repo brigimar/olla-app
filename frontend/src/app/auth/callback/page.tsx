@@ -1,3 +1,4 @@
+//frontend\src\app\auth\callback\page.tsx
 import { Suspense } from 'react';
 import AuthCallbackContent from './AuthCallbackContent';
 
