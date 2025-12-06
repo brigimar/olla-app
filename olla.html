@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataformas de Delivery - Comparación UX/UI 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        :root {
+            --primary: #ffffff;
+            --secondary: #f8f9fa;
+            --accent: #ff6b35;
+            --text: #1a1a1a;
+            --text-light: #666666;
+            --border: #e0e0e0;
+            --success: #4caf50;
+            --info: #2196f3;
+            --warning: #ff9800;
+            --dark: #2c3e50;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --hover: #f5f7fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, var(--dark), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--primary);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            padding: 24px;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.1) 60%);
+            z-index: 1;
+        }
+
+        .card-header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .platform-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .platform-name i {
+            font-size: 1.4rem;
+        }
+
+        .platform-category {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .card-body {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .description {
+            margin-bottom: 20px;
+            color: var(--text);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .highlight-section h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .highlight-section h3 i {
+            color: var(--accent);
+        }
+
+        .highlight-text {
+            margin-bottom: 20px;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .link-section {
+            margin-top: auto;
+        }
+
+        .website-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary);
+            color: var(--dark);
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border);
+        }
+
+        .website-link:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: scale(1.03);
+        }
+
+        .website-link i {
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .card-header {
+                padding: 20px;
+            }
+            
+            .platform-name {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .card-body {
+                padding: 20px;
+            }
+        }
+
+        .ai-badge {
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Plataformas de Delivery - Comparación UX/UI 2025</h1>
+            <p class="subtitle">Análisis de las principales plataformas de delivery en Argentina: diseño, funcionalidades destacadas y experiencia de usuario</p>
+        </header>
+
+        <div class="grid">
+            <!-- DoorDash -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="platform-name">
+                            <i class="fas fa-utensils"></i>
+                            DoorDash
+                        </div>
+                        <div class="platform-category">Marketplace global de delivery rápido</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">Marketplace global de delivery rápido (hamburguesas, pizzas, etc.), con énfasis en locales independientes. Disponible en Argentina vía partners.</p>
+                    
+                    <div class="highlight-section">
+                        <h3><i class="fas fa-star"></i> ¿Por qué UI/UX Destaca?</h3>
+                        <p class="highlight-text">Diseño minimalista con carruseles de fotos HD, filtros por "entrega en 30 min" y mapa interactivo en tiempo real. UX intuitiva para upsell (agrega extras con un swipe).</p>
+                        <span class="badge ai-badge">Top en 2025 por personalización AI</span>
+                    </div>
+                    
+                    <div class="link-section">
+                        <a href="https://doordash.com" class="website-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> doordash.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uber Eats -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="platform-name">
+                            <i class="fas fa-car"></i>
+                            Uber Eats
+                        </div>
+                        <div class="platform-category">Delivery de fast food y cadenas</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">Delivery de fast food y cadenas (McDonald's, etc.), integrado con Uber para logística. Fuerte en Buenos Aires.</p>
+                    
+                    <div class="highlight-section">
+                        <h3><i class="fas fa-star"></i> ¿Por qué UI/UX Destaca?</h3>
+                        <p class="highlight-text">Interfaz limpia con dark mode, búsqueda predictiva y "carrito flotante" que reduce clics en 40%. Animaciones fluidas para tracking; accesible y responsive en web.</p>
+                    </div>
+                    
+                    <div class="link-section">
+                        <a href="https://ubereats.com" class="website-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> ubereats.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deliveroo -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="platform-name">
+                            <i class="fas fa-leaf"></i>
+                            Deliveroo
+                        </div>
+                        <div class="platform-category">Comida rápida premium</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">Enfocada en comida rápida premium (sushi, burgers gourmet). Expansión en LATAM, incluyendo Argentina.</p>
+                    
+                    <div class="highlight-section">
+                        <h3><i class="fas fa-star"></i> ¿Por qué UI/UX Destaca?</h3>
+                        <p class="highlight-text">UX "editions" con temas visuales por cocina, checkout de 1 página y notificaciones push-like en web. Elogiada por accesibilidad (WCAG-compliant) y carga <2s.</p>
+                    </div>
+                    
+                    <div class="link-section">
+                        <a href="https://deliveroo.com" class="website-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> deliveroo.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Domino's AnyWare -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="platform-name">
+                            <i class="fas fa-pizza-slice"></i>
+                            Domino's AnyWare
+                        </div>
+                        <div class="platform-category">Pizzas y fast food personalizable</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="description">Web/app para pizzas y fast food personalizable, con ordenes recurrentes. Disponible en Argentina.</p>
+                    
+                    <div class="highlight-section">
+                        <h3><i class="fas fa-star"></i> ¿Por qué UI/UX Destaca?</h3>
+                        <p class="highlight-text">Personalización interactiva (arrastrar toppings en 3D), UI gamificada con timers y "pizza tracker" visual. Mejor UX para customización en 2025.</p>
+                    </div>
+                    
+                    <div class="link-section">
+                        <a href="https://dominos.com.ar" class="website-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> dominos.com.ar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Comparación de plataformas de delivery - Análisis UX/UI 2025 | Basado en tendencias actuales del mercado argentino</p>
+        </div>
+    </div>
+</body>
+</html>
+

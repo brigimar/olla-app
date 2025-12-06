@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OllaApp - Comida casera de tu barrio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --tomato: #FF5533;
+            --coral: #FF7755;
+            --peach: #FFB399;
+            --olive: #6E7F4F;
+            --cream: #FFF4E9;
+            --graphite: #1A1A1C;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.12);
+            --shadow-lg: 0 16px 40px rgba(0,0,0,0.15);
+            --radius-sm: 16px;
+            --radius-md: 20px;
+            --radius-lg: 24px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--cream);
+            color: var(--graphite);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+            padding: 12px 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--graphite);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--tomato) 0%, var(--coral) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .menu-icon {
+            display: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--graphite);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--tomato);
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid var(--olive);
+            border-radius: 50px;
+            font-size: 0.95rem;
+            background: white;
+            transition: var(--transition);
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--tomato);
+            box-shadow: 0 0 0 3px rgba(255, 85, 51, 0.2);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--tomato);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            background: var(--coral);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--olive);
+            border: 2px solid var(--olive);
+        }
+
+        .btn-secondary:hover {
+            background: var(--olive);
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(26, 26, 28, 0.7), rgba(26, 26, 28, 0.7)), 
+                        url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -1;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.2rem;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--peach);
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .search-suggestions {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 20px;
+            border-radius: 50px;
+            margin: 0 auto;
+            max-width: 500px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--olive);
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* How it Works */
+        .how-it-works {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            color: var(--graphite);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--tomato);
+            border-radius: 2px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+            padding: 25px;
+            background: var(--cream);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--tomato);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin: 0 auto 15px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .step h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--graphite);
+        }
+
+        .step p {
+            color: var(--olive);
+            font-size: 0.95rem;
+        }
+
+        /* Communities Section */
+        .communities {
+            padding: 60px 0;
+            background: var(--cream);
+        }
+
+        .communities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .community-card {
+            height: 200px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .community-card:hover {
+            transform: scale(1.03);
+            box-shadow: var(--shadow-md);
+        }
+
+        .community-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .community-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .community-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(26, 26, 28, 0.85);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Neighborhood Feed */
+        .neighborhood-feed {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .feed-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--graphite);
+        }
+
+        .chefs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .chef-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .chef-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chef-image {
+            height: 150px;
+            overflow: hidden;
+        }
+
+        .chef-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .chef-card:hover .chef-image img {
+            transform: scale(1.05);
+        }
+
+        .chef-content {
+            padding: 20px;
+        }
+
+        .chef-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--graphite);
+        }
+
+        .chef-cuisine {
+            color: var(--tomato);
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .chef-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .rating {
+            color: var(--peach);
+            font-weight: 600;
+        }
+
+        .distance {
+            color: var(--olive);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .delivery-radius {
+            display: inline-block;
+            background: var(--olive);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .chef-description {
+            color: var(--olive);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .chef-button {
+            width: 100%;
+            padding: 8px;
+            background: var(--tomato);
+            color: white;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .chef-button:hover {
+            background: var(--coral);
+        }
+
+        /* Dish Cards */
+        .dish-cards {
+            padding: 60px 0;
+            background: var(--cream);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .dish-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .dish-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .dish-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .dish-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .dish-card:hover .dish-image img {
+            transform: scale(1.05);
+        }
+
+        .dish-content {
+            padding: 20px;
+        }
+
+        .dish-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--graphite);
+        }
+
+        .dish-description {
+            color: var(--olive);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .dish-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--tomato);
+            margin-bottom: 10px;
+        }
+
+        .dish-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+        }
+
+        .dish-rating {
+            color: var(--peach);
+            font-weight: 600;
+        }
+
+        .dish-location {
+            color: var(--olive);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dish-badge {
+            display: inline-block;
+            background: var(--olive);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .dish-button {
+            width: 100%;
+            padding: 8px;
+            background: var(--tomato);
+            color: white;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .dish-button:hover {
+            background: var(--coral);
+        }
+
+        /* Seller Profile */
+        .seller-profile {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--graphite);
+        }
+
+        .profile-cuisine {
+            color: var(--tomato);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .profile-bio {
+            color: var(--olive);
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--tomato);
+        }
+
+        .stat-label {
+            color: var(--olive);
+            font-size: 0.85rem;
+        }
+
+        .profile-menu {
+            margin-bottom: 30px;
+        }
+
+        .menu-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--graphite);
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid var(--cream);
+            transition: var(--transition);
+        }
+
+        .menu-item:hover {
+            background: var(--cream);
+        }
+
+        .menu-item-name {
+            font-weight: 600;
+        }
+
+        .menu-item-price {
+            color: var(--tomato);
+            font-weight: 600;
+        }
+
+        .profile-hours {
+            margin-bottom: 30px;
+        }
+
+        .hours-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--graphite);
+        }
+
+        .hours-list {
+            list-style: none;
+        }
+
+        .hours-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid var(--cream);
+        }
+
+        .profile-reviews {
+            margin-bottom: 30px;
+        }
+
+        .reviews-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--graphite);
+        }
+
+        .review {
+            background: var(--cream);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .review-author {
+            font-weight: 600;
+        }
+
+        .review-rating {
+            color: var(--peach);
+            font-weight: 600;
+        }
+
+        .review-text {
+            color: var(--olive);
+            font-size: 0.9rem;
+        }
+
+        .profile-action {
+            width: 100%;
+            padding: 12px;
+            background: var(--tomato);
+            color: white;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: var(--transition);
+            display: block;
+        }
+
+        .profile-action:hover {
+            background: var(--coral);
+        }
+
+        /* Checkout Flow */
+        .checkout {
+            padding: 60px 0;
+            background: var(--cream);
+        }
+
+        .checkout-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .checkout-step {
+            margin-bottom: 30px;
+        }
+
+        .checkout-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--graphite);
+        }
+
+        .checkout-form {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--graphite);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--olive);
+            border-radius: var(--radius-md);
+ 
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--tomato);
+            box-shadow: 0 0 0 3px rgba(255, 85, 51, 0.2);
+        }
+
+        .checkout-summary {
+            background: var(--cream);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--graphite);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .summary-total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--tomato);
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid var(--olive);
+        }
+
+        .payment-options {
+            margin-bottom: 20px;
+        }
+
+        .payment-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--graphite);
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 2px solid var(--olive);
+            border-radius: var(--radius-md);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .payment-option:hover {
+            background: var(--cream);
+        }
+
+        .payment-option.selected {
+            border-color: var(--tomato);
+            background: rgba(255, 85, 51, 0.1);
+        }
+
+        .payment-icon {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .checkout-button {
+            width: 100%;
+            padding: 12px;
+            background: var(--tomato);
+            color: white;
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: var(--transition);
+            display: block;
+        }
+
+        .checkout-button:hover {
+            background: var(--coral);
+        }
+
+        /* Map View */
+        .map-view {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .map-container {
+            height: 400px;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--peach) 100%);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 28, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .map-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .map-subtitle {
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .map-marker {
+            width: 20px;
+            height: 20px;
+            background: var(--tomato);
+            border-radius: 50%;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(255, 85, 51, 0.5);
+        }
+
+        .map-marker:nth-child(1) { top: 30%; left: 40%; }
+        .map-marker:nth-child(2) { top: 50%; left: 60%; }
+        .map-marker:nth-child(3) { top: 70%; left: 30%; }
+        .map-marker:nth-child(4) { top: 40%; left: 70%; }
+
+        /* Community Section */
+        .community {
+            padding: 60px 0;
+            background: var(--cream);
+        }
+
+        .community-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--graphite);
+        }
+
+        .community-description {
+            text-align: center;
+            color: var(--olive);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .community-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .community-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .community-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .community-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .community-card:hover .community-image img {
+            transform: scale(1.05);
+        }
+
+        .community-content {
+            padding: 20px;
+        }
+
+        .community-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--graphite);
+        }
+
+        .community-location {
+            color: var(--olive);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .community-description-small {
+            color: var(--olive);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .community-button {
+            width: 100%;
+            padding: 8px;
+            background: var(--tomato);
+            color: white;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .community-button:hover {
+            background: var(--coral);
+        }
+
+        /* Mobile Footer Navigation */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid var(--olive);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.08);
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            color: var(--olive);
+            font-size: 0.8rem;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--tomato);
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .search-bar {
+                margin: 0 10px;
+                max-width: 100%;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-image {
+                margin: 0 auto;
+            }
+            
+            .checkout-container {
+                margin: 0 10px;
+                width: calc(100% - 20px);
+            }
+            
+            .mobile-nav {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header-content {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .search-bar {
+                order: 3;
+                margin: 10px 0 0 0;
+                max-width: 100%;
+            }
+            
+            .nav-links {
+                order: 2;
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .menu-icon {
+                display: block;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">O</div>
+                    <span>OllaApp</span>
+                </div>
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="¿Qué querés comer hoy?">
+                </div>
+                <div class="nav-links">
+                    <a href="#home">Inicio</a>
+                    <a href="#explore">Explorar</a>
+                    <a href="#orders">Pedidos</a>
+                    <a href="#profile">Perfil</a>
+                </div>
+                <div class="menu-icon">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1>Comida real de gente real</h1>
+                <p>Descubrí sabores auténticos y conectá con cocineros locales en CABA y AMBA.</p>
+                <div class="hero-buttons">
+                    <a href="#explore" class="btn btn-primary">
+                        <i class="fas fa-map-marker-alt"></i> Explorar platos cerca de mí
+                    </a>
+                    <a href="#become-chef" class="btn btn-secondary">
+                        <i class="fas fa-user-chef"></i> Convertirme en cocinero
+                    </a>
+                </div>
+                <div class="search-suggestions">
+                    <span id="suggestion-text">Empanadas salteñas • Guisos tradicionales • Milanesas caseras</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">¿Cómo funciona?</h2>
+            <div class="steps">
+                <div class="step fade-in-up delay-1">
+                    <div class="step-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Descubrí cocineros</h3>
+                    <p>Explorá una variedad de cocineros caseros cerca de ti.</p>
+                </div>
+                <div class="step fade-in-up delay-2">
+                    <div class="step-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>Reservá tu plato</h3>
+                    <p>Seleccioná y reservá platos auténticos.</p>
+                </div>
+                <div class="step fade-in-up delay-3">
+                    <div class="step-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3>Retirá o recibí</h3>
+                    <p>Retirá tu pedido o recibilo en casa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Communities Section -->
+    <section class="communities">
+        <div class="container">
+            <h2 class="section-title">Cocina de nuestras comunidades</h2>
+            <div class="communities-grid">
+                <div class="community-card">
+                    <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Comida peruana">
+                    <div class="community-label">Peruana</div>
+                </div>
+                <div class="community-card">
+                    <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Comida boliviana">
+                    <div class="community-label">Boliviana</div>
+                </div>
+                <div class="community-card">
+                    <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13083?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Comida paraguaya">
+                    <div class="community-label">Paraguaya</div>
+                </div>
+                <div class="community-card">
+                    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Comida criolla">
+                    <div class="community-label">Criolla</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Neighborhood Feed -->
+    <section class="neighborhood-feed">
+        <div class="container">
+            <h2 class="feed-title">Cocineros caseros cerca tuyo</h2>
+            <div class="chefs-grid">
+                <div class="chef-card">
+                    <div class="chef-image">
+                        <img src="https://images.unsplash.com/photo-1563379926898-03c85951d812?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Abuela Marta">
+                    </div>
+                    <div class="chef-content">
+                        <h3 class="chef-name">Abuela Marta</h3>
+                        <div class="chef-cuisine">Cocina paraguaya</div>
+                        <div class="chef-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i> 4.9
+                            </div>
+                            <div class="distance">
+                                <i class="fas fa-map-marker-alt"></i> 0.8 km
+                            </div>
+                        </div>
+                        <div class="chef-description">
+                            Especialista en chipa, sopa paraguaya y asado con cuero. 25 años cocinando con amor.
+                        </div>
+                        <div class="delivery-radius">Entrega en 2km</div>
+                        <a href="#" class="chef-button">Ver menú</a>
+                    </div>
+                </div>
+                <div class="chef-card">
+                    <div class="chef-image">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Doña Rosa">
+                    </div>
+                    <div class="chef-content">
+                        <h3 class="chef-name">Doña Rosa</h3>
+                        <div class="chef-cuisine">Pizzas caseras</div>
+                        <div class="chef-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i> 4.8
+                            </div>
+                            <div class="distance">
+                                <i class="fas fa-map-marker-alt"></i> 0.5 km
+                            </div>
+                        </div>
+                        <div class="chef-description">
+                            Pizza a la piedra con masa fermentada 48 horas. La mejor del barrio de Belgrano.
+                        </div>
+                        <div class="delivery-radius">Entrega en 1.5km</div>
+                        <a href="#" class="chef-button">Ver menú</a>
+                    </div>
+                </div>
+                <div class="chef-card">
+                    <div class="chef-image">
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Familia López">
+                    </div>
+                    <div class="chef-content">
+                        <h3 class="chef-name">Familia López</h3>
+                        <div class="chef-cuisine">Comidas tradicionales</div>
+                        <div class="chef-meta">
+                            <div class="rating">
+                                <i class="fas fa-star"></i> 4.7
+                            </div>
+                            <div class="distance">
+                                <i class="fas fa-map-marker-alt"></i> 1.2 km
+                            </div>
+                        </div>
+                        <div class="chef-description">
+                            Guisos, milanesas y empanadas criollas. Recetas que pasan de generación en generación.
+                        </div>
+                        <div class="delivery-radius">Entrega en 2km</div>
+                        <a href="#" class="chef-button">Ver menú</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dish Cards -->
+    <section class="dish-cards">
+        <div class="container">
+            <h2 class="section-title">Platos destacados</h2>
+            <div class="cards-grid">
+                <div class="dish-card">
+                    <div class="dish-image">
+                        <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13083?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Empanadas salteñas">
+                    </div>
+                    <div class="dish-content">
+                        <span class="dish-badge">Hecho en tu barrio</span>
+                        <h3 class="dish-title">Empanadas Salteñas</h3>
+                        <p class="dish-description">Rellenas con carne, papas, huevo y aceitunas. Horneadas al momento.</p>
+                        <div class="dish-price">$1200</div>
+                        <div class="dish-meta">
+                            <div class="dish-rating">
+                                <i class="fas fa-star"></i> 4.9
+                            </div>
+                            <div class="dish-location">
+                                <i class="fas fa-map-marker-alt"></i> 0.8 km
+                            </div>
+                        </div>
+                        <a href="#" class="dish-button">Reservar</a>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <div class="dish-image">
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Guiso de lentejas">
+                    </div>
+                    <div class="dish-content">
+                        <span class="dish-badge">Hecho en tu barrio</span>
+                        <h3 class="dish-title">Guiso de Lentejas</h3>
+                        <p class="dish-description">Receta de abuela con verduras frescas y especias caseras. Servido caliente.</p>
+                        <div class="dish-price">$850</div>
+                        <div class="dish-meta">
+                            <div class="dish-rating">
+                                <i class="fas fa-star"></i> 4.8
+                            </div>
+                            <div class="dish-location">
+                                <i class="fas fa-map-marker-alt"></i> 1.2 km
+                            </div>
+                        </div>
+                        <a href="#" class="dish-button">Reservar</a>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <div class="dish-image">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Pizza a la piedra">
+                    </div>
+                    <div class="dish-content">
+                        <span class="dish-badge">Hecho en tu barrio</span>
+                        <h3 class="dish-title">Pizza a la Piedra</h3>
+                        <p class="dish-description">Masa fermentada 48h con ingredientes frescos y mozzarella artesanal.</p>
+                        <div class="dish-price">$2200</div>
+                        <div class="dish-meta">
+                            <div class="dish-rating">
+                                <i class="fas fa-star"></i> 4.9
+                            </div>
+                            <div class="dish-location">
+                                <i class="fas fa-map-marker-alt"></i> 0.5 km
+                            </div>
+                        </div>
+                        <a href="#" class="dish-button">Reservar</a>
+                    </div>
+                </div>
+                <div class="dish-card">
+                    <div class="dish-image">
+                        <img src="https://images.unsplash.com/photo-1563379926898-03c85951d812?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Locro argentino">
+                    </div>
+                    <div class="dish-content">
+                        <span class="dish-badge">Hecho en tu barrio</span>
+                        <h3 class="dish-title">Locro Argentino</h3>
+                        <p class="dish-description">Preparado para fechas patrias con maíz, carne y verduras de estación.</p>
+                        <div class="dish-price">$950</div>
+                        <div class="dish-meta">
+                            <div class="dish-rating">
+                                <i class="fas fa-star"></i> 4.7
+                            </div>
+                            <div class="dish-location">
+                                <i class="fas fa-map-marker-alt"></i> 1.5 km
+                            </div>
+                        </div>
+                        <a href="#" class="dish-button">Reservar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seller Profile -->
+    <section class="seller-profile">
+        <div class="container">
+            <h2 class="section-title">Perfil de cocinero</h2>
+            <div class="profile-header">
+                <div class="profile-image">
+                    <img src="https://images.unsplash.com/photo-1563379926898-03c85951d812?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Abuela Marta">
+                </div>
+                <div class="profile-info">
+                    <h2 class="profile-name">Abuela Marta</h2>
+                    <div class="profile-cuisine">Cocina paraguaya</div>
+                    <p class="profile-bio">
+                        Especialista en chipa, sopa paraguaya y asado con cuero. 25 años cocinando con amor en el barrio de Palermo.
+                    </p>
+                    <div class="profile-stats">
+                        <div class="stat">
+                            <div class="stat-value">127</div>
+                            <div class="stat-label">Pedidos</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4.9</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">25</div>
+                            <div class="stat-label">Años</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-menu">
+                <h3 class="menu-title">Menú disponible</h3>
+                <div class="menu-item">
+                    <div class="menu-item-name">Chipa</div>
+                    <div class="menu-item-price">$800</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-name">Sopa Paraguaya</div>
+                    <div class="menu-item-price">$950</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-name">Asado con Cuero</div>
+                    <div class="menu-item-price">$1200</div>
+                </div>
+                <div class="menu-item">
+                    <div class="menu-item-name">Mbeju</div>
+                    <div class="menu-item-price">$750</div>
+                </div>
+            </div>
+            
+            <div class="profile-hours">
+                <h3 class="hours-title">Horarios de entrega</h3>
+                <ul class="hours-list">
+                    <li class="hours-item">
+                        <span>Lunes a Viernes</span>
+                        <span>12:00 - 20:00</span>
+                    </li>
+                    <li class="hours-item">
+                        <span>Sábados</span>
+                        <span>10:00 - 18:00</span>
+                    </li>
+                    <li class="hours-item">
+                        <span>Domingos</span>
+                        <span>Cerrado</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="profile-reviews">
+                <h3 class="reviews-title">Reseñas</h3>
+                <div class="review">
+                    <div class="review-header">
+                        <div class="review-author">Juan P.</div>
+                        <div class="review-rating">
+                            <i class="fas fa-star"></i> 5.0
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        La mejor sopa paraguaya que probé en Buenos Aires. ¡Como la de mi abuela!
+                    </div>
+                </div>
+                <div class="review">
+                    <div class="review-header">
+                        <div class="review-author">María G.</div>
+                        <div class="review-rating">
+                            <i class="fas fa-star"></i> 4.8
+                        </div>
+                    </div>
+                    <div class="review-text">
+                        El chipa es increíble, fresco y con ese sabor auténtico que solo las abuelas saben hacer.
+                    </div>
+                </div>
+            </div>
+            
+            <a href="#" class="profile-action">Hacer pedido</a>
+        </div>
+    </section>
+
+    <!-- Checkout Flow -->
+    <section class="checkout">
+        <div class="container">
+            <h2 class="section-title">Checkout</h2>
+            <div class="checkout-container">
+                <div class="checkout-step">
+                    <h3 class="checkout-title">Detalles de entrega</h3>
+                    <div class="checkout-form">
+                        <div class="form-group">
+                            <label class="form-label">Nombre completo</label>
+                            <input type="text" class="form-input" value="Ana García">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Dirección</label>
+                            <input type="text" class="form-input" value="Av. Corrientes 1234, CABA">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Teléfono</label>
+                            <input type="tel" class="form-input" value="+54 11 1234-5678">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Instrucciones de entrega</label>
+                            <input type="text" class="form-input" placeholder="Ej: Dejar en portería">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checkout-step">
+                    <h3 class="checkout-title">Resumen de pedido</h3>
+                    <div class="checkout-summary">
+                        <div class="summary-title">Tu pedido</div>
+                        <div class="summary-item">
+                            <span>Empanadas Salteñas x 4</span>
+                            <span>$1200</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Guiso de Lentejas</span>
+                            <span>$850</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Delivery</span>
+                            <span>$150</span>
+                        </div>
+                        <div class="summary-total">
+                            Total: $2200
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="checkout-step">
+                    <h3 class="checkout-title">Método de pago</h3>
+                    <div class="payment-options">
+                        <div class="payment-title">Seleccioná tu método de pago</div>
+                        <div class="payment-option selected">
+                            <div class="payment-icon"><i class="fab fa-cc-mastercard"></i></div>
+                            <span>Tarjeta de crédito</span>
+                        </div>
+                        <div class="payment-option">
+                            <div class="payment-icon"><i class="fab fa-cc-paypal"></i></div>
+                            <span>PayPal</span>
+                        </div>
+                        <div class="payment-option">
+                            <div class="payment-icon"><i class="fab fa-cc-apple-pay"></i></div>
+                            <span>Apple Pay</span>
+                        </div>
+                        <div class="payment-option">
+                            <div class="payment-icon"><i class="fas fa-wallet"></i></div>
+                            <span>Mercado Pago</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="#" class="checkout-button">Confirmar pedido</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map View -->
+    <section class="map-view">
+        <div class="container">
+            <h2 class="section-title">Mapa de cocineros</h2>
+            <div class="map-container">
+                <div class="map-overlay">
+                    <h3 class="map-title">Cocineros cerca tuyo</h3>
+                    <p class="map-subtitle">Encontrá cocineros en tu zona con entrega disponible</p>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-map-marker-alt"></i> Ver en mapa
+                    </button>
+                </div>
+                <div class="map-marker"></div>
+                <div class="map-marker"></div>
+                <div class="map-marker"></div>
+                <div class="map-marker"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="community">
+        <div class="container">
+            <h2 class="community-title">Cocineros de tu barrio</h2>
+            <p class="community-description">
+                Conocé a las personas detrás de cada plato. Cada cocinero tiene una historia única para compartir.
+            </p>
+            <div class="community-grid">
+                <div class="community-card">
+                    <div class="community-image">
+                        <img src="https://images.unsplash.com/photo-1563379926898-03c85951d812?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Abuela Marta">
+                    </div>
+                    <div class="community-content">
+                        <h3 class="community-name">Abuela Marta</h3>
+                        <div class="community-location">Palermo, CABA</div>
+                        <p class="community-description-small">
+                            Cocina paraguaya auténtica con recetas de familia. ¡Como comer en casa de tu abuela!
+                        </p>
+                        <a href="#" class="community-button">Ver perfil</a>
+                    </div>
+                </div>
+                <div class="community-card">
+                    <div class="community-image">
+                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Doña Rosa">
+                    </div>
+                    <div class="community-content">
+                        <h3 class="community-name">Doña Rosa</h3>
+                        <div class="community-location">Belgrano, CABA</div>
+                        <p class="community-description-small">
+                            Pizza a la piedra con masa fermentada 48h. La mejor del barrio.
+                        </p>
+                        <a href="#" class="community-button">Ver perfil</a>
+                    </div>
+                </div>
+                <div class="community-card">
+                    <div class="community-image">
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Familia López">
+                    </div>
+                    <div class="community-content">
+                        <h3 class="community-name">Familia López</h3>
+                        <div class="community-location">Caballito, CABA</div>
+                        <p class="community-description-small">
+                            Guisos, milanesas y empanadas criollas. Recetas que pasan de generación en generación.
+                        </p>
+                        <a href="#" class="community-button">Ver perfil</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mobile Footer Navigation -->
+    <div class="mobile-nav">
+        <a href="#home" class="nav-item active">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <span>Inicio</span>
+        </a>
+        <a href="#explore" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-search"></i></div>
+            <span>Explorar</span>
+        </a>
+        <a href="#orders" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-receipt"></i></div>
+            <span>Pedidos</span>
+        </a>
+        <a href="#profile" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-user"></i></div>
+            <span>Perfil</span>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <footer style="background: var(--graphite); color: white; padding: 40px 0 20px;">
+        <div class="container">
+            <div style="display: flex; flex-wrap: wrap; gap: 40px; margin-bottom: 30px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
+                        <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--tomato) 0%, var(--coral) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1rem;">O</div>
+                        <span style="font-size: 1.3rem; font-weight: 800;">OllaApp</span>
+                    </div>
+                    <p style="color: #b0b0b0; line-height: 1.8; margin-top: 15px;">
+                        El marketplace de comidas caseras que conecta cocineros talentosos con vecinos que buscan autenticidad en CABA y AMBA.
+                    </p>
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <a href="#" style="color: #b0b0b0; font-size: 1.2rem; transition: color 0.3s ease;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: #b0b0b0; font-size: 1.2rem; transition: color 0.3s ease;"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" style="color: #b0b0b0; font-size: 1.2rem; transition: color 0.3s ease;"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" style="color: #b0b0b0; font-size: 1.2rem; transition: color 0.3s ease;"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: white;">Para compradores</h3>
+                    <ul style="list-style: none; color: #b0b0b0; line-height: 2;">
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Cómo comprar</a></li>
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Cocineros cerca tuyo</a></li>
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Comidas regionales</a></li>
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Seguridad y confianza</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: white;">Para cocineros</h3>
+                    <ul style="list-style: none; color: #b0b0b0; line-height: 2;">
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Vendé tu comida</a></li>
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Requisitos</a></li>
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Herramientas</a></li>
+                        <li><a href="#" style="color: #b0b0b0; text-decoration: none; transition: color 0.3s ease;">Soporte</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: white;">Contacto</h3>
+                    <ul style="list-style: none; color: #b0b0b0; line-height: 2;">
+                        <li><i class="fas fa-envelope" style="margin-right: 8px;"></i> hola@ollaapp.com.ar</li>
+                        <li><i class="fas fa-phone" style="margin-right: 8px;"></i> +54 11 1234-5678</li>
+                        <li><i class="fas fa-map-marker-alt" style="margin-right: 8px;"></i> Buenos Aires, Argentina</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid #333; padding-top: 20px; text-align: center; color: #888; font-size: 0.9rem;">
+                © 2025 OllaApp - Todos los derechos reservados. Hecho con ❤️ en Buenos Aires, Argentina.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple animation trigger
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in-up');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            fadeElements.forEach(el => {
+                observer.observe(el);
+            });
+            
+            // Rotate suggestions
+            const suggestions = [
+                "Empanadas salteñas",
+                "Guisos tradicionales",
+                "Milanesas caseras",
+                "Pizza a la piedra",
+                "Locro argentino",
+                "Postres criollos"
+            ];
+            let currentSuggestion = 0;
+            const suggestionElement = document.getElementById('suggestion-text');
+            
+            setInterval(() => {
+                currentSuggestion = (currentSuggestion + 1) % suggestions.length;
+                suggestionElement.textContent = suggestions[currentSuggestion];
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
+

@@ -3,5 +3,10 @@
     "build": "next build",
     "start": "next start",
     "dev": "next dev"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0"
   }
 }

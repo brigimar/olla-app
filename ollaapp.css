@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SABOR BARRIAL - Marketplace de Comidas Caseras</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-orange: #ff6b35;
+            --primary-coral: #ff8c69;
+            --primary-teal: #4ecdc4;
+            --primary-dark: #2c3e50;
+            --primary-light: #f8f9fa;
+            --secondary-light: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-medium: #4a5568;
+            --text-light: #718096;
+            --success: #48bb78;
+            --border-radius: 24px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --shadow-hover: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fffaf7 0%, #f0f7ff 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            padding: 30px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary-orange);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-medium);
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-orange);
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary-orange) 0%, var(--primary-coral) 100%);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary-orange) 50%, var(--primary-teal) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-medium);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            font-weight: 400;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .secondary-button {
+            background: transparent;
+            border: 3px solid var(--primary-orange);
+            color: var(--primary-orange);
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: background 0.3s ease;
+        }
+
+        .secondary-button:hover {
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* Problem/Solution Section */
+        .problem-solution {
+            padding: 80px 0;
+            background: white;
+            border-radius: var(--border-radius);
+            margin: 40px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            color: var(--primary-dark);
+        }
+
+        .problem-solution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .problem-box, .solution-box {
+            padding: 30px;
+            border-radius: var(--border-radius);
+        }
+
+        .problem-box {
+            background: linear-gradient(135deg, #fff5f3 0%, #fff8f0 100%);
+            border: 2px solid #ffebee;
+        }
+
+        .solution-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #f5f0ff 100%);
+            border: 2px solid #e6f7ff;
+        }
+
+        .problem-solution h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .problem-solution h3 i {
+            font-size: 1.5rem;
+        }
+
+        .problem-box h3 {
+            color: #d32f2f;
+        }
+
+        .solution-box h3 {
+            color: var(--success);
+        }
+
+        .problem-solution p {
+            font-size: 1.1rem;
+            color: var(--text-medium);
+            margin-bottom: 15px;
+        }
+
+        /* App Screens Section */
+        .app-screens {
+            padding: 80px 0;
+        }
+
+        .screens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .screen-card {
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .screen-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .screen-image {
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary-orange), var(--primary-teal));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .screen-content {
+            padding: 25px;
+        }
+
+        .screen-content h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-dark);
+        }
+
+        .screen-content p {
+            color: var(--text-medium);
+            font-size: 1rem;
+        }
+
+        /* Visual Identity */
+        .visual-identity {
+            padding: 80px 0;
+            background: white;
+            border-radius: var(--border-radius);
+            margin: 40px 0;
+            box-shadow: var(--shadow);
+        }
+
+        .colors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .color-item {
+            text-align: center;
+        }
+
+        .color-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+        }
+
+        .color-orange { background: var(--primary-orange); }
+        .color-coral { background: var(--primary-coral); }
+        .color-teal { background: var(--primary-teal); }
+        .color-dark { background: var(--primary-dark); }
+
+        .color-name {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .color-hex {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Use Cases */
+        .use-cases {
+            padding: 80px 0;
+        }
+
+        .use-case {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .use-case.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .use-case-image {
+            flex: 1;
+            min-height: 300px;
+            background: linear-gradient(45deg, var(--primary-orange), var(--primary-teal));
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .use-case-content {
+            flex: 1;
+        }
+
+        .use-case-content h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+        }
+
+        .use-case-content p {
+            color: var(--text-medium);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Community Section */
+        .community {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .chefs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .chef-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .chef-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-orange), var(--primary-teal));
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .chef-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+
+        .chef-cuisine {
+            color: var(--primary-orange);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .chef-description {
+            color: var(--text-medium);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #b0bec5;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #4a5568;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .problem-solution-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .use-case, .use-case.reverse {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .use-case-content h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-coral));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-utensils"></i>
+                    <span>SABOR BARRIAL</span>
+                </div>
+                <nav class="nav-links">
+                    <a href="#screens">App</a>
+                    <a href="#community">Comunidad</a>
+                    <a href="#how-it-works">Cómo funciona</a>
+                    <a href="#about">Sobre nosotros</a>
+                </nav>
+                <a href="#get-started" class="cta-button">Empieza ahora</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Comida real de gente real</h1>
+            <p>Descubrí y comprá comidas caseras hechas por tus vecinos. Desde guisos tradicionales hasta platos étnicos y regionales, todo preparado con amor en cocinas de barrio.</p>
+            <div class="hero-buttons">
+                <a href="#download" class="cta-button">Descargar App</a>
+                <a href="#sell" class="secondary-button">Vendé tu comida</a>
+            </div>
+            <div class="search-bar">
+                <div style="background: white; padding: 15px; border-radius: 50px; max-width: 500px; margin: 0 auto; box-shadow: var(--shadow);">
+                    <p style="color: var(--text-medium); text-align: center; font-weight: 500;">¿Qué querés comer hoy?</p>
+                    <p style="color: var(--primary-orange); text-align: center; font-size: 0.9rem; margin-top: 5px; font-weight: 600;">Guiso de lentejas • Empanadas salteñas • Milanesas caseras • Postres criollos</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem/Solution -->
+    <section class="problem-solution" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">El problema y nuestra solución</h2>
+            <div class="problem-solution-grid">
+                <div class="problem-box">
+                    <h3><i class="fas fa-exclamation-triangle"></i> El Problema</h3>
+                    <p><strong>Cocineras talentosas sin visibilidad:</strong> Abuelas, amas de casa y migrantes preparan comidas increíbles pero no tienen canales para venderlas.</p>
+                    <p><strong>Vecinos buscando autenticidad:</strong> Cada vez más personas quieren comida casera real, no comida industrial de delivery tradicional.</p>
+                    <p><strong>Economía barrial estancada:</strong> Oportunidades económicas reales desperdiciadas en cada cocina de barrio.</p>
+                </div>
+                <div class="solution-box">
+                    <h3><i class="fas fa-check-circle"></i> Nuestra Solución</h3>
+                    <p><strong>Marketplace especializado:</strong> Plataforma diseñada exclusivamente para comidas caseras y pequeños productores locales.</p>
+                    <p><strong>Confianza y seguridad:</strong> Verificación de cocineros, reseñas reales y sistema de pagos integrado con Mercado Pago.</p>
+                    <p><strong>Oportunidad económica:</strong> Herramientas simples para que cualquier persona convierta su cocina en un pequeño negocio.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Screens -->
+    <section class="app-screens" id="screens">
+        <div class="container">
+            <h2 class="section-title">Experiencia de usuario</h2>
+            <div class="screens-grid">
+                <div class="screen-card">
+                    <div class="screen-image">Feed de barrio</div>
+                    <div class="screen-content">
+                        <h3>Cocineros cerca tuyo</h3>
+                        <p>Descubrí cocineros caseros en tu zona. Filtra por cocina, distancia o tipo de comida.</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">Tarjetas de comida</div>
+                    <div class="screen-content">
+                        <h3>Platos auténticos</h3>
+                        <p>Fotos reales, ingredientes detallados y precios justos. ¡Como comer en casa de tu abuela!</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">Perfil de cocinero</div>
+                    <div class="screen-content">
+                        <h3>Perfiles confiables</h3>
+                        <p>Conocé a quién prepara tu comida: historias, especialidades y reseñas de otros vecinos.</p>
+                    </div>
+                </div>
+                <div class="screen-card">
+                    <div class="screen-image">Checkout simple</div>
+                    <div class="screen-content">
+                        <h3>Pago seguro</h3>
+                        <p>Checkout en 3 pasos con Mercado Pago. Sin tarjetas guardadas, sin complicaciones.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Identity -->
+    <section class="visual-identity">
+        <div class="container">
+            <h2 class="section-title">Identidad visual</h2>
+            <p style="text-align: center; color: var(--text-medium); margin-bottom: 40px; font-size: 1.1rem;">Una paleta cálida que transmite alegría, confianza y autenticidad</p>
+            <div class="colors-grid">
+                <div class="color-item">
+                    <div class="color-preview color-orange"></div>
+                    <div class="color-name">Naranja vibrante</div>
+                    <div class="color-hex">#ff6b35</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-preview color-coral"></div>
+                    <div class="color-name">Coral cálido</div>
+                    <div class="color-hex">#ff8c69</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-preview color-teal"></div>
+                    <div class="color-name">Verde agua</div>
+                    <div class="color-hex">#4ecdc4</div>
+                </div>
+                <div class="color-item">
+                    <div class="color-preview color-dark"></div>
+                    <div class="color-name">Azul oscuro</div>
+                    <div class="color-hex">#2c3e50</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="use-cases">
+        <div class="container">
+            <h2 class="section-title">Casos de uso</h2>
+            
+            <div class="use-case" id="buy">
+                <div class="use-case-image">Compra a tus vecinos</div>
+                <div class="use-case-content">
+                    <h2>Comprá comida casera auténtica</h2>
+                    <p>Descubrí el guiso de lentejas de Doña Marta del barrio de Palermo, las empanadas salteñas de la familia López en Caballito, o el locro de la abuela Rosa en San Telmo.</p>
+                    <p>Todo preparado con ingredientes frescos, recetas tradicionales y el cariño que solo una cocina casera puede dar.</p>
+                    <div class="badge">¡Como comer en casa de tu abuela!</div>
+                </div>
+            </div>
+
+            <div class="use-case reverse" id="sell">
+                <div class="use-case-image">Vendé tu cocina</div>
+                <div class="use-case-content">
+                    <h2>Convertí tu cocina en negocio</h2>
+                    <p>Si preparás comidas caseras, tenés una oportunidad real de generar ingresos. Desde platos diarios hasta comidas especiales para fechas patrias o celebraciones.</p>
+                    <p>Nuestra plataforma te da visibilidad, herramientas de gestión y un sistema de pagos seguro y confiable.</p>
+                    <div class="badge">Oportunidad económica real para tu barrio</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community -->
+    <section class="community" id="community">
+        <div class="container">
+            <h2 class="section-title">Cocineros de tu barrio</h2>
+            <p style="color: var(--text-medium); max-width: 700px; margin: 0 auto 40px;">Conocé a las personas detrás de cada plato. Cada cocinero tiene una historia única para compartir.</p>
+            
+            <div class="chefs-grid">
+                <div class="chef-card">
+                    <div class="chef-image">
+                        <i class="fas fa-user-grandmother"></i>
+                    </div>
+                    <h3 class="chef-name">Abuela Marta</h3>
+                    <div class="chef-cuisine">Cocina paraguaya</div>
+                    <p class="chef-description">Especialista en chipa, sopa paraguaya y asado con cuero. 25 años cocinando con amor.</p>
+                </div>
+                <div class="chef-card">
+                    <div class="chef-image">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="chef-name">Familia López</h3>
+                    <div class="chef-cuisine">Comidas tradicionales</div>
+                    <p class="chef-description">Guisos, milanesas y empanadas criollas. Recetas que pasan de generación en generación.</p>
+                </div>
+                <div class="chef-card">
+                    <div class="chef-image">
+                        <i class="fas fa-pizza-slice"></i>
+                    </div>
+                    <h3 class="chef-name">Doña Rosa</h3>
+                    <div class="chef-cuisine">Pizzas caseras</div>
+                    <p class="chef-description">Pizza a la piedra con masa fermentada 48 horas. La mejor del barrio de Belgrano.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SABOR BARRIAL</h3>
+                    <p style="color: #b0bec5; margin-top: 20px; line-height: 1.8;">El marketplace de comidas caseras que conecta cocineros talentosos con vecinos que buscan autenticidad.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Para compradores</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Cómo comprar</a></li>
+                        <li><a href="#">Cocineros cerca tuyo</a></li>
+                        <li><a href="#">Comidas regionales</a></li>
+                        <li><a href="#">Seguridad y confianza</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Para cocineros</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Vendé tu comida</a></li>
+                        <li><a href="#">Requisitos</a></li>
+                        <li><a href="#">Herramientas</a></li>
+                        <li><a href="#">Soporte</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">info@saborbarrial.com.ar</a></li>
+                        <li><a href="#">+54 11 1234-5678</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">WhatsApp</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                © 2025 SABOR BARRIAL - Todos los derechos reservados. Hecho con ❤️ en Buenos Aires, Argentina.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+
