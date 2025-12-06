@@ -50,7 +50,7 @@ export default function DishCreateForm() {
         name,
         description,
         price_cents: price * 100,
-        image_url: imageUrl,
+        image_url: imageUrl ?? undefined,
         category,
         is_available: true,
         preparation_time_minutes: prepTime > 0 ? prepTime : null,

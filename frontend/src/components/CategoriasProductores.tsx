@@ -1,36 +1,36 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Pizza, Soup, Home, Utensils } from "lucide-react";
+import Link from 'next/link';
+import { Pizza, Soup, Home, Utensils } from 'lucide-react';
 
 const categoriasProductores = [
-  { name: "Rotiserías", icon: Utensils },
-  { name: "Caseras", icon: Soup },
-  { name: "Pizzerías", icon: Pizza },
-  { name: "Hogareñas", icon: Home },
+  { name: 'Rotiserías', icon: Utensils },
+  { name: 'Caseras', icon: Soup },
+  { name: 'Pizzerías', icon: Pizza },
+  { name: 'Hogareñas', icon: Home },
 ];
 
 export default function CategoriasProductores() {
   return (
-    <section className="w-full py-16 bg-warm-cream">
+    <section className="w-full bg-warm-cream py-16">
       <div className="container">
-        <h2 className="text-center text-3xl md:text-4xl font-[Poppins] font-bold text-dark-graphite mb-4">
+        <h2 className="mb-4 text-center font-[Poppins] text-3xl font-bold text-dark-graphite md:text-4xl">
           Categorías de productores
         </h2>
-        <p className="text-center text-muted text-sm md:text-base mb-10">
+        <p className="mb-10 text-center text-sm text-muted md:text-base">
           Explorá agrupaciones de platos según el tipo de cocina o emprendimiento
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
           {categoriasProductores.map((cat, idx) => {
             const Icon = cat.icon;
             return (
               <Link
                 key={idx}
                 href={`/explorar?productor=${encodeURIComponent(cat.name)}`}
-                className="bg-card border border-border rounded-xl p-6 shadow-sm-custom hover:shadow-md-custom transition flex flex-col items-center text-center"
+                className="flex flex-col items-center rounded-xl border border-border bg-card p-6 text-center shadow-sm-custom transition hover:shadow-md-custom"
               >
-                <div className="h-14 w-14 flex items-center justify-center rounded-full bg-tomato text-white mb-4">
+                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-tomato text-white">
                   <Icon className="h-7 w-7" />
                 </div>
                 <span className="text-sm font-semibold text-dark-graphite">{cat.name}</span>

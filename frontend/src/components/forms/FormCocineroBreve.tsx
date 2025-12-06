@@ -1,4 +1,5 @@
 'use client';
+//frontend\src\components\forms\FormCocineroBreve.tsx
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabaseClient';
@@ -12,12 +13,12 @@ export default function FormCocineroBreve() {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
-    whatsapp: ''
+    whatsapp: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,13 +28,13 @@ export default function FormCocineroBreve() {
 
     try {
       // 1. Guardar datos básicos en pending_registrations
-      const { error: pendingError } = await supabase
-        .from('pending_registrations')
-        .insert([{
+      const { error: pendingError } = await supabase.from('pending_registrations').insert([
+        {
           name: formData.nombre,
           email: formData.email,
-          whatsapp: formData.whatsapp
-        }]);
+          whatsapp: formData.whatsapp,
+        },
+      ]);
       if (pendingError) throw pendingError;
 
       // 2. Crear usuario en Auth (Supabase envía email de verificación)
@@ -41,7 +42,9 @@ export default function FormCocineroBreve() {
       if (signUpError) throw new Error(signUpError.message);
       if (!user) throw new Error('No se pudo crear el usuario');
 
-      setSuccessMessage('✅ Registro inicial exitoso. Verifica tu correo y luego completa tu perfil.');
+      setSuccessMessage(
+        '✅ Registro inicial exitoso. Verifica tu correo y luego completa tu perfil.'
+      );
 
       // Resetear el estado de los inputs
       setFormData({ nombre: '', email: '', whatsapp: '' });
@@ -62,7 +65,7 @@ export default function FormCocineroBreve() {
           required
           value={formData.nombre}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full rounded-md border px-3 py-2"
         />
         <input
           type="email"
@@ -71,7 +74,7 @@ export default function FormCocineroBreve() {
           required
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full rounded-md border px-3 py-2"
         />
         <input
           type="text"
@@ -80,7 +83,7 @@ export default function FormCocineroBreve() {
           required
           value={formData.whatsapp}
           onChange={handleChange}
-          className="w-full px-3 py-2 border rounded-md"
+          className="w-full rounded-md border px-3 py-2"
         />
       </div>
 
@@ -90,7 +93,7 @@ export default function FormCocineroBreve() {
       <button
         type="submit"
         disabled={authLoading}
-        className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+        className="w-full rounded-md bg-indigo-600 py-2 text-white hover:bg-indigo-700 disabled:opacity-50"
       >
         {authLoading ? 'Registrando...' : 'Registrar Cocinero'}
       </button>

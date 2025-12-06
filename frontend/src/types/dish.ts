@@ -4,7 +4,7 @@ export type Dish = {
   name: string;
   description: string;
   price_cents: number;
-  image_url?: string;
+  image_url?: string | null; // ✅ ahora acepta null también
   category?: string;
   is_available: boolean;
   preparation_time_minutes: number | null;

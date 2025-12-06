@@ -1,5 +1,5 @@
 // src/components/Cart.tsx
-"use client"
+'use client';
 import type { CartItem } from '@/types/cart';
 
 interface CartProps {

@@ -1,1 +1,1 @@
-export const format = (v) => v;
+export const format = <T>(v: T): T => v;

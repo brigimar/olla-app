@@ -1,4 +1,4 @@
-import { Dish } from "./dish";
+import { Dish } from './dish';
 
 export interface CartItem {
   id: string;

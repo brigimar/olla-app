@@ -1,78 +1,91 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
-import {
-  Instagram,
-  Facebook,
-  Twitter,
-  MessageCircle,
-  MapPin,
-} from "lucide-react";
+import React from 'react';
+import Link from 'next/link';
+import { Instagram, Facebook, Twitter, MessageCircle, MapPin } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer className="w-full bg-dark-graphite text-cream-light">
-      
       {/* Sección principal */}
-      <div className="w-full max-w-[1600px] mx-auto px-6 py-16 grid grid-cols-1 gap-12 md:grid-cols-4">
-
+      <div className="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-12 px-6 py-16 md:grid-cols-4">
         {/* Marca */}
         <div>
-          <h3 className="text-2xl font-bold font-[Poppins] text-white mb-4">
-            OllaApp
-          </h3>
+          <h3 className="mb-4 font-[Poppins] text-2xl font-bold text-white">OllaApp</h3>
           <p className="text-sm leading-relaxed text-cream-light/80">
-            El marketplace de comidas caseras que conecta cocineros talentosos
-            con vecinos que buscan autenticidad en CABA y AMBA.
+            El marketplace de comidas caseras que conecta cocineros talentosos con vecinos que
+            buscan autenticidad en CABA y AMBA.
           </p>
 
           <div className="mt-6 flex gap-4 text-gold-accent">
-            <Instagram className="h-5 w-5 hover:text-white transition" />
-            <Facebook className="h-5 w-5 hover:text-white transition" />
-            <Twitter className="h-5 w-5 hover:text-white transition" />
-            <MessageCircle className="h-5 w-5 hover:text-white transition" />
+            <Instagram className="h-5 w-5 transition hover:text-white" />
+            <Facebook className="h-5 w-5 transition hover:text-white" />
+            <Twitter className="h-5 w-5 transition hover:text-white" />
+            <MessageCircle className="h-5 w-5 transition hover:text-white" />
           </div>
         </div>
 
         {/* Para compradores */}
         <div>
-          <h4 className="text-lg font-semibold font-[Poppins] text-white mb-4">
-            Para compradores
-          </h4>
+          <h4 className="mb-4 font-[Poppins] text-lg font-semibold text-white">Para compradores</h4>
           <ul className="space-y-2 text-sm">
-            <li><Link href="#" className="hover:text-gold-accent transition">Cómo comprar</Link></li>
-            <li><Link href="#" className="hover:text-gold-accent transition">Cocineros cerca tuyo</Link></li>
-            <li><Link href="#" className="hover:text-gold-accent transition">Comidas regionales</Link></li>
-            <li><Link href="#" className="hover:text-gold-accent transition">Seguridad y confianza</Link></li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Cómo comprar
+              </Link>
+            </li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Cocineros cerca tuyo
+              </Link>
+            </li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Comidas regionales
+              </Link>
+            </li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Seguridad y confianza
+              </Link>
+            </li>
           </ul>
         </div>
 
         {/* Para cocineros */}
         <div>
-          <h4 className="text-lg font-semibold font-[Poppins] text-white mb-4">
-            Para cocineros
-          </h4>
+          <h4 className="mb-4 font-[Poppins] text-lg font-semibold text-white">Para cocineros</h4>
           <ul className="space-y-2 text-sm">
-            <li><Link href="#" className="hover:text-gold-accent transition">Vendé tu comida</Link></li>
-            <li><Link href="#" className="hover:text-gold-accent transition">Requisitos</Link></li>
-            <li><Link href="#" className="hover:text-gold-accent transition">Herramientas</Link></li>
-            <li><Link href="#" className="hover:text-gold-accent transition">Soporte</Link></li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Vendé tu comida
+              </Link>
+            </li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Requisitos
+              </Link>
+            </li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Herramientas
+              </Link>
+            </li>
+            <li>
+              <Link href="#" className="transition hover:text-gold-accent">
+                Soporte
+              </Link>
+            </li>
           </ul>
         </div>
 
         {/* Contacto */}
         <div>
-          <h4 className="text-lg font-semibold font-[Poppins] text-white mb-4">
-            Contacto
-          </h4>
+          <h4 className="mb-4 font-[Poppins] text-lg font-semibold text-white">Contacto</h4>
           <ul className="space-y-2 text-sm">
             <li>
-              Email:{" "}
-              <a
-                href="mailto:hola@ollaapp.com.ar"
-                className="hover:text-gold-accent transition"
-              >
+              Email:{' '}
+              <a href="mailto:hola@ollaapp.com.ar" className="transition hover:text-gold-accent">
                 hola@ollaapp.com.ar
               </a>
             </li>
@@ -87,7 +100,7 @@ export default function Footer() {
 
       {/* CTA destacado */}
       <div className="border-t border-white/10 py-8 text-center">
-        <button className="bg-cream-light text-dark-graphite px-10 py-4 rounded-full text-sm font-semibold shadow-md hover:bg-white transition">
+        <button className="rounded-full bg-cream-light px-10 py-4 text-sm font-semibold text-dark-graphite shadow-md transition hover:bg-white">
           📍 Ubicación actual • Reservar ahora
         </button>
       </div>

@@ -1,6 +1,6 @@
 // frontend/src/app/api/cleanup/route.ts
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 // ⚠️ Usa la service_role key, nunca la expongas en el cliente
 const supabaseAdmin = createClient(
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const { userId } = await req.json();
     if (!userId) {
-      return NextResponse.json({ error: "userId requerido" }, { status: 400 });
+      return NextResponse.json({ error: 'userId requerido' }, { status: 400 });
     }
 
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
@@ -21,7 +21,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    // ✅ usamos unknown en vez de any
+    const message = err instanceof Error ? err.message : 'Error desconocido en cleanup';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

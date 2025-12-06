@@ -1,8 +1,7 @@
-// src/components/ProducerOnboardingPage.tsx
 'use client';
 
 import React, { useState } from 'react';
-import { User, Phone, MapPin, Soup, PlusCircle } from 'lucide-react';
+import { Soup, PlusCircle } from 'lucide-react'; // ✅ solo los íconos usados
 
 type ProducerData = {
   name: string;
@@ -26,10 +25,7 @@ const ProducerOnboardingPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
   const handleAddMenuItem = () => {
-    setMenuItems([
-      ...menuItems,
-      { id: crypto.randomUUID(), name: '', price: null },
-    ]);
+    setMenuItems([...menuItems, { id: crypto.randomUUID(), name: '', price: null }]);
   };
 
   return (
@@ -68,9 +64,7 @@ const ProducerOnboardingPage: React.FC = () => {
           <input
             type="text"
             value={producer.neighborhood}
-            onChange={(e) =>
-              setProducer({ ...producer, neighborhood: e.target.value })
-            }
+            onChange={(e) => setProducer({ ...producer, neighborhood: e.target.value })}
             className="w-full rounded border p-2"
             placeholder="Ej: Palermo"
           />
@@ -87,9 +81,7 @@ const ProducerOnboardingPage: React.FC = () => {
               value={item.name}
               onChange={(e) =>
                 setMenuItems(
-                  menuItems.map((m) =>
-                    m.id === item.id ? { ...m, name: e.target.value } : m
-                  )
+                  menuItems.map((m) => (m.id === item.id ? { ...m, name: e.target.value } : m))
                 )
               }
               placeholder="Nombre del plato"
@@ -101,9 +93,7 @@ const ProducerOnboardingPage: React.FC = () => {
               onChange={(e) =>
                 setMenuItems(
                   menuItems.map((m) =>
-                    m.id === item.id
-                      ? { ...m, price: Number(e.target.value) }
-                      : m
+                    m.id === item.id ? { ...m, price: Number(e.target.value) } : m
                   )
                 )
               }
@@ -126,8 +116,3 @@ const ProducerOnboardingPage: React.FC = () => {
 };
 
 export default ProducerOnboardingPage;
-
-
-
-
-

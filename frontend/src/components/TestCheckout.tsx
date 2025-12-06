@@ -8,15 +8,14 @@ export default function TestCheckout() {
   useEffect(() => {
     const runTest = async () => {
       try {
-       const order = await createOrder({
-  client_id: "test-client-id",
-  producer_id: "test-producer-id",
-  status: "pending",
-  subtotal_cents: 100,
-  commission_cents: 10,
-  total_cents: 110,
-});
-
+        const order = await createOrder({
+          client_id: 'test-client-id',
+          producer_id: 'test-producer-id',
+          status: 'pending',
+          subtotal_cents: 100,
+          commission_cents: 10,
+          total_cents: 110,
+        });
 
         console.log('✅ Checkout funciona, orden creada:', order);
       } catch (err: unknown) {

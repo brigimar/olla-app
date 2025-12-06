@@ -1,7 +1,7 @@
-import { CartItem } from "./cart";
+// order.ts
+import { GeoPoint } from './geo';
 
-export type OrderStatus = "pending" | "paid" | "cancelled";
-
+export type OrderStatus = 'pending' | 'paid' | 'cancelled';
 export interface Order {
   id?: string; // Supabase lo genera
   client_id: string;
@@ -10,9 +10,9 @@ export interface Order {
   subtotal_cents: number;
   commission_cents: number;
   total_cents: number;
-  created_at?: string;   // Supabase lo genera
-  updated_at?: string;   // Supabase lo genera
-  delivery_address_point?: any; // definir tipo si es geometry/enum
+  created_at?: string; // Supabase lo genera
+  updated_at?: string; // Supabase lo genera
+  delivery_address_point?: GeoPoint | null; // ✅ ya no es any
   pickup_time?: string | null;
   paid_at?: string | null;
   address_revealed_at?: string | null;
