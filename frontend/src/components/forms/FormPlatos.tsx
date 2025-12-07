@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase'; // 👈 usa tu cliente centralizado
+import { supabase, createClient } from '@/lib/supabase/client';
 import type { Dish } from '@/types/dish'; // 👈 tipado fuerte
 
 export default function DishCreateForm() {

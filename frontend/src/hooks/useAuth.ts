@@ -1,15 +1,17 @@
-﻿// hooks/useAuth.ts
-import { useState, useEffect, useMemo } from 'react';
-import { createClient } from '@/lib/supabase/client';
+﻿// src/hooks/useAuth.ts
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
+
+// Helper para mapear 'whatsapp' a 'sms'
+const toSupabaseMobileType = (otpChannel: 'sms' | 'whatsapp'): 'sms' => {
+  return 'sms';
+};
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-
-  // Memoizamos el cliente para evitar recrearlo en cada render
-  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     let mounted = true;
@@ -38,13 +40,8 @@ export const useAuth = () => {
       mounted = false;
       subscription?.unsubscribe();
     };
-  }, [supabase]);
+  }, []);
 
-  // -----------------------------
-  // Métodos de autenticación
-  // -----------------------------
-
-  // SignUp por email o teléfono
   const signUp = async (
     method: 'email' | 'phone',
     identifier: string,
@@ -68,7 +65,7 @@ export const useAuth = () => {
         phone: identifier,
         password,
         options: {
-          channel,
+          channel: channel === 'whatsapp' ? 'sms' : channel,
           data: metadata,
         },
       });
@@ -77,21 +74,23 @@ export const useAuth = () => {
     }
   };
 
-  // Login con email + contraseña
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
   };
 
-  // Login con OTP (SMS/WhatsApp)
-  const verifyOtp = async (phone: string, token: string, type: 'sms' | 'whatsapp' = 'sms') => {
+  const verifyOtp = async (
+    phone: string,
+    token: string,
+    otpChannel: 'sms' | 'whatsapp' = 'sms'
+  ) => {
+    const type = toSupabaseMobileType(otpChannel);
     const { data, error } = await supabase.auth.verifyOtp({ phone, token, type });
     if (error) throw error;
     return data;
   };
 
-  // Login con magic link (email)
   const signInWithMagicLink = async (email: string) => {
     const { data, error } = await supabase.auth.signInWithOtp({
       email,
@@ -103,7 +102,6 @@ export const useAuth = () => {
     return data;
   };
 
-  // Cerrar sesión
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;

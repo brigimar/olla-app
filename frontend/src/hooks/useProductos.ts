@@ -1,6 +1,6 @@
 // hooks/useProducts.ts
-import { useState, useMemo } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { useState } from 'react';
+import { supabase, createClient } from '@/lib/supabase/client';
 import { DishServerSchema } from '@/shared/validation';
 import { z } from 'zod';
 
@@ -9,8 +9,6 @@ type DishFormData = z.infer<typeof DishServerSchema>;
 export const useProducts = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const supabase = useMemo(() => createClient(), []);
 
   const createDish = async (dishData: DishFormData, photoFiles?: File[]) => {
     setLoading(true);

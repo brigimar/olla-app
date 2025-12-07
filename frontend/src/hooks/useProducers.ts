@@ -1,16 +1,18 @@
-// hooks/useProducer.ts
-import { useState, useMemo } from 'react';
-import { createClient } from '@/lib/supabase/client';
+// src/hooks/useProducer.ts
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase/client';
 import { ProducerServerSchema } from '@/shared/validation';
 import { z } from 'zod';
 
-type ProducerFormData = z.infer<typeof ProducerServerSchema>;
+type ProducerFormData = z.infer<typeof ProducerServerSchema> & {
+  logo_url?: string | null;
+  visible?: boolean;
+  is_active?: boolean;
+};
 
 export const useProducer = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const supabase = useMemo(() => createClient(), []);
 
   const createOrUpdateProducer = async (data: ProducerFormData, logoFile?: File | null) => {
     setLoading(true);

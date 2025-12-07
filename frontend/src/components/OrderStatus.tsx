@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, createClient } from '@/lib/supabase/client';
 
 interface Order {
   id: string;

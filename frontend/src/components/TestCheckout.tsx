@@ -1,33 +1,42 @@
 // src/components/TestCheckout.tsx
 'use client';
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase/client';
 
-import { useEffect } from 'react';
-import { createOrder } from '@/lib/supabase';
+const createOrder = async (orderData: any) => {
+  const { data, error } = await supabase
+    .from('orders')
+    .insert(orderData)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
 
 export default function TestCheckout() {
-  useEffect(() => {
-    const runTest = async () => {
-      try {
-        const order = await createOrder({
-          client_id: 'test-client-id',
-          producer_id: 'test-producer-id',
-          status: 'pending',
-          subtotal_cents: 100,
-          commission_cents: 10,
-          total_cents: 110,
-        });
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-        console.log('✅ Checkout funciona, orden creada:', order);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          console.error('❌ Error en Checkout:', err.message);
-        } else {
-          console.error('❌ Error desconocido en Checkout:', err);
-        }
-      }
-    };
-    runTest();
-  }, []);
+  const handleCheckout = async () => {
+    setError(null);
+    setSuccess(null);
+    try {
+      const order = await createOrder({
+        item: 'Plato de prueba',
+        quantity: 1,
+        price_cents: 1000,
+      });
+      setSuccess(`Orden creada con ID: ${order.id}`);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
 
-  return <div>Test Checkout ejecutado (ver consola)</div>;
+  return (
+    <div>
+      <button onClick={handleCheckout}>Checkout</button>
+      {error && <p className="text-red-600">{error}</p>}
+      {success && <p className="text-green-600">{success}</p>}
+    </div>
+  );
 }

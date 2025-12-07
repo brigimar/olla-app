@@ -1,24 +1,26 @@
-// shared/validation.ts
+// src/shared/validation.ts
 import { z } from 'zod';
 
 // Etapa 1: Crear cuenta (registro)
-export const SignUpChoiceSchema = z.object({
-  method: z.enum(['email', 'phone']),
-  email: z.string().email().optional(),
-  phone: z.string().regex(/^\+549\d{10,11}$/).optional(),
-  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
-  business_name: z.string().min(2, 'El nombre del negocio es obligatorio'),
-}).refine(
-  (data) => {
-    if (data.method === 'email') return !!data.email;
-    if (data.method === 'phone') return !!data.phone;
-    return false;
-  },
-  {
-    message: 'Debes proporcionar el campo correspondiente al método elegido',
-    path: ['method'],
-  }
-);
+export const SignUpChoiceSchema = z
+  .object({
+    method: z.enum(['email', 'phone']),
+    email: z.string().email().optional(),
+    phone: z.string().regex(/^\+549\d{10,11}$/).optional(),
+    password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+    business_name: z.string().min(2, 'El nombre del negocio es obligatorio'),
+  })
+  .refine(
+    (data) => {
+      if (data.method === 'email') return !!data.email;
+      if (data.method === 'phone') return !!data.phone;
+      return false;
+    },
+    {
+      message: 'Debes proporcionar el campo correspondiente al método elegido',
+      path: ['method'],
+    }
+  );
 
 // Etapa 2: Negocio (sin File para validación del servidor)
 export const ProducerBaseSchema = z.object({
@@ -28,6 +30,9 @@ export const ProducerBaseSchema = z.object({
   email: z.string().email(),
   phone: z.string().regex(/^\+549\d{10,11}$/),
 });
+
+// Alias principal para productores (simplifica imports)
+export const ProducerSchema = ProducerBaseSchema;
 
 // Esquema para el cliente (incluye File)
 export const ProducerClientSchema = ProducerBaseSchema.extend({

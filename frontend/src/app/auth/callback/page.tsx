@@ -1,18 +1,15 @@
 // app/auth/callback/page.tsx
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
-export default function AuthCallback() {
+function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // Memoize client to avoid effect re-runs caused by a new instance each render
   const supabase = useMemo(() => createClient(), []);
 
-  // Read once to keep effect dependencies minimal and stable
   const code = searchParams.get('code');
   const next = searchParams.get('next') || '/onboarding/negocio';
 
@@ -20,40 +17,28 @@ export default function AuthCallback() {
     let mounted = true;
 
     const run = async () => {
-      // Early exit: missing code (e.g., direct visit)
       if (!code) {
         router.replace('/onboarding/crear-cuenta?error=missing_code');
         return;
       }
 
-      // If already authenticated, skip exchange and proceed
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session) {
-        try {
-          if (mounted) {
-            localStorage.setItem('onboardingStage', 'crear-cuenta-completada');
-            router.replace(next);
-          }
-          return;
-        } catch {
-          // ignore SSR/localStorage edge cases
+        if (mounted) {
+          localStorage.setItem('onboardingStage', 'crear-cuenta-completada');
+          router.replace(next);
         }
+        return;
       }
 
-      // Exchange code for session
       try {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) throw error;
 
-        if (!mounted) return;
-
-        try {
+        if (mounted) {
           localStorage.setItem('onboardingStage', 'crear-cuenta-completada');
-        } catch {
-          // ignore if localStorage not available
+          router.replace(next);
         }
-
-        router.replace(next);
       } catch (err: any) {
         if (!mounted) return;
         const message =
@@ -65,7 +50,6 @@ export default function AuthCallback() {
     };
 
     run();
-
     return () => {
       mounted = false;
     };
@@ -86,5 +70,13 @@ export default function AuthCallback() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AuthCallback() {
+  return (
+    <Suspense fallback={<p>Cargando...</p>}>
+      <CallbackContent />
+    </Suspense>
   );
 }

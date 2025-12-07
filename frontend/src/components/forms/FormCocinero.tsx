@@ -1,34 +1,46 @@
+// src/components/forms/FormCocinero.tsx  (Bloque 1 corregido)
 'use client';
-
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useProducers } from '@/hooks/useProducers';
+import { useProducer } from '@/hooks/useProducers';
+
+type ProducerFormData = {
+  email: string;
+  password: string;
+  business_name: string;
+  description?: string | null;
+  address: string;
+  phone: string;
+  logo?: File | null;
+  logo_url?: string | null;
+  visible?: boolean;
+  is_active?: boolean;
+};
 
 export default function FormCocinero() {
   const { signUp, loading: authLoading } = useAuth();
-  const { createProfile, loading: profileLoading, error: profileError } = useProducers();
+  const { createOrUpdateProducer, loading: profileLoading, error: profileError } = useProducer();
 
   const [formError, setFormError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProducerFormData>({
     email: '',
     password: '',
-    businessName: '',
+    business_name: '',
     description: '',
     address: '',
     phone: '',
-    logo: null as File | null,
+    logo: null,
+    logo_url: null,
+    visible: false,
+    is_active: true,
   });
 
   const isLoading = authLoading || profileLoading;
 
-  // -------------------------
-  // Handle inputs
-  // -------------------------
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, files } = e.target as HTMLInputElement;
-
     if (files) {
       setFormData((prev) => ({ ...prev, [name]: files[0] }));
     } else {
@@ -36,31 +48,15 @@ export default function FormCocinero() {
     }
   };
 
-  // -------------------------
-  // Validaciones avanzadas
-  // -------------------------
   const validateForm = () => {
-    if (!formData.email.includes('@')) {
-      throw new Error('El email no es válido.');
-    }
-
-    if (formData.password.length < 6) {
-      throw new Error('La contraseña debe tener al menos 6 caracteres.');
-    }
-
-    if (formData.phone.length < 6) {
-      throw new Error('El teléfono es demasiado corto.');
-    }
-
-    if (formData.businessName.trim().length < 2) {
-      throw new Error('El nombre del negocio es demasiado corto.');
-    }
-
-    if (!formData.address.trim()) {
-      throw new Error('Debes ingresar una dirección.');
-    }
+    if (!formData.email.includes('@')) throw new Error('El email no es válido.');
+    if (formData.password.length < 6) throw new Error('La contraseña debe tener al menos 6 caracteres.');
+    if (formData.phone.length < 6) throw new Error('El teléfono es demasiado corto.');
+    if (formData.business_name.trim().length < 2) throw new Error('El nombre del negocio es demasiado corto.');
+    if (!formData.address.trim()) throw new Error('Debes ingresar una dirección.');
   };
 
+  // src/components/forms/FormCocinero.tsx  (Bloque 2 corregido)
   // -------------------------
   // Submit
   // -------------------------
@@ -73,28 +69,23 @@ export default function FormCocinero() {
       validateForm();
 
       // ---- 1. Crear usuario en Auth ----
-      const { user, error: signUpError } = await signUp(formData.email, formData.password);
-
-      if (signUpError) {
-        if (signUpError.message.includes('already registered')) {
-          throw new Error('Este email ya está registrado.');
-        }
-        throw new Error(signUpError.message);
-      }
+      const { user } = await signUp('email', formData.email, formData.password);
 
       if (!user) {
         throw new Error('No se pudo crear el usuario.');
       }
 
       // ---- 2. Crear perfil en producers ----
-      await createProfile(
-        user.id,
+      await createOrUpdateProducer(
         {
-          business_name: formData.businessName,
+          business_name: formData.business_name,
           description: formData.description,
           address: formData.address,
           email: formData.email,
           phone: formData.phone,
+          logo_url: formData.logo_url,
+          visible: formData.visible,
+          is_active: formData.is_active,
         },
         formData.logo || undefined
       );
@@ -105,11 +96,14 @@ export default function FormCocinero() {
       setFormData({
         email: '',
         password: '',
-        businessName: '',
+        business_name: '',
         description: '',
         address: '',
         phone: '',
         logo: null,
+        logo_url: null,
+        visible: false,
+        is_active: true,
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error desconocido.';
@@ -127,89 +121,7 @@ export default function FormCocinero() {
         Completa tus datos para comenzar a vender tus platos
       </p>
 
-      <div className="space-y-4">
-        {/* Email */}
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          required
-        />
-
-        {/* Contraseña */}
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={formData.password}
-          onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          required
-        />
-
-        {/* Nombre negocio */}
-        <input
-          type="text"
-          name="businessName"
-          placeholder="Nombre del negocio"
-          value={formData.businessName}
-          onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          required
-        />
-
-        {/* Descripción */}
-        <textarea
-          name="description"
-          placeholder="Descripción del negocio"
-          value={formData.description}
-          onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-        />
-
-        {/* Dirección */}
-        <input
-          type="text"
-          name="address"
-          placeholder="Dirección"
-          value={formData.address}
-          onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          required
-        />
-
-        {/* Teléfono */}
-        <input
-          type="text"
-          name="phone"
-          placeholder="Teléfono"
-          value={formData.phone}
-          onChange={handleChange}
-          className="w-full rounded-lg border border-gray-300 p-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          required
-        />
-
-        {/* Logo */}
-        <div>
-          <label
-            htmlFor="logo"
-            className="flex w-full cursor-pointer items-center justify-center rounded-lg bg-gradient-to-r from-pink-500 to-red-500 px-4 py-3 font-semibold text-white shadow transition-all duration-200 hover:from-pink-400 hover:to-red-400"
-          >
-            📤 Subir logo
-          </label>
-          <input
-            id="logo"
-            type="file"
-            name="logo"
-            accept="image/*"
-            onChange={handleChange}
-            className="hidden"
-          />
-        </div>
-      </div>
+      {/* ...inputs como en el bloque anterior... */}
 
       {/* Errores */}
       {(formError || profileError) && (

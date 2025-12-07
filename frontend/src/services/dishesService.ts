@@ -1,31 +1,12 @@
-﻿import { supabase } from '@/lib/supabase';
+﻿// src/services/dishesService.ts
+import { supabase, createClient } from '@/lib/supabase/client';
 
-export const dishesService = {
-  async getAll() {
-    const { data, error } = await supabase.from('dishes').select('*');
-    if (error) throw error;
-    return data ?? [];
-  },
+export const getDishesByProducer = async (producerId: string) => {
+  const { data, error } = await supabase
+    .from('dishes')
+    .select('*')
+    .eq('producer_id', producerId);
 
-  async getDishesByCity(city: string) {
-    const { data, error } = await supabase.from('dishes').select('*').eq('city', city); // ✅ usamos city
-    if (error) throw error;
-    return data ?? [];
-  },
-
-  async getPopularDishes(limit: number) {
-    const { data, error } = await supabase
-      .from('dishes')
-      .select('*')
-      .order('popularity', { ascending: false }) // ⚡ suponiendo que tenés un campo popularity
-      .limit(limit); // ✅ usamos limit
-    if (error) throw error;
-    return data ?? [];
-  },
-
-  async getDishById(id: string) {
-    const { data, error } = await supabase.from('dishes').select('*').eq('id', id).single(); // ✅ usamos id
-    if (error) throw error;
-    return data ?? null;
-  },
+  if (error) throw error;
+  return data;
 };
