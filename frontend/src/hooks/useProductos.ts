@@ -1,12 +1,15 @@
-// hooks/useProducts.ts
+// src/hooks/useProductos.ts
+'use client';
+
 import { useState } from 'react';
-import { supabase, createClient } from '@/lib/supabase/client';
-import { DishServerSchema } from '@/shared/validation';
+import { createClient } from '@/lib/supabase/client';
+import { DishServerSchema } from '@/lib/validations/dish';
 import { z } from 'zod';
 
 type DishFormData = z.infer<typeof DishServerSchema>;
 
-export const useProducts = () => {
+export const useProductos = () => {
+  const supabase = createClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -15,55 +18,56 @@ export const useProducts = () => {
     setError(null);
 
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
-      if (authError || !user) throw new Error('No autenticado');
-
-      const { data: dish, error: dishError } = await supabase
-        .from('dishes')
-        .insert({
-          producer_id: user.id,
-          name: dishData.name,
-          category: dishData.category,
-          ingredients: dishData.ingredients || [],
-          price_cents: dishData.price_cents,
-          portion_size: dishData.portion_size,
-          is_available: true,
-          status: 'active',
-        })
-        .select('id')
-        .single();
-
-      if (dishError) throw new Error('Error al crear plato');
-      if (!dish?.id) throw new Error('No se pudo obtener ID del plato');
-
-      let photoUrls: string[] = [];
-
-      if (photoFiles && photoFiles.length > 0) {
-        const uploadPromises = photoFiles.map(async (file, index) => {
-          const ext = file.name.split('.').pop() || 'jpg';
-          const path = `platos/${user.id}/${dish.id}/${Date.now()}-${index}.${ext}`;
-          const { error: uploadError } = await supabase.storage
-            .from('platos')
-            .upload(path, file, { upsert: true, contentType: file.type });
-          if (uploadError) throw new Error('Error al subir foto');
-          const { data: urlData } = supabase.storage.from('platos').getPublicUrl(path);
-          return urlData.publicUrl;
-        });
-
-        photoUrls = await Promise.all(uploadPromises);
-
-        const { error: updateError } = await supabase
-          .from('dishes')
-          .update({ photo_urls: photoUrls })
-          .eq('id', dish.id);
-
-        if (updateError) throw new Error('Error al actualizar fotos');
+      // 1) Validar datos
+      const parsed = DishServerSchema.safeParse(dishData);
+      if (!parsed.success) {
+        const first = parsed.error.issues[0];
+        throw new Error(first?.message || 'Datos inválidos');
       }
 
-      return { success: true, dishId: dish.id, photoUrls };
+      // 2) Usuario autenticado
+      const { data: userData, error: authError } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (authError || !user) throw new Error('No autenticado');
+
+      // 3) Subir fotos opcionales
+      let photoUrls: string[] = [];
+      if (photoFiles && photoFiles.length > 0) {
+        for (const file of photoFiles) {
+          const timestamp = Date.now();
+          const fileName = `dish-${timestamp}-${file.name}`;
+          const path = `dishes/${user.id}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('dishes')
+            .upload(path, file, { upsert: true });
+
+          if (uploadError) throw new Error('Error al subir foto');
+
+          const { data: urlData } = supabase.storage.from('dishes').getPublicUrl(path);
+          photoUrls.push(urlData.publicUrl);
+        }
+      }
+
+      // 4) Insertar plato en tabla dishes
+      const payload = {
+        user_id: user.id,
+        name: dishData.name,
+        description: dishData.description ?? null,
+        price: dishData.price,
+        category: dishData.category ?? null,
+        visible: dishData.visible ?? true,
+        photos: photoUrls,
+      };
+
+      const { error: insertError } = await supabase.from('dishes').insert(payload);
+      if (insertError) throw new Error('Error al guardar plato');
+
+      return { success: true };
     } catch (err: any) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      const message = typeof err?.message === 'string' ? err.message : 'Error inesperado';
+      setError(message);
+      return { success: false, error: message };
     } finally {
       setLoading(false);
     }
@@ -72,20 +76,23 @@ export const useProducts = () => {
   const getDishes = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No autenticado');
+      const { data: userData, error: authError } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (authError || !user) throw new Error('No autenticado');
 
       const { data, error } = await supabase
         .from('dishes')
         .select('*')
-        .eq('producer_id', user.id);
+        .eq('user_id', user.id);
 
       if (error) throw new Error('Error al obtener platos');
       return data;
     } catch (err: any) {
-      setError(err.message);
-      return [];
+      const message = typeof err?.message === 'string' ? err.message : 'Error inesperado';
+      setError(message);
+      return null;
     } finally {
       setLoading(false);
     }

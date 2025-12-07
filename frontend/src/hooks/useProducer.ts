@@ -1,7 +1,9 @@
 // src/hooks/useProducer.ts
+'use client';
+
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import { ProducerServerSchema } from '@/shared/validation';
+import { createClient } from '@/lib/supabase/client';
+import { ProducerServerSchema } from '@/lib/validations/producer';
 import { z } from 'zod';
 
 type ProducerFormData = z.infer<typeof ProducerServerSchema> & {
@@ -10,56 +12,85 @@ type ProducerFormData = z.infer<typeof ProducerServerSchema> & {
   is_active?: boolean;
 };
 
+type UpsertResult =
+  | { success: true }
+  | { success: false; error: string };
+
 export const useProducer = () => {
+  const supabase = createClient();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createOrUpdateProducer = async (data: ProducerFormData, logoFile?: File | null) => {
+  const createOrUpdateProducer = async (
+    data: ProducerFormData,
+    logoFile?: File | null
+  ): Promise<UpsertResult> => {
     setLoading(true);
     setError(null);
 
     try {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      // 1) Usuario autenticado
+      const { data: userData, error: authError } = await supabase.auth.getUser();
+      const user = userData?.user;
       if (authError || !user) throw new Error('No autenticado');
 
-      let logoUrl = data.logo_url ?? null;
+      // 2) Validación de payload de servidor (campos de producers)
+      const parsed = ProducerServerSchema.safeParse(data);
+      if (!parsed.success) {
+        const first = parsed.error.issues[0];
+        throw new Error(first?.message || 'Datos inválidos');
+      }
 
+      // 3) Upload opcional de logo y obtener URL pública
+      let logoUrl: string | null = data.logo_url ?? null;
       if (logoFile) {
         const timestamp = Date.now();
-        const fileName = `logo-${timestamp}.webp`;
+        const extension = 'webp'; // si subís otros formatos, ajustá acá
+        const fileName = `logo-${timestamp}.${extension}`;
         const path = `cocineros/${user.id}/${fileName}`;
+
         const { error: uploadError } = await supabase.storage
           .from('cocineros')
           .upload(path, logoFile, {
             upsert: true,
-            contentType: 'image/webp',
+            contentType: `image/${extension}`,
           });
+
         if (uploadError) throw new Error('Error al subir logo');
-        const { data: urlData } = supabase.storage.from('cocineros').getPublicUrl(path);
+
+        const { data: urlData } = await supabase.storage
+          .from('cocineros')
+          .getPublicUrl(path);
+
         logoUrl = urlData.publicUrl;
       }
 
+      // 4) Armar payload final para upsert
       const payload = {
         id: user.id,
         business_name: data.business_name,
-        description: data.description,
-        address: data.address,
+        description: data.description ?? null,
+        address: data.address ?? null,
         email: data.email,
-        phone: data.phone,
+        phone: data.phone ?? null,
         logo_url: logoUrl,
         visible: data.visible ?? false,
         is_active: data.is_active ?? false,
       };
 
+      // 5) Upsert por id en producers
       const { error: upsertError } = await supabase
         .from('producers')
         .upsert(payload, { onConflict: 'id' });
 
       if (upsertError) throw new Error('Error al guardar negocio');
+
       return { success: true };
     } catch (err: any) {
-      setError(err.message);
-      return { success: false, error: err.message };
+      const message =
+        typeof err?.message === 'string' ? err.message : 'Error inesperado';
+      setError(message);
+      return { success: false, error: message };
     } finally {
       setLoading(false);
     }
@@ -68,9 +99,11 @@ export const useProducer = () => {
   const getProducer = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No autenticado');
+      const { data: userData, error: authError } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (authError || !user) throw new Error('No autenticado');
 
       const { data, error } = await supabase
         .from('producers')
@@ -81,7 +114,9 @@ export const useProducer = () => {
       if (error) throw new Error('Error al obtener negocio');
       return data;
     } catch (err: any) {
-      setError(err.message);
+      const message =
+        typeof err?.message === 'string' ? err.message : 'Error inesperado';
+      setError(message);
       return null;
     } finally {
       setLoading(false);

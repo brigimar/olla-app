@@ -1,4 +1,3 @@
-// frontend/src/lib/validations/signUp.ts
 import { z } from "zod";
 
 export const signUpSchema = z.object({
@@ -12,3 +11,4 @@ export const signUpSchema = z.object({
 });
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
+
