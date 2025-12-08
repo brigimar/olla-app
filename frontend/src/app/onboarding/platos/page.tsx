@@ -1,7 +1,7 @@
-'use client';
+﻿'use client';
 // src/app/onboarding/platos/page.tsx
 import { useForm } from 'react-hook-form';
-import { supabase } from '@/lib/supabase/client';
+import { useSupabase } from "@/lib/supabase/client";  // correcto
 
 type DishFormData = {
   name: string;
@@ -15,6 +15,7 @@ type DishFormData = {
 };
 
 export default function PlatosPage() {
+  const supabase = useSupabase(); // ✅ instancia única estable
   const { register, handleSubmit, reset } = useForm<DishFormData>({
     defaultValues: {
       name: '',

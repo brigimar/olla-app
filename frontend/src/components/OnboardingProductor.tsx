@@ -122,3 +122,6 @@ const OnboardingProductor: React.FC = () => {
 };
 
 export default OnboardingProductor;
+
+
+

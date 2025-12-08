@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import { ProducerServerSchema } from '@/lib/validations/producer';
-import { z } from 'zod';
+import { useState } from "react";
+import { ProducerServerSchema } from "@/lib/validations/producer";
+import { z } from "zod";
+import { useSupabase } from "@/lib/supabase/client"; // ✅ import correcto al inicio
 
 type ProducerFormData = z.infer<typeof ProducerServerSchema> & {
   logo_url?: string | null;
@@ -14,6 +14,7 @@ type ProducerFormData = z.infer<typeof ProducerServerSchema> & {
 type UpsertResult = { success: true } | { success: false; error: string };
 
 export function useProducer() {
+  const supabase = useSupabase(); // ✅ instancia única
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,31 +28,33 @@ export function useProducer() {
     try {
       const { data: userData, error: authError } = await supabase.auth.getUser();
       const user = userData?.user;
-      if (authError || !user) throw new Error('No autenticado');
+      if (authError || !user) throw new Error("No autenticado");
 
       const parsed = ProducerServerSchema.safeParse(data);
       if (!parsed.success) {
         const first = parsed.error.issues[0];
-        throw new Error(first?.message || 'Datos inválidos');
+        throw new Error(first?.message || "Datos inválidos");
       }
 
       let logoUrl: string | null = data.logo_url ?? null;
       if (logoFile) {
         const timestamp = Date.now();
-        const extension = 'webp';
+        const extension = "webp";
         const fileName = `logo-${timestamp}.${extension}`;
         const path = `cocineros/${user.id}/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('cocineros')
+          .from("cocineros")
           .upload(path, logoFile, {
             upsert: true,
             contentType: `image/${extension}`,
           });
 
-        if (uploadError) throw new Error('Error al subir logo');
+        if (uploadError) throw new Error("Error al subir logo");
 
-        const { data: urlData } = await supabase.storage.from('cocineros').getPublicUrl(path);
+        const { data: urlData } = await supabase.storage
+          .from("cocineros")
+          .getPublicUrl(path);
         logoUrl = urlData.publicUrl;
       }
 
@@ -68,14 +71,14 @@ export function useProducer() {
       };
 
       const { error: upsertError } = await supabase
-        .from('producers')
-        .upsert(payload, { onConflict: 'id' });
+        .from("producers")
+        .upsert(payload, { onConflict: "id" });
 
-      if (upsertError) throw new Error('Error al guardar negocio');
+      if (upsertError) throw new Error("Error al guardar negocio");
 
       return { success: true };
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error inesperado';
+      const message = err instanceof Error ? err.message : "Error inesperado";
       setError(message);
       return { success: false, error: message };
     } finally {
@@ -90,18 +93,18 @@ export function useProducer() {
     try {
       const { data: userData, error: authError } = await supabase.auth.getUser();
       const user = userData?.user;
-      if (authError || !user) throw new Error('No autenticado');
+      if (authError || !user) throw new Error("No autenticado");
 
       const { data, error } = await supabase
-        .from('producers')
-        .select('*')
-        .eq('id', user.id)
+        .from("producers")
+        .select("*")
+        .eq("id", user.id)
         .single();
 
-      if (error) throw new Error('Error al obtener negocio');
+      if (error) throw new Error("Error al obtener negocio");
       return data;
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error inesperado';
+      const message = err instanceof Error ? err.message : "Error inesperado";
       setError(message);
       return null;
     } finally {

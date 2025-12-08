@@ -1,24 +1,23 @@
-// src/app/providers.tsx
-'use client';
+﻿"use client";
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { useState } from 'react';
+import { useState, createContext } from "react";
+import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js"; // ✅ tipo correcto
 
-export function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: { staleTime: 60 * 1000, refetchOnWindowFocus: false },
-        },
-      })
+// Contexto tipado: puede ser SupabaseClient o null
+export const SupabaseContext = createContext<SupabaseClient | null>(null);
+
+export const SupabaseProvider = ({ children }: { children: React.ReactNode }) => {
+  const [supabase] = useState(() =>
+    createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <SupabaseContext.Provider value={supabase}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    </SupabaseContext.Provider>
   );
-}
+};

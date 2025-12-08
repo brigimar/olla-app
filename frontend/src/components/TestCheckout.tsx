@@ -1,7 +1,8 @@
-'use client';
-import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+// src/components/TestCheckout.tsx - Client Component
+"use client";
 
+import { useState } from "react";
+import { useSupabase } from "@/lib/supabase/client";
 // Definimos el tipo de orden
 interface OrderData {
   item: string;
@@ -16,28 +17,34 @@ interface Order {
   price_cents: number;
 }
 
-const createOrder = async (orderData: OrderData): Promise<Order> => {
-  const { data, error } = await supabase.from('orders').insert(orderData).select().single();
-  if (error) throw error;
-  return data as Order;
-};
-
 export default function TestCheckout() {
+  const supabase = useSupabase(); // ✅ instancia única desde el Provider
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const createOrder = async (orderData: OrderData): Promise<Order> => {
+    const { data, error } = await supabase
+      .from("orders")
+      .insert(orderData)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Order;
+  };
 
   const handleCheckout = async () => {
     setError(null);
     setSuccess(null);
     try {
       const order = await createOrder({
-        item: 'Plato de prueba',
+        item: "Plato de prueba",
         quantity: 1,
         price_cents: 1000,
       });
       setSuccess(`Orden creada con ID: ${order.id}`);
     } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : 'Error inesperado al crear la orden';
+      const message =
+        e instanceof Error ? e.message : "Error inesperado al crear la orden";
       setError(message);
     }
   };
@@ -50,3 +57,9 @@ export default function TestCheckout() {
     </div>
   );
 }
+
+
+
+
+
+

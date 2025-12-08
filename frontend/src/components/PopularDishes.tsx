@@ -1,10 +1,11 @@
 'use client';
 
-import Image from 'next/image';
-import { normalizeImageUrl } from '@/utils/image';
-import { usePopularDishes } from '@/hooks/usePopularDishes';
-import type { Dish } from '@/types/database.types';
-import React from 'react';
+import Image from "next/image";
+import { normalizeImageUrl } from "@/utils/image";
+import { usePopularDishes } from "@/hooks/usePopularDishes";
+import type { Dish } from "@/types/database.types";
+import React from "react";
+
 
 type Props = {
   title?: string;
@@ -113,3 +114,6 @@ function DishCard({ dish }: { dish: Dish }) {
     </article>
   );
 }
+
+
+

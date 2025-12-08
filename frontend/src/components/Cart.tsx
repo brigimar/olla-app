@@ -29,3 +29,6 @@ export default function Cart({ items }: CartProps) {
     </div>
   );
 }
+
+
+

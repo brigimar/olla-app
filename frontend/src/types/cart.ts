@@ -12,3 +12,6 @@ export interface CartResult {
   items: CartItem[];
   total: number;
 }
+
+
+

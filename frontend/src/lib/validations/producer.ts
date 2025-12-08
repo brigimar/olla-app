@@ -9,3 +9,6 @@ export const ProducerServerSchema = z.object({
   address: z.string().optional(),
   logo: z.string().url('Debe ser una URL válida').optional(), // si enviás logo como string externo
 });
+
+
+

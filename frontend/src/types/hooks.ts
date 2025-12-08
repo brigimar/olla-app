@@ -96,3 +96,6 @@ export interface CartResult {
   clearCart: () => void;
   updateQuantity: (dishId: string, quantity: number) => void;
 }
+
+
+

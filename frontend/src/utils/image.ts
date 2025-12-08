@@ -12,3 +12,6 @@ export function normalizeImageUrl(url?: string) {
   // Fallback seguro → placeholder
   return '/hamb.avif';
 }
+
+
+

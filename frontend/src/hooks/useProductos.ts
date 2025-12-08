@@ -1,13 +1,14 @@
-'use client';
+﻿"use client";
 
-import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import { DishServerSchema } from '@/lib/validations/dish';
-import { z } from 'zod';
+import { useState } from "react";
+import { DishServerSchema } from "@/lib/validations/dish";
+import { z } from "zod";
+import { useSupabase } from "@/lib/supabase/client"; // ✅ import correcto al inicio
 
 type DishFormData = z.infer<typeof DishServerSchema>;
 
 export function useProductos() {
+  const supabase = useSupabase(); // ✅ instancia única
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,13 +21,13 @@ export function useProductos() {
       const parsed = DishServerSchema.safeParse(dishData);
       if (!parsed.success) {
         const first = parsed.error.issues[0];
-        throw new Error(first?.message || 'Datos inválidos');
+        throw new Error(first?.message || "Datos inválidos");
       }
 
       // 2) Usuario autenticado
       const { data: userData, error: authError } = await supabase.auth.getUser();
       const user = userData?.user;
-      if (authError || !user) throw new Error('No autenticado');
+      if (authError || !user) throw new Error("No autenticado");
 
       // 3) Subir fotos opcionales
       const photoUrls: string[] = [];
@@ -37,12 +38,12 @@ export function useProductos() {
           const path = `dishes/${user.id}/${fileName}`;
 
           const { error: uploadError } = await supabase.storage
-            .from('dishes')
+            .from("dishes")
             .upload(path, file, { upsert: true });
 
-          if (uploadError) throw new Error('Error al subir foto');
+          if (uploadError) throw new Error("Error al subir foto");
 
-          const { data: urlData } = supabase.storage.from('dishes').getPublicUrl(path);
+          const { data: urlData } = supabase.storage.from("dishes").getPublicUrl(path);
           photoUrls.push(urlData.publicUrl);
         }
       }
@@ -58,12 +59,12 @@ export function useProductos() {
         photos: photoUrls,
       };
 
-      const { error: insertError } = await supabase.from('dishes').insert(payload);
-      if (insertError) throw new Error('Error al guardar plato');
+      const { error: insertError } = await supabase.from("dishes").insert(payload);
+      if (insertError) throw new Error("Error al guardar plato");
 
       return { success: true };
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error inesperado';
+      const message = err instanceof Error ? err.message : "Error inesperado";
       setError(message);
       return { success: false, error: message };
     } finally {
@@ -78,14 +79,17 @@ export function useProductos() {
     try {
       const { data: userData, error: authError } = await supabase.auth.getUser();
       const user = userData?.user;
-      if (authError || !user) throw new Error('No autenticado');
+      if (authError || !user) throw new Error("No autenticado");
 
-      const { data, error } = await supabase.from('dishes').select('*').eq('user_id', user.id);
+      const { data, error } = await supabase
+        .from("dishes")
+        .select("*")
+        .eq("user_id", user.id);
 
-      if (error) throw new Error('Error al obtener platos');
+      if (error) throw new Error("Error al obtener platos");
       return data;
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error inesperado';
+      const message = err instanceof Error ? err.message : "Error inesperado";
       setError(message);
       return null;
     } finally {

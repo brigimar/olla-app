@@ -1,33 +1,29 @@
-'use client';
+﻿'use client';
 
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
+import { useSupabase } from "@/lib/supabase/client";
+
 
 function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const supabase = useSupabase(); // ✅ instancia única estable
 
   const code = searchParams.get('code');
-  const next = searchParams.get('next') || '/onboarding/negocio';
+  const next = searchParams.get('next') || '/dashboard';
 
   useEffect(() => {
     let mounted = true;
 
     const run = async () => {
-      // 🔎 Log de depuración: ver qué llega en la URL
-      console.log('Callback searchParams:', Object.fromEntries(searchParams.entries()));
-      console.log('Code recibido:', code);
-      console.log('Next recibido:', next);
-
       if (!code) {
-        // 🚨 No llegó el parámetro code → mostrar error claro
         router.replace('/onboarding/error?reason=missing_code');
         return;
       }
 
       try {
-        // ✅ Si ya hay sesión, no hace falta intercambiar
+        // Verificar si ya hay sesión activa
         const { data: sessionData } = await supabase.auth.getSession();
         if (sessionData.session) {
           if (mounted) {
@@ -37,7 +33,7 @@ function CallbackContent() {
           return;
         }
 
-        // 🔄 Intercambiar el code por sesión
+        // Intercambiar el código por sesión
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) throw error;
 
@@ -51,16 +47,18 @@ function CallbackContent() {
           err instanceof Error && typeof err.message === 'string'
             ? err.message
             : 'auth_failed';
+
         console.error('Error en callback:', message);
         router.replace(`/onboarding/error?reason=${encodeURIComponent(message)}`);
       }
     };
 
     run();
+
     return () => {
       mounted = false;
     };
-  }, [code, next, router, searchParams]);
+  }, [code, next, router, supabase]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">

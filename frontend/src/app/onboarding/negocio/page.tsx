@@ -1,7 +1,8 @@
-'use client';
+﻿'use client';
 
-import { supabase } from '@/lib/supabase/client';
 import { useForm } from 'react-hook-form';
+import { useSupabase } from "@/lib/supabase/client";
+
 
 type ProducerFormData = {
   business_name: string;
@@ -12,15 +13,8 @@ type ProducerFormData = {
   logo?: File | null;
 };
 
-const uploadLogo = async (file: File, userId: string) => {
-  const path = `cocineros/${userId}/logo-${Date.now()}.webp`;
-  const { error } = await supabase.storage.from('cocineros').upload(path, file, { upsert: true });
-  if (error) throw error;
-  const { data } = supabase.storage.from('cocineros').getPublicUrl(path);
-  return data.publicUrl;
-};
-
 export default function NegocioPage() {
+  const supabase = useSupabase(); // ✅ instancia única estable
   const { register, handleSubmit, setValue } = useForm<ProducerFormData>({
     defaultValues: {
       business_name: '',
@@ -31,6 +25,14 @@ export default function NegocioPage() {
       logo: null,
     },
   });
+
+  const uploadLogo = async (file: File, userId: string) => {
+    const path = `cocineros/${userId}/logo-${Date.now()}.webp`;
+    const { error } = await supabase.storage.from('cocineros').upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data } = supabase.storage.from('cocineros').getPublicUrl(path);
+    return data.publicUrl;
+  };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;

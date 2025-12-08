@@ -45,3 +45,6 @@ export interface GeoFeatureCollection<T extends Geometry = Geometry> {
   type: 'FeatureCollection';
   features: GeoFeature<T>[];
 }
+
+
+

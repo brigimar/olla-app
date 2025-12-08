@@ -40,3 +40,6 @@ export const PARTIDOS_AMBA: PartidoAMBA[] = [
   // ... (agregar los 48 partidos completos con polígonos reales)
   // Por brevedad, mostramos solo 2 partidos. En producción incluir los 48
 ];
+
+
+

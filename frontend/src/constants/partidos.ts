@@ -25,3 +25,6 @@ export const PARTIDOS_AMBA: PartidoAMBA[] = [
   },
   // … agrega más partidos con sus polígonos
 ];
+
+
+

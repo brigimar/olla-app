@@ -1,17 +1,21 @@
-// src/app/onboarding/espera-email/page.tsx
+﻿// src/app/onboarding/espera-email/page.tsx
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { useSupabase } from "@/lib/supabase/client";
+
 
 export default function EsperaEmailPage() {
+  const supabase = useSupabase(); // ✅ instancia única estable
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
   const handleResend = async () => {
     setLoading(true);
     setMessage('');
+
     try {
+      // Obtener usuario actual
       const { data } = await supabase.auth.getUser();
       const email = data.user?.email;
 
@@ -20,6 +24,7 @@ export default function EsperaEmailPage() {
         return;
       }
 
+      // Reenviar email de confirmación
       const { error } = await supabase.auth.resend({
         type: 'signup',
         email,
@@ -42,12 +47,14 @@ export default function EsperaEmailPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-blue-50">
       <div className="mx-4 max-w-md text-center">
-        <h1 className="mb-4 text-3xl font-bold text-blue-700">📧 Revisá tu bandeja de entrada</h1>
+        <h1 className="mb-4 text-3xl font-bold text-blue-700">Revisá tu bandeja de entrada</h1>
+
         <p className="mb-6 text-gray-700">
           Te enviamos un correo de confirmación. Hacé clic en el enlace para activar tu cuenta y
           continuar con el onboarding.
         </p>
-        <p className="text-sm text-gray-500 mb-6">
+
+        <p className="mb-6 text-sm text-gray-500">
           Si no lo encontrás, revisá la carpeta de <strong>Spam</strong> o <strong>Promociones</strong>.
         </p>
 
@@ -60,7 +67,9 @@ export default function EsperaEmailPage() {
         </button>
 
         {message && (
-          <div className="mt-4 rounded bg-blue-100 px-3 py-2 text-sm text-blue-700">{message}</div>
+          <div className="mt-4 rounded bg-blue-100 px-3 py-2 text-sm text-blue-700">
+            {message}
+          </div>
         )}
       </div>
     </div>

@@ -46,3 +46,6 @@ export function handleSupabaseError(error: unknown): Error {
   // Error desconocido
   return new Error('Error desconocido');
 }
+
+
+
