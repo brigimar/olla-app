@@ -1,7 +1,6 @@
-// src/app/onboarding/espera-email/page.tsx
-"use client";
+﻿// src/app/onboarding/espera-email/page.tsx
+'use client';
 export const dynamic = 'force-dynamic';
-
 import { useState } from 'react';
 import { useSupabase } from "@/lib/supabase/client";
 
