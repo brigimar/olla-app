@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client'; // ✅ instancia única
+import { supabase } from '@/lib/supabase/client';
 
 function CallbackContent() {
   const router = useRouter();
@@ -15,21 +15,29 @@ function CallbackContent() {
     let mounted = true;
 
     const run = async () => {
-      if (!code) {
-        router.replace('/onboarding/crear-cuenta?error=missing_code');
-        return;
-      }
+      // 🔎 Log de depuración: ver qué llega en la URL
+      console.log('Callback searchParams:', Object.fromEntries(searchParams.entries()));
+      console.log('Code recibido:', code);
+      console.log('Next recibido:', next);
 
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData.session) {
-        if (mounted) {
-          localStorage.setItem('onboardingStage', 'crear-cuenta-completada');
-          router.replace(next);
-        }
+      if (!code) {
+        // 🚨 No llegó el parámetro code → mostrar error claro
+        router.replace('/onboarding/error?reason=missing_code');
         return;
       }
 
       try {
+        // ✅ Si ya hay sesión, no hace falta intercambiar
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData.session) {
+          if (mounted) {
+            localStorage.setItem('onboardingStage', 'crear-cuenta-completada');
+            router.replace(next);
+          }
+          return;
+        }
+
+        // 🔄 Intercambiar el code por sesión
         const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) throw error;
 
@@ -43,7 +51,8 @@ function CallbackContent() {
           err instanceof Error && typeof err.message === 'string'
             ? err.message
             : 'auth_failed';
-        router.replace(`/onboarding/crear-cuenta?error=${encodeURIComponent(message)}`);
+        console.error('Error en callback:', message);
+        router.replace(`/onboarding/error?reason=${encodeURIComponent(message)}`);
       }
     };
 
@@ -51,7 +60,7 @@ function CallbackContent() {
     return () => {
       mounted = false;
     };
-  }, [code, next, router]);
+  }, [code, next, router, searchParams]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
@@ -61,8 +70,8 @@ function CallbackContent() {
         </div>
         <h1 className="mb-2 text-2xl font-bold text-gray-800">Confirmando tu cuenta</h1>
         <p className="text-gray-600">
-          Por favor, esperá mientras verificamos tu identidad y te llevamos a la siguiente etapa de
-          registro...
+          Estamos verificando tu identidad y creando tu sesión. En unos segundos vas a avanzar al
+          siguiente paso del registro...
         </p>
       </div>
     </div>

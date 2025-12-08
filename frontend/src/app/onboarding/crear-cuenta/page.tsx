@@ -34,33 +34,38 @@ export default function CrearCuentaPage() {
   };
 
   const onSubmit = async (data: FormData) => {
-    setError('');
-    setLoading(true);
-    try {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email: data.email,
-        password: data.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            name: data.name, // opcional: guarda como user_metadata
-          },
+  setError('');
+  setLoading(true);
+  try {
+    // 🔎 Definimos la constante antes de usarla
+    const redirectTo = `${window.location.origin}/auth/callback`;
+    console.log('Signup redirectTo:', redirectTo);
+
+    const { error: signUpError } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        emailRedirectTo: redirectTo,
+        data: {
+          name: data.name, // opcional: guarda como user_metadata
         },
-      });
+      },
+    });
 
-      if (signUpError) throw signUpError;
+    if (signUpError) throw signUpError;
 
-      router.push('/onboarding/espera-email');
-    } catch (err: unknown) {
-      const message =
-        err instanceof Error && typeof err.message === 'string'
-          ? err.message
-          : 'Ocurrió un error. Intenta nuevamente.';
-      setError(mapAuthError(message));
-    } finally {
-      setLoading(false);
-    }
-  };
+    router.push('/onboarding/espera-email');
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error && typeof err.message === 'string'
+        ? err.message
+        : 'Ocurrió un error. Intenta nuevamente.';
+    setError(mapAuthError(message));
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="mx-auto max-w-md rounded bg-white p-6 shadow">
