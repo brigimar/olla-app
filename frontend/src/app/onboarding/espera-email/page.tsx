@@ -1,6 +1,44 @@
 'use client';
 
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase/client';
+
 export default function EsperaEmailPage() {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+
+  const handleResend = async () => {
+    setLoading(true);
+    setMessage('');
+    try {
+      // 🚀 Obtenemos el email del usuario actual (si está en metadata)
+      const { data } = await supabase.auth.getUser();
+      const email = data.user?.email;
+
+      if (!email) {
+        setMessage('No se encontró un email asociado a tu sesión.');
+        return;
+      }
+
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+      });
+
+      if (error) throw error;
+
+      setMessage('Correo de confirmación reenviado. Revisá tu bandeja de entrada.');
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error && typeof err.message === 'string'
+          ? err.message
+          : 'Ocurrió un error al reenviar el correo.';
+      setMessage(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-blue-50">
       <div className="mx-4 max-w-md text-center">
@@ -9,9 +47,21 @@ export default function EsperaEmailPage() {
           Te enviamos un correo de confirmación. Hacé clic en el enlace para activar tu cuenta y
           continuar con el onboarding.
         </p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 mb-6">
           Si no lo encontrás, revisá la carpeta de <strong>Spam</strong> o <strong>Promociones</strong>.
         </p>
+
+        <button
+          onClick={handleResend}
+          disabled={loading}
+          className="rounded bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+        >
+          {loading ? 'Reenviando...' : 'Reenviar correo de confirmación'}
+        </button>
+
+        {message && (
+          <div className="mt-4 rounded bg-blue-100 px-3 py-2 text-sm text-blue-700">{message}</div>
+        )}
       </div>
     </div>
   );

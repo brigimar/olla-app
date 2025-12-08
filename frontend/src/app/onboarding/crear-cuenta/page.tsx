@@ -6,22 +6,27 @@ import { supabase } from '@/lib/supabase/client';
 import { signUpSchema, SignUpFormData } from '@/lib/validations/signUp';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useSession } from '@supabase/auth-helpers-react';
 
 type FormData = SignUpFormData;
 
 export default function CrearCuentaPage() {
   const router = useRouter();
-  const session = useSession(); // 👈 consumir sesión del provider
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [sessionChecked, setSessionChecked] = useState(false);
 
-  // 🚀 Si ya hay sesión, redirigimos automáticamente al dashboard
+  // 🚀 Verificamos si ya hay sesión activa
   useEffect(() => {
-    if (session) {
-      router.replace('/dashboard');
-    }
-  }, [session, router]);
+    const checkSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        router.replace('/dashboard');
+      } else {
+        setSessionChecked(true);
+      }
+    };
+    checkSession();
+  }, [router]);
 
   const {
     register,
@@ -60,7 +65,6 @@ export default function CrearCuentaPage() {
 
       if (signUpError) throw signUpError;
 
-      // 👉 Si no hay sesión todavía, mandamos a la pantalla de espera
       router.push('/onboarding/espera-email');
     } catch (err: unknown) {
       const message =
@@ -73,9 +77,13 @@ export default function CrearCuentaPage() {
     }
   };
 
-  // 🔎 Si ya hay sesión, no renderizamos el formulario (porque el useEffect redirige)
-  if (session) {
-    return null;
+  // 🔎 Mientras chequeamos sesión, no renderizamos nada
+  if (!sessionChecked) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p className="text-gray-600">Verificando sesión...</p>
+      </div>
+    );
   }
 
   return (
