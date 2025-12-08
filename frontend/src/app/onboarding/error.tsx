@@ -1,8 +1,11 @@
-import { useRouter } from "next/router";
+'use client';
+
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ErrorPage() {
   const router = useRouter();
-  const { reason } = router.query;
+  const searchParams = useSearchParams();
+  const reason = searchParams.get("reason");
 
   const messages: Record<string, string> = {
     missing_code: "Falta el código de verificación.",
@@ -18,12 +21,12 @@ export default function ErrorPage() {
         <p className="mb-6 text-gray-700">
           {messages[reason as string] || messages.default}
         </p>
-        <a
-          href="/signup"
+        <button
+          onClick={() => router.push("/signup")}
           className="rounded bg-red-600 px-4 py-2 font-semibold text-white hover:bg-red-700"
         >
           Volver a registrarme
-        </a>
+        </button>
       </div>
     </div>
   );
