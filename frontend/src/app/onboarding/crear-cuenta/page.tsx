@@ -1,18 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 import { signUpSchema, SignUpFormData } from '@/lib/validations/signUp';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useSession } from '@supabase/auth-helpers-react';
 
 type FormData = SignUpFormData;
 
 export default function CrearCuentaPage() {
   const router = useRouter();
+  const session = useSession(); // 👈 consumir sesión del provider
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // 🚀 Si ya hay sesión, redirigimos automáticamente al dashboard
+  useEffect(() => {
+    if (session) {
+      router.replace('/dashboard');
+    }
+  }, [session, router]);
 
   const {
     register,
@@ -34,38 +43,40 @@ export default function CrearCuentaPage() {
   };
 
   const onSubmit = async (data: FormData) => {
-  setError('');
-  setLoading(true);
-  try {
-    // 🔎 Definimos la constante antes de usarla
-    const redirectTo = `${window.location.origin}/auth/callback`;
-    console.log('Signup redirectTo:', redirectTo);
+    setError('');
+    setLoading(true);
+    try {
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      console.log('Signup redirectTo:', redirectTo);
 
-    const { error: signUpError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-      options: {
-        emailRedirectTo: redirectTo,
-        data: {
-          name: data.name, // opcional: guarda como user_metadata
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          emailRedirectTo: redirectTo,
+          data: { name: data.name },
         },
-      },
-    });
+      });
 
-    if (signUpError) throw signUpError;
+      if (signUpError) throw signUpError;
 
-    router.push('/onboarding/espera-email');
-  } catch (err: unknown) {
-    const message =
-      err instanceof Error && typeof err.message === 'string'
-        ? err.message
-        : 'Ocurrió un error. Intenta nuevamente.';
-    setError(mapAuthError(message));
-  } finally {
-    setLoading(false);
+      // 👉 Si no hay sesión todavía, mandamos a la pantalla de espera
+      router.push('/onboarding/espera-email');
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error && typeof err.message === 'string'
+          ? err.message
+          : 'Ocurrió un error. Intenta nuevamente.';
+      setError(mapAuthError(message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔎 Si ya hay sesión, no renderizamos el formulario (porque el useEffect redirige)
+  if (session) {
+    return null;
   }
-};
-
 
   return (
     <div className="mx-auto max-w-md rounded bg-white p-6 shadow">
