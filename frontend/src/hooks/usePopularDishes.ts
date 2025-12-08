@@ -1,53 +1,44 @@
-﻿"use client";
+﻿// src/hooks/usePopularDishes.ts
+"use client"; // ⚠️ CRÍTICO: Agregar esta directiva
 
 import { useEffect, useState } from "react";
-import { Dish } from "@/types/database.types";
 import { useSupabase } from "@/lib/supabase/client";
 
-export const usePopularDishes = () => {
+interface Dish {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  image_url?: string;
+  // ... otros campos
+}
+
+export function usePopularDishes() {
   const supabase = useSupabase();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchDishes = async () => {
+    async function fetchDishes() {
       try {
-        console.log("[usePopularDishes] Iniciando fetch…");
         setLoading(true);
-
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from("dishes")
           .select("*")
-          .eq("is_available", true)
-          .order("destacado", { ascending: false })
-          .order("name", { ascending: true })
           .limit(10);
 
-        console.log("[usePopularDishes] Respuesta Supabase:", { data, error });
-
-        if (error) {
-          console.error("[usePopularDishes] Error Supabase:", error);
-          throw error;
-        }
-
-        setDishes(data as Dish[]);
-      } catch (err: unknown) {
-        console.error("[usePopularDishes] Excepción capturada:", err);
-
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("Error desconocido al cargar platos");
-        }
+        if (fetchError) throw fetchError;
+        setDishes(data || []);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error("Error desconocido"));
       } finally {
-        console.log("[usePopularDishes] Finalizando fetch. Loading=false");
         setLoading(false);
       }
-    };
+    }
 
     fetchDishes();
-  }, []);
+  }, [supabase]);
 
   return { dishes, loading, error };
-};
+}

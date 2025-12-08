@@ -1,26 +1,13 @@
 // frontend/src/app/page.tsx
-import dynamic from 'next/dynamic';
 import Navbar from '../components/Navbar';
 import HeroSection from '../components/HeroSection';
 import ComoFunciona from '../components/ComoFunciona';
 import CategoriasCocina from '../components/CategoriasCocina';
 import CategoriasProductores from '../components/CategoriasProductores';
+import PopularDishes from '../components/PopularDishes';
 import CommunityChefs from '../components/CommunityChefs';
 import PequenoNegocio from '../components/PequenoNegocio';
 import Footer from '../components/Footer';
-
-// ⚠️ CRÍTICO: PopularDishes usa useSupabase(), entonces debe cargarse solo en cliente
-const PopularDishes = dynamic(
-  () => import('../components/PopularDishes'),
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="flex justify-center items-center py-16">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-      </div>
-    )
-  }
-);
 
 export default function Page() {
   return (
@@ -40,3 +27,6 @@ export default function Page() {
     </main>
   );
 }
+
+
+
