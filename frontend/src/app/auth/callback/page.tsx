@@ -1,14 +1,12 @@
-// app/auth/callback/page.tsx
 'use client';
 
-import { useEffect, useMemo, Suspense } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client'; // ✅ instancia única
 
 function CallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const supabase = useMemo(() => createClient(), []);
 
   const code = searchParams.get('code');
   const next = searchParams.get('next') || '/onboarding/negocio';
@@ -39,13 +37,13 @@ function CallbackContent() {
           localStorage.setItem('onboardingStage', 'crear-cuenta-completada');
           router.replace(next);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!mounted) return;
         const message =
-          typeof err?.message === 'string' ? err.message : 'auth_failed';
-        router.replace(
-          `/onboarding/crear-cuenta?error=${encodeURIComponent(message)}`
-        );
+          err instanceof Error && typeof err.message === 'string'
+            ? err.message
+            : 'auth_failed';
+        router.replace(`/onboarding/crear-cuenta?error=${encodeURIComponent(message)}`);
       }
     };
 
@@ -53,20 +51,18 @@ function CallbackContent() {
     return () => {
       mounted = false;
     };
-  }, [code, next, router, supabase]);
+  }, [code, next, router]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className="text-center max-w-md mx-4">
-        <div className="flex justify-center mb-6">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600"></div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50">
+      <div className="mx-4 max-w-md text-center">
+        <div className="mb-6 flex justify-center">
+          <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-green-600"></div>
         </div>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          Confirmando tu cuenta
-        </h1>
+        <h1 className="mb-2 text-2xl font-bold text-gray-800">Confirmando tu cuenta</h1>
         <p className="text-gray-600">
-          Por favor, esperá mientras verificamos tu identidad y te llevamos a la
-          siguiente etapa de registro...
+          Por favor, esperá mientras verificamos tu identidad y te llevamos a la siguiente etapa de
+          registro...
         </p>
       </div>
     </div>

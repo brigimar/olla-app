@@ -1,29 +1,27 @@
-// src/app/onboarding/negocio/page.tsx
-'use client'
+'use client';
 
-import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase/client'
-import { useForm } from 'react-hook-form'
+import { supabase } from '@/lib/supabase/client';
+import { useForm } from 'react-hook-form';
 
 type ProducerFormData = {
-  business_name: string
-  address: string
-  email: string
-  phone: string
-  description?: string | null
-  logo?: File | null
-}
+  business_name: string;
+  address: string;
+  email: string;
+  phone: string;
+  description?: string | null;
+  logo?: File | null;
+};
 
 const uploadLogo = async (file: File, userId: string) => {
-  const path = `cocineros/${userId}/logo-${Date.now()}.webp`
-  const { error } = await supabase.storage.from('cocineros').upload(path, file, { upsert: true })
-  if (error) throw error
-  const { data } = supabase.storage.from('cocineros').getPublicUrl(path)
-  return data.publicUrl
-}
+  const path = `cocineros/${userId}/logo-${Date.now()}.webp`;
+  const { error } = await supabase.storage.from('cocineros').upload(path, file, { upsert: true });
+  if (error) throw error;
+  const { data } = supabase.storage.from('cocineros').getPublicUrl(path);
+  return data.publicUrl;
+};
 
 export default function NegocioPage() {
-  const { register, handleSubmit, setValue, reset } = useForm<ProducerFormData>({
+  const { register, handleSubmit, setValue } = useForm<ProducerFormData>({
     defaultValues: {
       business_name: '',
       address: '',
@@ -32,36 +30,36 @@ export default function NegocioPage() {
       description: null,
       logo: null,
     },
-  })
+  });
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
-    setValue('logo', file)
-  }
+    const file = e.target.files?.[0] || null;
+    setValue('logo', file);
+  };
 
   const onSubmit = async (data: ProducerFormData) => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('No autenticado')
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
 
-    const logo_url = data.logo ? await uploadLogo(data.logo, user.id) : null
+    const logo_url = data.logo ? await uploadLogo(data.logo, user.id) : null;
 
-    const { error } = await supabase
-      .from('producers')
-      .upsert(
-        {
-          id: user.id,
-          business_name: data.business_name,
-          description: data.description,
-          address: data.address,
-          email: data.email,
-          phone: data.phone,
-          logo_url,
-        },
-        { onConflict: 'id' },
-      )
+    const { error } = await supabase.from('producers').upsert(
+      {
+        id: user.id,
+        business_name: data.business_name,
+        description: data.description,
+        address: data.address,
+        email: data.email,
+        phone: data.phone,
+        logo_url,
+      },
+      { onConflict: 'id' }
+    );
 
-    if (error) throw error
-  }
+    if (error) throw error;
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -73,5 +71,5 @@ export default function NegocioPage() {
       <input type="file" name="logo" onChange={handleLogoChange} />
       <button type="submit">Guardar</button>
     </form>
-  )
+  );
 }

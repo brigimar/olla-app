@@ -1,7 +1,7 @@
-'use client'
+'use client';
 // src/app/onboarding/platos/page.tsx
 import { useForm } from 'react-hook-form';
-import { supabase, createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 type DishFormData = {
   name: string;
@@ -24,11 +24,13 @@ export default function PlatosPage() {
       ingredients: [''],
       description: null,
       photoFiles: undefined,
-    }
+    },
   });
 
   const onSubmit = async (data: DishFormData) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) throw new Error('No autenticado');
 
     const { error } = await supabase

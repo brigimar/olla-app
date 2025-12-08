@@ -1,5 +1,5 @@
 // src/services/auth.ts
-import { supabase, createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 export const getSession = async () => {
   const { data, error } = await supabase.auth.getSession();

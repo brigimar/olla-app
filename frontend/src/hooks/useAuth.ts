@@ -1,10 +1,9 @@
-﻿// src/hooks/useAuth.ts
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 
 // Helper para mapear 'whatsapp' a 'sms'
-const toSupabaseMobileType = (otpChannel: 'sms' | 'whatsapp'): 'sms' => {
+const toSupabaseMobileType = (_otpChannel: 'sms' | 'whatsapp'): 'sms' => {
   return 'sms';
 };
 
@@ -17,7 +16,10 @@ export const useAuth = () => {
     let mounted = true;
 
     const fetchSession = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
       if (error) console.error('Error fetching session:', error);
       if (mounted) {
         setSession(session);
@@ -28,7 +30,9 @@ export const useAuth = () => {
 
     fetchSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
         setSession(session);
         setUser(session?.user ?? null);
@@ -46,7 +50,7 @@ export const useAuth = () => {
     method: 'email' | 'phone',
     identifier: string,
     password: string,
-    metadata?: any,
+    metadata?: Record<string, unknown>,
     channel: 'sms' | 'whatsapp' = 'sms'
   ) => {
     if (method === 'email') {

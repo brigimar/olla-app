@@ -1,15 +1,13 @@
-// src/hooks/useProductos.ts
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { DishServerSchema } from '@/lib/validations/dish';
 import { z } from 'zod';
 
 type DishFormData = z.infer<typeof DishServerSchema>;
 
-export const useProductos = () => {
-  const supabase = createClient();
+export function useProductos() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +29,7 @@ export const useProductos = () => {
       if (authError || !user) throw new Error('No autenticado');
 
       // 3) Subir fotos opcionales
-      let photoUrls: string[] = [];
+      const photoUrls: string[] = [];
       if (photoFiles && photoFiles.length > 0) {
         for (const file of photoFiles) {
           const timestamp = Date.now();
@@ -64,8 +62,8 @@ export const useProductos = () => {
       if (insertError) throw new Error('Error al guardar plato');
 
       return { success: true };
-    } catch (err: any) {
-      const message = typeof err?.message === 'string' ? err.message : 'Error inesperado';
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error inesperado';
       setError(message);
       return { success: false, error: message };
     } finally {
@@ -82,15 +80,12 @@ export const useProductos = () => {
       const user = userData?.user;
       if (authError || !user) throw new Error('No autenticado');
 
-      const { data, error } = await supabase
-        .from('dishes')
-        .select('*')
-        .eq('user_id', user.id);
+      const { data, error } = await supabase.from('dishes').select('*').eq('user_id', user.id);
 
       if (error) throw new Error('Error al obtener platos');
       return data;
-    } catch (err: any) {
-      const message = typeof err?.message === 'string' ? err.message : 'Error inesperado';
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Error inesperado';
       setError(message);
       return null;
     } finally {
@@ -104,4 +99,4 @@ export const useProductos = () => {
     createDish,
     getDishes,
   };
-};
+}

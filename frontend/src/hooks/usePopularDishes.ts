@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase, createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { Dish } from '@/types/database.types';
 
 export const usePopularDishes = () => {

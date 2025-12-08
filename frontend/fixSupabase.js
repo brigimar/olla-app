@@ -1,6 +1,6 @@
 // fixSupabase.js
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const baseDir = path.join(__dirname, 'src', 'lib', 'supabase');
 const clientFile = path.join(baseDir, 'client.ts');
@@ -23,7 +23,7 @@ if (!fs.existsSync(baseDir)) {
 fs.writeFileSync(clientFile, content, 'utf8');
 
 // eliminar duplicados si existen
-['supabase.ts', 'supabaseClient.ts'].forEach(file => {
+['supabase.ts', 'supabaseClient.ts'].forEach((file) => {
   const filePath = path.join(baseDir, '..', file);
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
@@ -46,7 +46,7 @@ function replaceImports(filePath) {
 }
 
 function walk(dir) {
-  fs.readdirSync(dir).forEach(file => {
+  fs.readdirSync(dir).forEach((file) => {
     const fullPath = path.join(dir, file);
     if (fs.statSync(fullPath).isDirectory()) {
       walk(fullPath);

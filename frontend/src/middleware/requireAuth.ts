@@ -1,13 +1,9 @@
-// src/middleware/requireAuth.ts
-import { NextRequest } from 'next/server';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
-export const requireAuth = async (req: NextRequest) => {
-  const supabase = createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error) throw error;
+export async function requireAuth() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw new Error(error.message);
+  const user = data?.session?.user;
   if (!user) throw new Error('Unauthorized');
-
   return user;
-};
+}

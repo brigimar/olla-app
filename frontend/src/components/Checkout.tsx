@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase, createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 
 export default function Checkout() {
   const [loading, setLoading] = useState(false);

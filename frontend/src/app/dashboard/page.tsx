@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase, createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import Image from 'next/image';
 
 type Producer = {

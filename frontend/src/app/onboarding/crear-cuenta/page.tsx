@@ -1,10 +1,9 @@
-// frontend/src/app/onboarding/crear-cuenta/page.tsx
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
-import { signUpSchema, SignUpFormData } from "@/lib/validations/signUp";
+import { signUpSchema, SignUpFormData } from '@/lib/validations/signUp';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -12,8 +11,6 @@ type FormData = SignUpFormData;
 
 export default function CrearCuentaPage() {
   const router = useRouter();
-  const supabaseClient = createClient();
-
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +37,7 @@ export default function CrearCuentaPage() {
     setError('');
     setLoading(true);
     try {
-      const { error: signUpError } = await supabaseClient.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -53,23 +50,24 @@ export default function CrearCuentaPage() {
 
       if (signUpError) throw signUpError;
 
-      // Página de espera (opcional) o redirección directa al callback una vez que el usuario hace clic en el email.
       router.push('/onboarding/espera-email');
-    } catch (err: any) {
-      setError(mapAuthError(err.message));
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error && typeof err.message === 'string'
+          ? err.message
+          : 'Ocurrió un error. Intenta nuevamente.';
+      setError(mapAuthError(message));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow rounded">
-      <h1 className="text-xl font-bold mb-4">Crear cuenta</h1>
+    <div className="mx-auto max-w-md rounded bg-white p-6 shadow">
+      <h1 className="mb-4 text-xl font-bold">Crear cuenta</h1>
 
       {error && (
-        <div className="mb-3 rounded bg-red-100 text-red-700 px-3 py-2 text-sm">
-          {error}
-        </div>
+        <div className="mb-3 rounded bg-red-100 px-3 py-2 text-sm text-red-700">{error}</div>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -77,10 +75,10 @@ export default function CrearCuentaPage() {
           <label className="block text-sm font-medium">Nombre</label>
           <input
             {...register('name')}
-            className="w-full border p-2 rounded"
+            className="w-full rounded border p-2"
             placeholder="Tu nombre"
           />
-          {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+          {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
         </div>
 
         <div>
@@ -88,10 +86,10 @@ export default function CrearCuentaPage() {
           <input
             {...register('email')}
             type="email"
-            className="w-full border p-2 rounded"
+            className="w-full rounded border p-2"
             placeholder="tu@email.com"
           />
-          {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+          {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
         </div>
 
         <div>
@@ -99,10 +97,10 @@ export default function CrearCuentaPage() {
           <input
             {...register('password')}
             type="password"
-            className="w-full border p-2 rounded"
+            className="w-full rounded border p-2"
             placeholder="mínimo 6 caracteres"
           />
-          {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
+          {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
         </div>
 
         <div>
@@ -110,17 +108,17 @@ export default function CrearCuentaPage() {
           <input
             {...register('confirmPassword')}
             type="password"
-            className="w-full border p-2 rounded"
+            className="w-full rounded border p-2"
           />
           {errors.confirmPassword && (
-            <p className="text-red-600 text-sm">{errors.confirmPassword.message}</p>
+            <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
           )}
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 text-white py-2 rounded disabled:opacity-50"
+          className="w-full rounded bg-green-600 py-2 text-white disabled:opacity-50"
         >
           {loading ? 'Creando cuenta...' : 'Registrarme'}
         </button>

@@ -1,16 +1,25 @@
-// src/components/TestCheckout.tsx
 'use client';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 
-const createOrder = async (orderData: any) => {
-  const { data, error } = await supabase
-    .from('orders')
-    .insert(orderData)
-    .select()
-    .single();
+// Definimos el tipo de orden
+interface OrderData {
+  item: string;
+  quantity: number;
+  price_cents: number;
+}
+
+interface Order {
+  id: string;
+  item: string;
+  quantity: number;
+  price_cents: number;
+}
+
+const createOrder = async (orderData: OrderData): Promise<Order> => {
+  const { data, error } = await supabase.from('orders').insert(orderData).select().single();
   if (error) throw error;
-  return data;
+  return data as Order;
 };
 
 export default function TestCheckout() {
@@ -27,8 +36,9 @@ export default function TestCheckout() {
         price_cents: 1000,
       });
       setSuccess(`Orden creada con ID: ${order.id}`);
-    } catch (e: any) {
-      setError(e.message);
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Error inesperado al crear la orden';
+      setError(message);
     }
   };
 

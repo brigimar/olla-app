@@ -1,10 +1,5 @@
 import 'dotenv/config';
-import { createClient, User } from '@supabase/supabase-js';
-
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { supabaseAdmin } from '@/lib/supabase/admin';
 
 async function ensureProducerUser(
   email: string,
@@ -18,8 +13,8 @@ async function ensureProducerUser(
 
   let userId: string | null = null;
 
-  // ✅ Tipamos correctamente los usuarios
-  const existingUser = listData?.users.find((u: User) => u.email === email);
+  // ✅ Buscar usuario existente por email
+  const existingUser = listData?.users.find((u) => u.email === email);
 
   if (existingUser) {
     userId = existingUser.id;
