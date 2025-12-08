@@ -1,3 +1,4 @@
+// src/app/onboarding/crear-cuenta/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -15,7 +16,6 @@ export default function CrearCuentaPage() {
   const [loading, setLoading] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
 
-  // 🚀 Verificamos si ya hay sesión activa
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -52,7 +52,6 @@ export default function CrearCuentaPage() {
     setLoading(true);
     try {
       const redirectTo = `${window.location.origin}/auth/callback`;
-      console.log('Signup redirectTo:', redirectTo);
 
       const { error: signUpError } = await supabase.auth.signUp({
         email: data.email,
@@ -77,7 +76,6 @@ export default function CrearCuentaPage() {
     }
   };
 
-  // 🔎 Mientras chequeamos sesión, no renderizamos nada
   if (!sessionChecked) {
     return (
       <div className="flex min-h-screen items-center justify-center">

@@ -1,3 +1,4 @@
+// src/app/onboarding/espera-email/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -11,7 +12,6 @@ export default function EsperaEmailPage() {
     setLoading(true);
     setMessage('');
     try {
-      // 🚀 Obtenemos el email del usuario actual (si está en metadata)
       const { data } = await supabase.auth.getUser();
       const email = data.user?.email;
 
