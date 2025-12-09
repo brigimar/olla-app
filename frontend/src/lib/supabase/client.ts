@@ -1,7 +1,4 @@
-﻿# Actualiza client.ts
-$clientTsPath = "src/lib/supabase/client.ts"
-$newClientTs = @'
-// src/lib/supabase/client.ts - CON VALIDACIÓN FORZADA
+﻿// src/lib/supabase/client.ts - VERSIÓN CORRECTA
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
@@ -89,6 +86,3 @@ export const useSupabase = () => {
     return { client: null, isLoading: false, error: errorMsg };
   }
 };
-'@
-
-Set-Content -Path $clientTsPath -Value $newClientTs
