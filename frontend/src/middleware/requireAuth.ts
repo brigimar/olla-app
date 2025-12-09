@@ -1,4 +1,4 @@
-// src/middleware/requireAuth.ts
+// src/lib/auth/requireAuth.ts
 import { getServerSupabase } from "@/lib/supabase/server";
 import { type ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { type User } from "@supabase/supabase-js";

@@ -1,79 +1,34 @@
-"use client";
-export const dynamic = 'force-dynamic';
+// app/dashboard/page.tsx
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { requireAuth } from "@/lib/auth/requireAuth";
+import { getServerSupabase } from "@/lib/supabase/server";
+import DashboardClient from "./DashboardClient";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSupabase } from "@/lib/supabase/client";
-
-
-type Producer = {
-  id: string;
-  business_name: string;
-  is_active: boolean;
-};
-
-export default function ProducerDashboard() {
-  const supabase = useSupabase(); // ✅ instancia única estable
-  const [producer, setProducer] = useState<Producer | null>(null);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadData = async () => {
-      try {
-        // 1. Obtener usuario autenticado
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-
-        if (!user) {
-          router.push('/login');
-          return;
-        }
-
-        // 2. Obtener productor asociado
-        const { data, error } = await supabase
-          .from('producers')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
-
-        if (error) throw error;
-
-        if (mounted) {
-          setProducer(data);
-        }
-      } catch (err) {
-        console.error('Error cargando dashboard:', err);
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadData();
-    return () => {
-      mounted = false;
-    };
-  }, [router, supabase]);
-
-  if (loading) {
-    return <p>Cargando...</p>;
+export default async function DashboardPage() {
+  const cookieStore = cookies();
+  
+  // 1. Verificar autenticación
+  let user;
+  try {
+    user = await requireAuth(cookieStore);
+  } catch {
+    redirect('/login');
   }
 
-  if (!producer) {
-    return <p>No se encontraron datos del productor.</p>;
+  // 2. Obtener datos del productor
+  const supabase = getServerSupabase(cookieStore);
+  const { data: producer, error } = await supabase
+    .from('producers')
+    .select('*')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error || !producer) {
+    // Puedes redirigir o mostrar mensaje
+    redirect('/onboarding/completar-perfil');
   }
 
-  return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold">Hola, {producer.business_name}</h1>
-      <p className="mt-2 text-gray-600">
-        Estado de actividad: {producer.is_active ? 'Activo' : 'Inactivo'}
-      </p>
-    </div>
-  );
+  // 3. Pasar datos al cliente
+  return <DashboardClient producer={producer} />;
 }
