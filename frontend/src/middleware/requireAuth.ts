@@ -1,19 +1,15 @@
-import { createServerClient } from "@supabase/ssr";
-import type { Session, User } from "@supabase/supabase-js";
+// src/lib/auth/requireAuth.ts
+import { getServerSupabase } from "@/lib/supabase/server";
+import { type ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { type User } from "@supabase/supabase-js";
 
-export async function requireAuth(cookies: any) {
-  // Inicializar cliente server-side
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // ⚠️ usar la Service Role Key en server
-    { cookies }
-  );
+export async function requireAuth(cookies: ReadonlyRequestCookies) {
+  const supabase = getServerSupabase(cookies);
+  const { data: { session }, error } = await supabase.auth.getSession();
 
-  const { data, error } = await supabase.auth.getSession();
-  if (error) throw new Error(error.message);
+  if (error || !session?.user) {
+    throw new Error("Unauthorized");
+  }
 
-  const user: User | undefined = data?.session?.user;
-  if (!user) throw new Error("Unauthorized");
-
-  return user;
+  return session.user as User;
 }

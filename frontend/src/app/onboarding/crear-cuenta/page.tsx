@@ -1,5 +1,5 @@
+// src/app/onboarding/crear-cuenta/page.tsx
 "use client";
-export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -31,6 +31,7 @@ export default function CrearCuentaPage() {
         setSessionChecked(true);
       }
     };
+
     checkSession();
   }, [router, supabase]);
 
@@ -54,7 +55,7 @@ export default function CrearCuentaPage() {
 
     if (msg.includes("invalid email")) return "El email no es válido. Revisá el formato.";
 
-    return message;
+    return "Ocurrió un error. Intentá nuevamente.";
   };
 
   const onSubmit = async (formValues: FormData) => {
@@ -62,29 +63,36 @@ export default function CrearCuentaPage() {
     setLoading(true);
 
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`;
+      // ✅ Usar NEXT_PUBLIC_SITE_URL en lugar de window.location.origin
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+      if (!siteUrl) {
+        throw new Error("NEXT_PUBLIC_SITE_URL no está definido en las variables de entorno.");
+      }
 
       const { error: signUpError } = await supabase.auth.signUp({
         email: formValues.email,
         password: formValues.password,
         options: {
-          emailRedirectTo: redirectTo,
+          emailRedirectTo: `${siteUrl}/auth/callback`,
           data: { name: formValues.name },
         },
       });
 
-      if (signUpError) throw signUpError;
+      if (signUpError) {
+        throw signUpError;
+      }
 
       router.push("/onboarding/espera-email");
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Ocurrió un error. Intentá nuevamente.";
+        err instanceof Error ? err.message : "Ocurrió un error inesperado.";
       setError(mapAuthError(message));
     } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Esperar a verificar sesión antes de renderizar el formulario
   if (!sessionChecked) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -111,7 +119,9 @@ export default function CrearCuentaPage() {
             className="w-full rounded border p-2"
             placeholder="Tu nombre"
           />
-          {errors.name && <p className="text-sm text-red-600">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-sm text-red-600">{errors.name.message}</p>
+          )}
         </div>
 
         <div>
@@ -122,7 +132,9 @@ export default function CrearCuentaPage() {
             className="w-full rounded border p-2"
             placeholder="tu@email.com"
           />
-          {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="text-sm text-red-600">{errors.email.message}</p>
+          )}
         </div>
 
         <div>

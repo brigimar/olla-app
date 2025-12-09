@@ -1,15 +1,22 @@
 // src/lib/supabase/server.ts
-import { createServerClient } from "@supabase/ssr";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { type CookieOptions, createServerClient } from "@supabase/ssr";
+import { type ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
-/**
- * Devuelve una instancia de Supabase para usar en servicios o middleware (server-side).
- * Recibe cookies para mantener sesión en SSR.
- */
-export function getServerSupabase(cookies: any): SupabaseClient {
+export function getServerSupabase(cookies: ReadonlyRequestCookies) {
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // ⚠️ usar Service Role Key solo en server
-    { cookies }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, // ✅ Usar la misma key que en el cliente
+    {
+      cookies: {
+        getAll() {
+          return cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookies.set(name, value, options)
+          );
+        },
+      } as CookieOptions,
+    }
   );
 }
