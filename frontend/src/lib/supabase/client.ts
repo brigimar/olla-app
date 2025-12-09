@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { createBrowserClient } from "@supabase/ssr";
+import { HeartHandshake } from "lucide-react";
 
 let supabaseBrowserClient: ReturnType<typeof createBrowserClient> | null = null;
 
@@ -44,4 +45,4 @@ export const useSupabase = () => {
   }
 
   return supabaseBrowserClient;
-};
+};HeartHandshake
