@@ -1,4 +1,4 @@
-// src/app/onboarding/crear-cuenta/page.tsx
+// src/app/onboarding/crear-cuenta/page.tsx - VERSIÓN CORREGIDA
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,29 +10,59 @@ import { signUpSchema, type SignUpFormData } from "@/lib/validations/signUp";
 
 export default function CrearCuentaPage() {
   const router = useRouter();
-  const supabase = useSupabase();
+  const { client: supabase, isLoading: supabaseLoading, error: supabaseError } = useSupabase();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [sessionChecked, setSessionChecked] = useState(false);
 
-  // ✅ Verificar si ya hay sesión activa
+  // 🔍 DEBUG: Log del estado de Supabase
   useEffect(() => {
+    console.log('🔍 CrearCuentaPage - Estado Supabase:', {
+      tieneSupabase: !!supabase,
+      supabaseLoading,
+      supabaseError,
+      sessionChecked
+    });
+  }, [supabase, supabaseLoading, supabaseError, sessionChecked]);
+
+  // ✅ Manejar error de inicialización de Supabase
+  useEffect(() => {
+    if (supabaseError) {
+      console.error("❌ Error en useSupabase:", supabaseError);
+      setError(`Error de configuración: ${supabaseError}. Por favor, recarga la página.`);
+    }
+  }, [supabaseError]);
+
+  // ✅ Verificar si ya hay sesión activa - SOLO cuando supabase esté listo
+  useEffect(() => {
+    if (supabaseLoading || !supabase) return;
+
     const checkSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        console.log('🔍 CrearCuentaPage - Verificando sesión...');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("❌ Error al verificar sesión:", sessionError);
+          setSessionChecked(true);
+          return;
+        }
+
         if (session) {
+          console.log('🔍 CrearCuentaPage - Sesión encontrada, redirigiendo a dashboard');
           router.replace("/dashboard");
         } else {
+          console.log('🔍 CrearCuentaPage - No hay sesión, mostrando formulario');
           setSessionChecked(true);
         }
       } catch (err) {
-        console.error("Error checking session:", err);
+        console.error("❌ Error checking session:", err);
         setSessionChecked(true);
       }
     };
 
     checkSession();
-  }, [router, supabase]);
+  }, [router, supabase, supabaseLoading]);
 
   const {
     register,
@@ -64,17 +94,24 @@ export default function CrearCuentaPage() {
   };
 
   const onSubmit = async (formValues: SignUpFormData) => {
+    if (!supabase) {
+      setError("Supabase no está inicializado. Por favor, recarga la página.");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
       // ✅ Usar NEXT_PUBLIC_SITE_URL en lugar de window.location.origin
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-if (!siteUrl) {
-  throw new Error("NEXT_PUBLIC_SITE_URL no está definido. " +
-    "Agrégalo a tu archivo .env.local");
-}
+      if (!siteUrl) {
+        throw new Error("NEXT_PUBLIC_SITE_URL no está definido. " +
+          "Agrégalo a tu archivo .env.local");
+      }
 
+      console.log('🔍 CrearCuentaPage - Intentando signUp para:', formValues.email);
+      
       const { error: signUpError, data } = await supabase.auth.signUp({
         email: formValues.email,
         password: formValues.password,
@@ -96,14 +133,68 @@ if (!siteUrl) {
         throw new Error("Este email ya está registrado.");
       }
 
+      console.log('✅ CrearCuentaPage - SignUp exitoso, redirigiendo');
       router.push("/onboarding/espera-email");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Ocurrió un error inesperado.";
+      console.error('❌ CrearCuentaPage - Error en onSubmit:', err);
       setError(mapAuthError(message));
     } finally {
       setLoading(false);
     }
   };
+
+  // ✅ Múltiples estados de carga que debemos verificar
+  if (supabaseLoading) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+        <p className="mt-4 text-gray-600">Inicializando aplicación...</p>
+        <p className="mt-2 text-sm text-gray-500">Cargando Supabase</p>
+      </div>
+    );
+  }
+
+  if (supabaseError) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-red-50 p-4">
+        <h1 className="mb-4 text-2xl font-bold text-red-700">Error de configuración</h1>
+        <p className="mb-4 text-center text-red-600">
+          No se pudo conectar con el servicio de autenticación.
+          <br />
+          <span className="text-sm">{supabaseError}</span>
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="rounded bg-red-600 px-6 py-2 text-white hover:bg-red-700"
+        >
+          Recargar página
+        </button>
+        <p className="mt-4 text-sm text-gray-600">
+          Si el problema persiste, contacta al soporte.
+        </p>
+      </div>
+    );
+  }
+
+  if (!supabase) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-yellow-50 p-4">
+        <h1 className="mb-4 text-2xl font-bold text-yellow-700">Servicio no disponible</h1>
+        <p className="mb-4 text-yellow-600">
+          El servicio de autenticación no está disponible.
+          <br />
+          Verifica que las variables de entorno estén configuradas.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="rounded bg-yellow-600 px-6 py-2 text-white hover:bg-yellow-700"
+        >
+          Intentar nuevamente
+        </button>
+      </div>
+    );
+  }
 
   // ✅ Esperar a verificar sesión antes de renderizar el formulario
   if (!sessionChecked) {
@@ -115,6 +206,7 @@ if (!siteUrl) {
     );
   }
 
+  // ✅ RENDER FINAL - Todo está listo
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
@@ -127,6 +219,7 @@ if (!siteUrl) {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* ... resto del formulario igual ... */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Nombre completo
