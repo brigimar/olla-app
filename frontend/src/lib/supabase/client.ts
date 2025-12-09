@@ -1,92 +1,94 @@
-﻿// src/lib/supabase/client.ts - SOLUCIÓN DEFINITIVA
+﻿# Actualiza client.ts
+$clientTsPath = "src/lib/supabase/client.ts"
+$newClientTs = @'
+// src/lib/supabase/client.ts - CON VALIDACIÓN FORZADA
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
 
-// Singleton global usando patrón de módulo ES6
-let supabaseClientInstance: ReturnType<typeof createBrowserClient> | null = null;
+let supabaseInstance: ReturnType<typeof createBrowserClient> | null = null;
 
-export const useSupabase = (): ReturnType<typeof createBrowserClient> => {
-  // SSR - retorna un mock seguro
+export const useSupabase = () => {
+  // Para SSR, retorna null
   if (typeof window === "undefined") {
-    return createSafeMockClient();
+    return { 
+      client: null, 
+      isLoading: false, 
+      error: "Llamada en servidor. Las variables deberían estar disponibles." 
+    };
   }
-
-  // Si ya existe la instancia, retornarla
-  if (supabaseClientInstance) {
-    return supabaseClientInstance;
-  }
-
-  // Inicializar el cliente
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    console.error(
-      "❌ Missing Supabase environment variables. " +
-      "Check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY"
-    );
-    return createSafeMockClient();
-  }
-
-  try {
-    supabaseClientInstance = createBrowserClient(supabaseUrl, supabaseKey);
+  
+  // DEBUG: Log para ver qué hay disponible
+  console.log('🔍 [DEBUG] Variables en cliente:', {
+    hasSiteUrl: !!process.env.NEXT_PUBLIC_SITE_URL,
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    nodeEnv: process.env.NODE_ENV,
+    vercel: process.env.VERCEL
+  });
+  
+  // 🔴 VALIDACIÓN CRÍTICA
+  const missingVars = [];
+  if (!process.env.NEXT_PUBLIC_SITE_URL) missingVars.push('NEXT_PUBLIC_SITE_URL');
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL) missingVars.push('NEXT_PUBLIC_SUPABASE_URL');
+  if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) missingVars.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  
+  if (missingVars.length > 0) {
+    const errorMsg = `🚨 VARIABLES FALTANTES: ${missingVars.join(', ')}. 
     
-    // Configurar para desarrollo
-    if (process.env.NODE_ENV === "development") {
-      console.log("✅ Supabase Client Singleton creado");
-      // Exponer para debugging
-      (window as any).__supabase = supabaseClientInstance;
+    Esto significa que las variables de entorno NO están configuradas en Vercel o no se están inyectando.
+    
+    SOLUCIÓN:
+    1. Ve a https://vercel.com/dashboard
+    2. Selecciona tu proyecto "olla-app"
+    3. Ve a Settings → Environment Variables
+    4. Agrega las variables faltantes
+    5. Haz un redeploy
+    
+    Variables necesarias:
+    - NEXT_PUBLIC_SITE_URL=https://olla-app.vercel.app
+    - NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
+    - NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_anon_key_publica`;
+    
+    console.error(errorMsg);
+    
+    // También mostrar alerta en producción para el usuario
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+      setTimeout(() => {
+        if (!localStorage.getItem('env_error_shown')) {
+          alert('⚠️ Error de configuración: Variables de entorno faltantes. Por favor, contacta al administrador.');
+          localStorage.setItem('env_error_shown', 'true');
+        }
+      }, 2000);
     }
     
-    return supabaseClientInstance;
+    return { 
+      client: null, 
+      isLoading: false, 
+      error: errorMsg 
+    };
+  }
+  
+  // Singleton
+  if (supabaseInstance) {
+    return { client: supabaseInstance, isLoading: false, error: null };
+  }
+  
+  // Crear instancia
+  try {
+    supabaseInstance = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    
+    console.log('✅ Supabase client creado exitosamente');
+    return { client: supabaseInstance, isLoading: false, error: null };
   } catch (error) {
-    console.error("❌ Error creando Supabase client:", error);
-    return createSafeMockClient();
+    const errorMsg = `Error creando cliente Supabase: ${error}`;
+    console.error(errorMsg);
+    return { client: null, isLoading: false, error: errorMsg };
   }
 };
+'@
 
-// Cliente mock para SSR y errores
-const createSafeMockClient = () => {
-  return {
-    auth: {
-      getSession: async () => ({ data: { session: null }, error: null }),
-      getUser: async () => ({ data: { user: null }, error: null }),
-      signUp: async () => ({ 
-        data: { 
-          user: null, 
-          session: null,
-          user_identities: []
-        }, 
-        error: null 
-      }),
-      signInWithPassword: async () => ({ data: { user: null, session: null }, error: null }),
-      signOut: async () => ({ error: null }),
-      onAuthStateChange: () => ({ 
-        data: { 
-          subscription: { 
-            unsubscribe: () => {} 
-          } 
-        } 
-      }),
-      resend: async () => ({ error: null }),
-    },
-    from: () => ({
-      select: () => ({
-        eq: () => Promise.resolve({ data: [], error: null }),
-        single: () => Promise.resolve({ data: null, error: null }),
-      }),
-      insert: () => ({ 
-        select: () => ({ single: () => Promise.resolve({ data: null, error: null }) }) 
-      }),
-      upsert: () => Promise.resolve({ data: null, error: null }),
-      update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
-    }),
-    storage: {
-      from: () => ({
-        upload: async () => ({ error: null }),
-        getPublicUrl: () => ({ data: { publicUrl: "" } }),
-      }),
-    },
-  } as unknown as ReturnType<typeof createBrowserClient>;
-};
+Set-Content -Path $clientTsPath -Value $newClientTs
