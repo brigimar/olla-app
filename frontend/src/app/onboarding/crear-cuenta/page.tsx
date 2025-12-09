@@ -7,6 +7,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSupabase } from "@/lib/supabase/client";
 import { signUpSchema, type SignUpFormData } from "@/lib/validations/signUp";
+// DEBUG: Verifica si estamos en el cliente
+if (typeof window !== 'undefined') {
+  console.log('🔍 CREAR-CUENTA - Window disponible, variables:', {
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ? '✅' : '❌',
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅' : '❌',
+    NODE_ENV: process.env.NODE_ENV,
+    VERCEL: process.env.VERCEL ? '✅' : '❌'
+  });
+}
 
 export default function CrearCuentaPage() {
   const router = useRouter();
