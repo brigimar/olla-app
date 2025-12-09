@@ -1,4 +1,4 @@
-// src/lib/supabase/client.ts - VERSIÓN CORRECTA
+// src/lib/supabase/client.ts - VERSIï¿½N CORRECTA
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
@@ -11,11 +11,11 @@ export const useSupabase = () => {
     return { 
       client: null, 
       isLoading: false, 
-      error: "Llamada en servidor. Las variables deberían estar disponibles." 
+      error: "Llamada en servidor. Las variables deberï¿½an estar disponibles." 
     };
   }
   
-  // DEBUG: Log para ver qué hay disponible
+  // DEBUG: Log para ver quï¿½ hay disponible
   console.log('?? [DEBUG] Variables en cliente:', {
     hasSiteUrl: !!process.env.NEXT_PUBLIC_SITE_URL,
     hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -24,7 +24,7 @@ export const useSupabase = () => {
     vercel: process.env.VERCEL
   });
   
-  // ?? VALIDACIÓN CRÍTICA
+  // ?? VALIDACIï¿½N CRï¿½TICA
   const missingVars = [];
   if (!process.env.NEXT_PUBLIC_SITE_URL) missingVars.push('NEXT_PUBLIC_SITE_URL');
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) missingVars.push('NEXT_PUBLIC_SUPABASE_URL');
@@ -33,9 +33,9 @@ export const useSupabase = () => {
   if (missingVars.length > 0) {
     const errorMsg = `?? VARIABLES FALTANTES: ${missingVars.join(', ')}. 
     
-    Esto significa que las variables de entorno NO están configuradas en Vercel o no se están inyectando.
+    Esto significa que las variables de entorno NO estï¿½n configuradas en Vercel o no se estï¿½n inyectando.
     
-    SOLUCIÓN:
+    SOLUCIï¿½N:
     1. Ve a https://vercel.com/dashboard
     2. Selecciona tu proyecto "olla-app"
     3. Ve a Settings ? Environment Variables
@@ -49,11 +49,11 @@ export const useSupabase = () => {
     
     console.error(errorMsg);
     
-    // También mostrar alerta en producción para el usuario
+    // Tambiï¿½n mostrar alerta en producciï¿½n para el usuario
     if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
       setTimeout(() => {
         if (!localStorage.getItem('env_error_shown')) {
-          alert('?? Error de configuración: Variables de entorno faltantes. Por favor, contacta al administrador.');
+          alert('?? Error de configuraciï¿½n: Variables de entorno faltantes. Por favor, contacta al administrador.');
           localStorage.setItem('env_error_shown', 'true');
         }
       }, 2000);

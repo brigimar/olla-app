@@ -4,7 +4,7 @@ import { useSupabase } from "@/lib/supabase/client";
 import type { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 
 export const useAuth = () => {
-  const supabase = useSupabase(); // ? instancia única estable
+  const supabase = useSupabase(); // ? instancia ï¿½nica estable
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ export const useAuth = () => {
     };
   }, [supabase]);
 
-  // Funciones de autenticación (ejemplos)
+  // Funciones de autenticaciï¿½n (ejemplos)
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,

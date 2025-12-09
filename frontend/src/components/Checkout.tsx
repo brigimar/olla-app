@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useSupabase } from "@/lib/supabase/client"; // ? import correcto
 
 export default function Checkout() {
-  const supabase = useSupabase();   // ? instancia única estable
+  const supabase = useSupabase();   // ? instancia ï¿½nica estable
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {

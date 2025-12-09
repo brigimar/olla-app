@@ -1,5 +1,5 @@
-// src/hooks/usePopularDishes.ts
-"use client"; // ?? CR�TICO: Agregar esta directiva
+﻿// src/hooks/usePopularDishes.ts
+"use client"; // ?? CRï¿½TICO: Agregar esta directiva
 
 import { useEffect, useState } from "react";
 import { useSupabase } from "@/lib/supabase/client";

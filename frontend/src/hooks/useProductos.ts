@@ -8,7 +8,7 @@ import { useSupabase } from "@/lib/supabase/client"; // ? import correcto al ini
 type DishFormData = z.infer<typeof DishServerSchema>;
 
 export function useProductos() {
-  const supabase = useSupabase(); // ? instancia única
+  const supabase = useSupabase(); // ? instancia ï¿½nica
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +21,7 @@ export function useProductos() {
       const parsed = DishServerSchema.safeParse(dishData);
       if (!parsed.success) {
         const first = parsed.error.issues[0];
-        throw new Error(first?.message || "Datos inválidos");
+        throw new Error(first?.message || "Datos invï¿½lidos");
       }
 
       // 2) Usuario autenticado
