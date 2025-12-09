@@ -1,14 +1,14 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { DishServerSchema } from "@/lib/validations/dish";
 import { z } from "zod";
-import { useSupabase } from "@/lib/supabase/client"; // ✅ import correcto al inicio
+import { useSupabase } from "@/lib/supabase/client"; // ? import correcto al inicio
 
 type DishFormData = z.infer<typeof DishServerSchema>;
 
 export function useProductos() {
-  const supabase = useSupabase(); // ✅ instancia única
+  const supabase = useSupabase(); // ? instancia �nica
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +21,7 @@ export function useProductos() {
       const parsed = DishServerSchema.safeParse(dishData);
       if (!parsed.success) {
         const first = parsed.error.issues[0];
-        throw new Error(first?.message || "Datos inválidos");
+        throw new Error(first?.message || "Datos inv�lidos");
       }
 
       // 2) Usuario autenticado
@@ -104,3 +104,4 @@ export function useProductos() {
     getDishes,
   };
 }
+

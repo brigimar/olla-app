@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useSupabase } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
@@ -34,7 +34,7 @@ export default function OrderStatus({ orderId }: { orderId: string }) {
         .single();
 
       if (error) {
-        console.error("❌ Error cargando orden:", error.message);
+        console.error("? Error cargando orden:", error.message);
         return;
       }
       if (data) setOrder(data as Order);
@@ -50,3 +50,4 @@ export default function OrderStatus({ orderId }: { orderId: string }) {
   if (!order) return <div>Cargando...</div>;
   return <div>Estado de la orden: {order.status}</div>;
 }
+

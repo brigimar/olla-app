@@ -16,7 +16,7 @@ type Producer = {
 };
 
 export default function DashboardClient({ producer }: { producer: Producer }) {
-  const supabase = useSupabase();
+  const { client: supabase, isLoading: supabaseLoading, error: supabaseError } = useSupabase();
   const [loading, setLoading] = useState(false);
   const [localProducer, setLocalProducer] = useState<Producer>(producer);
 
@@ -63,3 +63,4 @@ export default function DashboardClient({ producer }: { producer: Producer }) {
     </div>
   );
 }
+

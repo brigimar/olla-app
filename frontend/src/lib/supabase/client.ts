@@ -1,4 +1,4 @@
-ï»¿// src/lib/supabase/client.ts - VERSIÃ“N CORRECTA
+// src/lib/supabase/client.ts - VERSIÓN CORRECTA
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
@@ -11,12 +11,12 @@ export const useSupabase = () => {
     return { 
       client: null, 
       isLoading: false, 
-      error: "Llamada en servidor. Las variables deberÃ­an estar disponibles." 
+      error: "Llamada en servidor. Las variables deberían estar disponibles." 
     };
   }
   
-  // DEBUG: Log para ver quÃ© hay disponible
-  console.log('ðŸ” [DEBUG] Variables en cliente:', {
+  // DEBUG: Log para ver qué hay disponible
+  console.log('?? [DEBUG] Variables en cliente:', {
     hasSiteUrl: !!process.env.NEXT_PUBLIC_SITE_URL,
     hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
     hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -24,21 +24,21 @@ export const useSupabase = () => {
     vercel: process.env.VERCEL
   });
   
-  // ðŸ”´ VALIDACIÃ“N CRÃTICA
+  // ?? VALIDACIÓN CRÍTICA
   const missingVars = [];
   if (!process.env.NEXT_PUBLIC_SITE_URL) missingVars.push('NEXT_PUBLIC_SITE_URL');
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) missingVars.push('NEXT_PUBLIC_SUPABASE_URL');
   if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) missingVars.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
   
   if (missingVars.length > 0) {
-    const errorMsg = `ðŸš¨ VARIABLES FALTANTES: ${missingVars.join(', ')}. 
+    const errorMsg = `?? VARIABLES FALTANTES: ${missingVars.join(', ')}. 
     
-    Esto significa que las variables de entorno NO estÃ¡n configuradas en Vercel o no se estÃ¡n inyectando.
+    Esto significa que las variables de entorno NO están configuradas en Vercel o no se están inyectando.
     
-    SOLUCIÃ“N:
+    SOLUCIÓN:
     1. Ve a https://vercel.com/dashboard
     2. Selecciona tu proyecto "olla-app"
-    3. Ve a Settings â†’ Environment Variables
+    3. Ve a Settings ? Environment Variables
     4. Agrega las variables faltantes
     5. Haz un redeploy
     
@@ -49,11 +49,11 @@ export const useSupabase = () => {
     
     console.error(errorMsg);
     
-    // TambiÃ©n mostrar alerta en producciÃ³n para el usuario
+    // También mostrar alerta en producción para el usuario
     if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
       setTimeout(() => {
         if (!localStorage.getItem('env_error_shown')) {
-          alert('âš ï¸ Error de configuraciÃ³n: Variables de entorno faltantes. Por favor, contacta al administrador.');
+          alert('?? Error de configuración: Variables de entorno faltantes. Por favor, contacta al administrador.');
           localStorage.setItem('env_error_shown', 'true');
         }
       }, 2000);
@@ -78,7 +78,7 @@ export const useSupabase = () => {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     );
     
-    console.log('âœ… Supabase client creado exitosamente');
+    console.log('? Supabase client creado exitosamente');
     return { client: supabaseInstance, isLoading: false, error: null };
   } catch (error) {
     const errorMsg = `Error creando cliente Supabase: ${error}`;

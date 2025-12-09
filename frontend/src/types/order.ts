@@ -12,12 +12,13 @@ export interface Order {
   total_cents: number;
   created_at?: string; // Supabase lo genera
   updated_at?: string; // Supabase lo genera
-  delivery_address_point?: GeoPoint | null; // ✅ ya no es any
+  delivery_address_point?: GeoPoint | null; // ✅ ya no es unknown
   pickup_time?: string | null;
   paid_at?: string | null;
   address_revealed_at?: string | null;
   delivery_address?: string | null;
 }
+
 
 
 

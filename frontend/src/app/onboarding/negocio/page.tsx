@@ -14,7 +14,7 @@ type ProducerFormData = {
 };
 
 export default function NegocioPage() {
-  const supabase = useSupabase(); // ✅ instancia única estable
+  const { client: supabase, isLoading: supabaseLoading, error: supabaseError } = useSupabase(); // ✅ instancia única estable
   const { register, handleSubmit, setValue } = useForm<ProducerFormData>({
     defaultValues: {
       business_name: '',
@@ -75,3 +75,5 @@ export default function NegocioPage() {
     </form>
   );
 }
+
+

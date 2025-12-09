@@ -18,7 +18,7 @@ type DishFormData = {
 
 export default function PlatosPage() {
   const router = useRouter();
-  const supabase = useSupabase();
+  const { client: supabase, isLoading: supabaseLoading, error: supabaseError } = useSupabase();
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -218,3 +218,4 @@ export default function PlatosPage() {
     </div>
   );
 }
+

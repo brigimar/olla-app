@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useSupabase } from "@/lib/supabase/client";
 
 export default function EsperaEmailPage() {
-  const supabase = useSupabase();
+  const { client: supabase, isLoading: supabaseLoading, error: supabaseError } = useSupabase();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -101,3 +101,4 @@ export default function EsperaEmailPage() {
     </div>
   );
 }
+

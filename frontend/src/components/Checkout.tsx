@@ -1,11 +1,11 @@
-﻿// src/components/Checkout.tsx - Client Component
+// src/components/Checkout.tsx - Client Component
 "use client";
 
 import { useState } from "react";
-import { useSupabase } from "@/lib/supabase/client"; // ✅ import correcto
+import { useSupabase } from "@/lib/supabase/client"; // ? import correcto
 
 export default function Checkout() {
-  const supabase = useSupabase();   // ✅ instancia única estable
+  const supabase = useSupabase();   // ? instancia �nica estable
   const [loading, setLoading] = useState(false);
 
   const handleCheckout = async () => {
@@ -32,3 +32,4 @@ export default function Checkout() {
     </button>
   );
 }
+
