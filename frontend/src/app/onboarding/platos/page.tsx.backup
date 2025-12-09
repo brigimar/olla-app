@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 // src/app/onboarding/platos/page.tsx
 export const dynamic = 'force-dynamic';
 import { useForm } from 'react-hook-form';

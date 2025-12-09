@@ -1,15 +1,39 @@
-﻿// src/services/auth.ts
+// src/services/auth.ts
+import { type ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { type Session } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
-import type { Session } from "@supabase/supabase-js";
 
-export const getSession = async (cookies: any): Promise<Session | null> => {
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // ⚠️ usar Service Role Key en server
-    { cookies }
-  );
+export const getSession = async (
+  cookies: ReadonlyRequestCookies
+): Promise<Session | null> => {
+  try {
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookies.getAll();
+          },
+          setAll(cookieList) {
+            cookieList.forEach(({ name, value, options }) =>
+              cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
 
-  const { data, error } = await supabase.auth.getSession();
-  if (error) throw error;
-  return data.session;
+    // ✅ Corrección: usar `data: { session }`
+    const { data: { session }, error } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("Error obteniendo sesión:", error);
+      return null;
+    }
+    return session;
+  } catch (error) {
+    console.error("Error inesperado en getSession:", error);
+    return null;
+  }
 };

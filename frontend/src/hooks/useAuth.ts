@@ -3,11 +3,6 @@ import { useState, useEffect } from "react";
 import { useSupabase } from "@/lib/supabase/client";
 import type { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
 
-// Helper para mapear 'whatsapp' a 'sms'
-const toSupabaseMobileType = (_otpChannel: "sms" | "whatsapp"): "sms" => {
-  return "sms";
-};
-
 export const useAuth = () => {
   const supabase = useSupabase(); // ✅ instancia única estable
   const [user, setUser] = useState<User | null>(null);
@@ -50,5 +45,34 @@ export const useAuth = () => {
     };
   }, [supabase]);
 
-  // ... resto de funciones signUp, signIn, verifyOtp, etc.
+  // Funciones de autenticación (ejemplos)
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+  };
+
+  const signUp = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) throw error;
+  };
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  };
+
+  return {
+    user,
+    session,
+    loading,
+    signIn,
+    signUp,
+    signOut,
+  };
 };

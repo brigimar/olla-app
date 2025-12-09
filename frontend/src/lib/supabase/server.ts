@@ -13,16 +13,22 @@ export function getServerSupabase(cookies: ReadonlyRequestCookies) {
       cookiesToSet.forEach(({ name, value, options }) => {
         try {
           cookies.set(name, value, options);
-        } catch (e) {
+        } catch (_) {
           // Silently ignore if cookies are not mutable (e.g., in some edge cases)
+          // Usamos '_' para indicar que el parámetro del error no se usa
         }
       });
     },
   };
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: cookieStore }
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      "Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are required"
+    );
+  }
+
+  return createServerClient(supabaseUrl, supabaseKey, { cookies: cookieStore });
 }

@@ -1,5 +1,5 @@
 "use client";
-export const dynamic = 'force-dynamic';
+
 import { useForm } from 'react-hook-form';
 import { useSupabase } from "@/lib/supabase/client";
 
